@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick.ButtonType;
@@ -69,6 +70,8 @@ public class Robot extends TimedRobot {
   public static Ultrasonic frontSide; // Front Direction Sensor
   public static DigitalInput hatchSwitchAutoClose; // This switch is to auto close the
   public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
+  
+  public static VictorSP motorLift, motorTilt, climbMotor, walkingMotor, ballIntake;
 
   public static Compressor compressor;
   public static CommandGroup autoCommand;
@@ -126,6 +129,12 @@ public class Robot extends TimedRobot {
 
     hatchSol = new DoubleSolenoid(0, 1);
     transSol = new DoubleSolenoid(7, 8);
+
+    motorLift = new VictorSP(1);
+    motorTilt = new VictorSP(2);
+    climbMotor = new VictorSP(3);
+    walkingMotor = new VictorSP(4);
+    ballIntake = new VictorSP(5);
 
     compressor = new Compressor(0);
 
