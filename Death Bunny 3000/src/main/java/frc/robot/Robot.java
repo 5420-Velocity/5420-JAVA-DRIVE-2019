@@ -73,6 +73,8 @@ public class Robot extends TimedRobot {
   
   public static VictorSP motorLift, motorTilt, climbMotor, walkingMotor, ballIntake;
 
+  public static DoubleSolenoid winchBreak;
+
   public static Compressor compressor;
   public static CommandGroup autoCommand;
 
@@ -128,7 +130,8 @@ public class Robot extends TimedRobot {
     frontSide = new Ultrasonic(5, 6);
 
     hatchSol = new DoubleSolenoid(0, 1);
-    transSol = new DoubleSolenoid(7, 8);
+    winchBreak = new DoubleSolenoid(2, 3);
+    transSol = new DoubleSolenoid(4, 5);
 
     motorLift = new VictorSP(1);
     motorTilt = new VictorSP(2);
