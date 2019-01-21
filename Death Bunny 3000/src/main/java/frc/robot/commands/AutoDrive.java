@@ -1,7 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.exceptions.NotDefinedException;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.Robot;
 
 /**
  * AutoDrive
@@ -14,13 +15,12 @@ public class AutoDrive extends Command {
     protected double time;
     protected long endTime;
 
-    public AutoDrive() throws NotDefinedException {
-        throw new NotDefinedException();
-    }
+    public DifferentialDrive drive;
 
-    public AutoDrive(double power, double timeInMillis) {
+    public AutoDrive(DifferentialDrive  drive, double power, double timeInMillis) {
         this.power = power;
         this.time = timeInMillis;
+        this.drive = drive;
     }
 
     // Called just before this Command runs the first time
@@ -31,7 +31,7 @@ public class AutoDrive extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        
+        this.drive.arcadeDrive(0.5, 0);
     }
 
     // Make this return true when this Command no longer needs to run execute()

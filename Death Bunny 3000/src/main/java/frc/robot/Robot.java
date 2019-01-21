@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick.ButtonType;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -57,6 +59,7 @@ public class Robot extends TimedRobot {
   public static WPI_TalonSRX test;
   public static SpeedControllerGroup left;
   public static SpeedControllerGroup right;
+  public static DoubleSolenoid transSol; // Put Solenoid to the Close State
 
   public static NetworkTableInstance tableInstance;
   public static NetworkTable table;
@@ -65,17 +68,12 @@ public class Robot extends TimedRobot {
   public static Ultrasonic rightSide; // Right Side Sonar Sensor
   public static Ultrasonic frontSide; // Front Direction Sensor
   public static DigitalInput hatchSwitchAutoClose; // This switch is to auto close the
-  public static Solenoid hatchOpen; // Put Solenoid to the Open State
-  public static Solenoid hatchClose; // Put Solenoid to the Close State
-
-  public static Solenoid transHigh; // Put Solenoid to the Close State
-  public static Solenoid transLow; // Put Solenoid to the Open State
+  public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
 
   public static Compressor compressor;
   public static CommandGroup autoCommand;
 
   public static char[] gameData;
-
 
   // Used to Store the Table Entries for the Network Table.
   //  Stored as an Associative Array to the NetowrkTable Entry
@@ -126,10 +124,8 @@ public class Robot extends TimedRobot {
     rightSide = new Ultrasonic(3, 4);
     frontSide = new Ultrasonic(5, 6);
 
-    hatchOpen = new Solenoid(0);
-    hatchClose = new Solenoid(1);
-    transHigh = new Solenoid(7);
-    transLow = new Solenoid(8);
+    hatchSol = new DoubleSolenoid(0, 1);
+    transSol = new DoubleSolenoid(7, 8);
 
     compressor = new Compressor(0);
 
@@ -150,12 +146,10 @@ public class Robot extends TimedRobot {
     Robot.test.set( SmartDashboard.getNumber("Test", 0) );
 
     if(SmartDashboard.getBoolean("Sol", false) == false){
-      hatchOpen.set(true);
-      hatchClose.set(false);
+      hatchSol.set(DoubleSolenoid.Value.kForward);
     }
     else {
-      hatchClose.set(true);
-      hatchOpen.set(false);
+      hatchSol.set(DoubleSolenoid.Value.kReverse);
     }
 
   }  
@@ -180,7 +174,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    inputGrabberToggle.whenPressed(new ToggleHatchGrabState());
 
     // Auto Timer Delay
 		if( SmartDashboard.getNumber("AutoDelay", 0) != 0 ){
@@ -189,7 +182,7 @@ public class Robot extends TimedRobot {
 		}
     Robot.autoCommand = new CommandGroup();
 
-    Robot.autoCommand.addSequential(new AutoDrive(0.5, 10));
+    Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 10));
 
     Robot.autoCommand.start();
   }
@@ -208,9 +201,16 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void teleopInit() {
+    inputGrabberToggle.whenPressed(new ToggleHatchGrabState());
+
+  }
+
+  @Override
   public void teleopPeriodic() {
     //m_myRobot.tankDrive(m_leftStick.getY(), m_rightStick.getY());
-
+    
+    Robot.m_drive.arcadeDrive(driver.getY(), driver.getX());
 
   }
 

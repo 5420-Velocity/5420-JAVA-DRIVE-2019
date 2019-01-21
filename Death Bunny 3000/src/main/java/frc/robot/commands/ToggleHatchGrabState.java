@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
-import frc.robot.exceptions.NotDefinedException;
 
 /**
  * ToggleHatchGrabState
  * This class will flip the value of the Hatch when the Push the Button.
+ * This is not to be used in the CommandGroups. Only Used for the Button
+ *  event.
  * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  */
