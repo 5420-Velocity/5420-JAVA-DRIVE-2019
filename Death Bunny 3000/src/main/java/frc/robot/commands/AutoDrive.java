@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.Robot;
 
 /**
  * AutoDrive
@@ -40,13 +39,8 @@ public class AutoDrive extends Command {
         return false;
     }
 
-    // Called once after isFinished returns true
+    // Called once after isFinished returns true OR interrupted() is called.
     protected void end() {
-        // Robot.driveTrain.setPower(0, 0);
-
-    }
-
-    protected void interrupted() {
-        end();
+        this.drive.arcadeDrive(0, 0);
     }
 }

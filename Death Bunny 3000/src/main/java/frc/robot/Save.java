@@ -7,9 +7,7 @@
 
 package frc.robot;
 
-import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -22,14 +20,6 @@ public class Save {
      * @var FileWriter
      */
     private FileWriter fileStream;
-
-    /**
-     * File Object
-     *  Allows you to get the File info as well as delete the file.
-     * 
-     * @var File
-     */
-    private File file;
 
 
     /**
