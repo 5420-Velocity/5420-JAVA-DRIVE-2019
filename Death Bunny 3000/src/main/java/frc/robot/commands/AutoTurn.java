@@ -26,7 +26,6 @@ public class AutoTurn extends Command {
         this.drive = drive;
         this.Gyro = gyro;
         
-    	// TODO: Check the Turn power is being check when you get the Robot
 		if( turnDEG > 0 ){
         	// Number is +
 			this.Turn = Math.abs(Speed);
