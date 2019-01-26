@@ -39,6 +39,13 @@ public class Robot extends TimedRobot {
   
   private static int logInterval = 0;
   
+  /**
+   * All Input and Output Devices below should be in the
+   *  Excel Sheet in the link below.
+   * 
+   * @link https://docs.google.com/spreadsheets/d/1qpUWBg1E4hRL2MkAI9xdoiQkqGg9Q8PkZpfA0f9DALU/edit
+   */
+
   public static Joystick driver;
   //private XboxController driver;
   public static JoystickButton inputGrabberToggle;
@@ -80,7 +87,7 @@ public class Robot extends TimedRobot {
   public static int DRIVER = 1;
   public static int DRIVER_TRIGGER_A = 1; // Button Value, A Button
   public static int OPERATOR = 2;
-  public static int CTRL_LOG_INTERVAL = 30;
+  public static int CTRL_LOG_INTERVAL = 60;
 
   @Override
   public void robotInit() {
@@ -98,15 +105,16 @@ public class Robot extends TimedRobot {
 
     Robot.operator = new Joystick(Robot.OPERATOR);
 
-    Robot.left1 = new WPI_TalonSRX(50);
-    Robot.left2 = new WPI_TalonSRX(51);
-    Robot.left3 = new WPI_TalonSRX(52);
+    Robot.left1 = new WPI_TalonSRX(52);
+    Robot.left2 = new WPI_TalonSRX(54);
+    Robot.left3 = new WPI_TalonSRX(55);
 
-    Robot.right1 = new WPI_TalonSRX(53);
-    Robot.right2 = new WPI_TalonSRX(54);
-    Robot.right3 = new WPI_TalonSRX(55);
+    Robot.right1 = new WPI_TalonSRX(56);
+    Robot.right2 = new WPI_TalonSRX(57);
+    Robot.right3 = new WPI_TalonSRX(58);
 
     Robot.left = new SpeedControllerGroup(left1, left2, left3);
+    Robot.left.setInverted(true);
     Robot.right = new SpeedControllerGroup(right1, right2, right3);
     Robot.m_drive = new DifferentialDrive(Robot.left, Robot.right);
 
@@ -208,7 +216,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // Stop Auto Commands
-    Robot.autoCommand.cancel();
+    if(Robot.autoCommand != null){
+      Robot.autoCommand.cancel();
+    }
 
     inputGrabberToggle.whenPressed(new ToggleHatchGrabState());
 
@@ -219,7 +229,7 @@ public class Robot extends TimedRobot {
     Scheduler.getInstance().run();
     //m_myRobot.tankDrive(m_leftStick.getY(), m_rightStick.getY());
     
-    Robot.m_drive.arcadeDrive(driver.getY(), driver.getX());
+    Robot.m_drive.arcadeDrive( -driver.getX(), -driver.getY());
 
   }
 
