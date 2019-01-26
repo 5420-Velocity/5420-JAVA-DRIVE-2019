@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
   public static Ultrasonic rightSide; // Right Side Sonar Sensor
   public static Ultrasonic frontSide; // Front Direction Sensor
   public static DigitalInput hatchSwitchAutoClose; // This switch is to auto close the
+  public static DigitalInput ballLoaded; // This switch is for when the balll is loaded.
   public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
   
   public static VictorSP motorLift, motorTilt, climbMotor, walkingMotor, ballIntake;
@@ -115,13 +116,17 @@ public class Robot extends TimedRobot {
     //m_leftStick = new Joystick(0);
     //m_rightStick = new Joystick(1);
     
-    leftSide = new Ultrasonic(1, 2);
-    rightSide = new Ultrasonic(3, 4);
-    frontSide = new Ultrasonic(5, 6);
+    leftSide = new Ultrasonic(0, 1);
+    rightSide = new Ultrasonic(2, 3);
+    frontSide = new Ultrasonic(4, 5);
 
     hatchSol = new DoubleSolenoid(0, 1);
     winchBreak = new DoubleSolenoid(2, 3);
     transSol = new DoubleSolenoid(4, 5);
+
+    hatchSwitchAutoClose = new DigitalInput(6);
+
+    ballLoaded = new DigitalInput(7);
 
     motorLift = new VictorSP(1);
     motorTilt = new VictorSP(2);
@@ -184,19 +189,17 @@ public class Robot extends TimedRobot {
 		}
     Robot.autoCommand = new CommandGroup();
 
+    // Robot Auto Command Drive Controls
     Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 10));
 
     Robot.autoCommand.start();
   }
 
-  
-
   @Override
   public void autonomousPeriodic() {
     Robot.gameData = window.getData();
-    
     if(hatchSwitchAutoClose.get() == true){
-      new ToggleHatchGrabState().start();
+      new ToggleHatchGrabState(DoubleSolenoid.Value.kForward).start();
     }
 
     Scheduler.getInstance().run();
@@ -204,12 +207,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    // Stop Auto Commands
+    Robot.autoCommand.cancel();
+
     inputGrabberToggle.whenPressed(new ToggleHatchGrabState());
 
   }
 
   @Override
   public void teleopPeriodic() {
+    Scheduler.getInstance().run();
     //m_myRobot.tankDrive(m_leftStick.getY(), m_rightStick.getY());
     
     Robot.m_drive.arcadeDrive(driver.getY(), driver.getX());
