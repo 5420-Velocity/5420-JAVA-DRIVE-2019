@@ -78,9 +78,9 @@ public class Robot extends TimedRobot {
   public static NetworkTableEntryStore tableIndex;
 
   public static int DRIVER = 1;
-  public static int DRIVER_TRIGGER = 1; // Button Value, A Button
+  public static int DRIVER_TRIGGER_A = 1; // Button Value, A Button
   public static int OPERATOR = 2;
-  public static int INTERVAL_LOG = 30;
+  public static int CTRL_LOG_INTERVAL = 30;
 
   @Override
   public void robotInit() {
@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
 
     Robot.driver = new Joystick(Robot.DRIVER);
     //Robot.driver = new XboxController(Robot.DRIVER);
-    Robot.inputGrabberToggle = new JoystickButton(Robot.driver, DRIVER_TRIGGER);
+    Robot.inputGrabberToggle = new JoystickButton(Robot.driver, DRIVER_TRIGGER_A);
 
     Robot.driver.setRumble(RumbleType.kLeftRumble, 0);
 
@@ -169,7 +169,7 @@ public class Robot extends TimedRobot {
     operator.setRumble(RumbleType.kLeftRumble, 0);
     operator.setRumble(RumbleType.kRightRumble, 0);
 
-    if(logInterval % INTERVAL_LOG == 0){
+    if(logInterval % CTRL_LOG_INTERVAL == 0){
       Logger.pushCtrlValues("Driver", Robot.driver);
       Logger.pushCtrlValues("Operator", Robot.operator);
 

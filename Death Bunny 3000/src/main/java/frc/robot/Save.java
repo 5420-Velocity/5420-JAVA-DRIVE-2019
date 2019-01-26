@@ -17,7 +17,7 @@ public class Save {
 
     /**
      * Allows you to create one instance of the call and call it 
-     *  later without needing to recall a new instance or svae it.
+     *  later without needing to recall a new instance or save it.
      * 
      * @var Save
      */
