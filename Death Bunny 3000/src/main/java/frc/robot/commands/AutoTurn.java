@@ -40,7 +40,7 @@ public class AutoTurn extends Command {
 	
 	@Override
 	public void initialize(){
-        this.drive.stopMotor(); // Stop Motors
+        this.drive.stopMotor(); // Stop Motors, Stops any Rouge Commands Before Execution
 	}
 	
 	@Override
