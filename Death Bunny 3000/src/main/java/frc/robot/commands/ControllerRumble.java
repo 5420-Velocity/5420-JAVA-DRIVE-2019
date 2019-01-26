@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
  * AutoDrive
  * This class will Drive the Robot
  * 
+ * When added to the Schedualer this should be a parallel task
+ *  so it does not stop processing other actions.
+ * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  */
 public class ControllerRumble extends Command {
