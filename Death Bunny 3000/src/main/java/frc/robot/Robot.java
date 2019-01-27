@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 import frc.robot.helpers.*;
+import frc.robot.helpers.controllers.*;
 import frc.robot.commands.*;
 import frc.robot.user.commands.*;
 
@@ -85,7 +86,6 @@ public class Robot extends TimedRobot {
   public static NetworkTableEntryStore tableIndex;
 
   public static int DRIVER = 1;
-  public static int DRIVER_TRIGGER_A = 1; // Button Value, A Button
   public static int OPERATOR = 2;
   public static int CTRL_LOG_INTERVAL = 60;
 
@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
 
     Robot.driver = new Joystick(Robot.DRIVER);
     //Robot.driver = new XboxController(Robot.DRIVER);
-    Robot.inputGrabberToggle = new JoystickButton(Robot.driver, DRIVER_TRIGGER_A);
+    Robot.inputGrabberToggle = new JoystickButton(Robot.driver, LogitechMap_X.BUTTON_A);
 
     Robot.driver.setRumble(RumbleType.kLeftRumble, 0);
 
@@ -227,9 +227,22 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
-    //m_myRobot.tankDrive(m_leftStick.getY(), m_rightStick.getY());
+
+    // Ball Intake Control using Buttons
+    if(driver.getRawButton(LogitechMap_X.BUTTON_X)){
+      // Ball In
+      ballIntake.set(0.5);
+    }
+    else if(driver.getRawButton(LogitechMap_X.BUTTON_Y)){
+      // Ball Out
+      ballIntake.set(-0.5);
+    }
+    else {
+      // Ball oFF
+      ballIntake.set(0);
+    }
     
-    Robot.m_drive.arcadeDrive( -driver.getX(), -driver.getY());
+    Robot.m_drive.arcadeDrive( (driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X)*0.8), (-driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y)*0.8) );
 
   }
 
