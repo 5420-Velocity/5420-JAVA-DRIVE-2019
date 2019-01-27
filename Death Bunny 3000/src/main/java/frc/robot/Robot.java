@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
   public static NetworkTableInstance tableInstance;
   public static NetworkTable table;
   public static NetworkTableEntry autoSelect;
+  public static NetworkTableEntry cameraView;
   public static Ultrasonic leftSide; // Left Side Sonar Sensor
   public static Ultrasonic rightSide; // Right Side Sonar Sensor
   public static Ultrasonic frontSide; // Front Direction Sensor
@@ -96,6 +97,7 @@ public class Robot extends TimedRobot {
 
     Robot.tableInstance = NetworkTableInstance.getDefault(); // Get the Driver Station Network Table Instance.
     Robot.table = tableInstance.getTable("SensorData"); // Add the a table just for Sensor Data.
+    Robot.cameraView = Robot.table.getEntry("cameraView");
 
     Robot.driver = new Joystick(Robot.DRIVER);
     //Robot.driver = new XboxController(Robot.DRIVER);

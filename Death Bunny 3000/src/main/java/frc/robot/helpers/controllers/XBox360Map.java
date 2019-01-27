@@ -2,7 +2,7 @@ package frc.robot.helpers.controllers;
 
 /**
  * XBox360Map
- * The Map of the xBox 360 USB Controller
+ * The Map of the XBox 360 USB Controller
  * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  */
