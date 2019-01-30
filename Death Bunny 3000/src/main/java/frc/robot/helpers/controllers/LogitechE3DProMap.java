@@ -9,6 +9,48 @@ package frc.robot.helpers.controllers;
 
 public class LogitechE3DProMap {
 
+    /**
+     * Breakdown of the Controls in an Enum
+     * 
+     */
+    public enum Button {
+        TRIGGER(0),
+        THUMB(1),
+        T3(3),
+        T4(4),
+        T5(5),
+        T6(6),
+        B7(7),
+        B8(8),
+        B9(9),
+        B10(10),
+        B11(11),
+        B12(12);
+
+        public final int value;
+
+        Button(int value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * Breakdown of the Controls in an Enum
+     * 
+     */
+    public enum Axis {
+        X(0),
+        Y(1),
+        Rotate(2),
+        Slider(3);
+
+        public final int value;
+
+        Axis(int value) {
+            this.value = value;
+        }
+    }
+
     public static int BUTTON_TRIGGER = 1; // Button Value, A Button
     public static int BUTTON_THUMB = 2; // Button Value, B Button
     public static int BUTTON_3 = 3; // Button Value, Button 3

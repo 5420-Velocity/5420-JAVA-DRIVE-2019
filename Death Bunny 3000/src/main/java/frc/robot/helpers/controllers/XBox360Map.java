@@ -9,6 +9,48 @@ package frc.robot.helpers.controllers;
 
 public class XBox360Map {
 
+    /**
+     * Breakdown of the Controls in an Enum
+     * 
+     */
+    public enum Button {
+        A(1),
+        B(2),
+        X(3),
+        Y(4),
+        LB(5),
+        RB(6),
+        BACK(7),
+        START(8),
+        LEFT(9),
+        RIGHT(10);
+
+        public final int value;
+
+        Button(int value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * Breakdown of the Controls in an Enum
+     * 
+     */
+    public enum Axis {
+        LEFT_X(0),
+        LEFT_Y(1),
+        RIGHT_X(2),
+        RIGHT_Y(3),
+        LT(4),
+        RT(5);
+
+        public final int value;
+
+        Axis(int value) {
+            this.value = value;
+        }
+    }
+
     public static int BUTTON_A = 1; // Button Value, A Button
     public static int BUTTON_B = 2; // Button Value, B Button
     public static int BUTTON_X = 3; // Button Value, X Button

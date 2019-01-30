@@ -240,7 +240,7 @@ public class Robot extends TimedRobot {
       ballIntake.set(-0.5);
     }
     else {
-      // Ball oFF
+      // Ball Off
       ballIntake.set(0);
     }
     
