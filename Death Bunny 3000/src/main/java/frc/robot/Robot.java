@@ -14,11 +14,11 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -26,8 +26,10 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.sensors.PigeonIMU;
 
 import frc.robot.helpers.*;
+import frc.robot.helpers.RobotOrientation.Side;
 import frc.robot.helpers.controllers.*;
 import frc.robot.commands.*;
 import frc.robot.user.commands.*;
@@ -56,9 +58,11 @@ public class Robot extends TimedRobot {
   public static WPI_TalonSRX left1, left2, left3; // Left Side Motors
   public static WPI_TalonSRX right1, right2, right3; // Right Side Motors
   public static WPI_TalonSRX test;
-  public static SpeedControllerGroup left;
-  public static SpeedControllerGroup right;
   public static DoubleSolenoid transSol; // Put Solenoid to the Close State
+  public static ButtonDebouncer directionSwitch;
+  public static ButtonDebouncer transButtonHigh;
+  public static ButtonDebouncer transButtonLow;
+  public static PigeonIMU pigeon;
 
   public static NetworkTableInstance tableInstance;
   public static NetworkTable table;
@@ -86,41 +90,51 @@ public class Robot extends TimedRobot {
 
   public static NetworkTableEntryStore tableIndex;
 
-  public static int DRIVER = 1;
-  public static int OPERATOR = 2;
+  public static int DRIVER = 0;
+  public static int OPERATOR = 1;
   public static int CTRL_LOG_INTERVAL = 60;
 
   @Override
   public void robotInit() {
-    Save.getInstance().writeComment("Robot Log Started.")
-                      .write("Started Program");
+    Save.getInstance().writeComment("Robot Log Started.");
 
     Robot.tableInstance = NetworkTableInstance.getDefault(); // Get the Driver Station Network Table Instance.
     Robot.table = tableInstance.getTable("SensorData"); // Add the a table just for Sensor Data.
     Robot.cameraView = Robot.table.getEntry("cameraView");
 
     Robot.driver = new Joystick(Robot.DRIVER);
-    //Robot.driver = new XboxController(Robot.DRIVER);
-    Robot.inputGrabberToggle = new JoystickButton(Robot.driver, LogitechMap_X.BUTTON_A);
-
     Robot.driver.setRumble(RumbleType.kLeftRumble, 0);
+    Robot.directionSwitch = new ButtonDebouncer(Robot.driver, LogitechMap_X.BUTTON_B, 0.8);
+    Robot.transButtonHigh = new ButtonDebouncer(Robot.driver, LogitechMap_X.BUTTON_Y, 0.8); // Low Range
+    Robot.transButtonLow = new ButtonDebouncer(Robot.driver, LogitechMap_X.BUTTON_X, 0.8);  // High Range
+    Robot.inputGrabberToggle = new JoystickButton(Robot.driver, LogitechMap_X.BUTTON_A);
 
     Robot.operator = new Joystick(Robot.OPERATOR);
 
+    // LEFT SIDE Control
     Robot.left1 = new WPI_TalonSRX(52);
+
     Robot.left2 = new WPI_TalonSRX(54);
+    Robot.left2.follow(Robot.left1);
+
     Robot.left3 = new WPI_TalonSRX(55);
+    Robot.left3.follow(Robot.left1);
 
+    // Right SIDE Control
     Robot.right1 = new WPI_TalonSRX(56);
-    Robot.right2 = new WPI_TalonSRX(57);
-    Robot.right3 = new WPI_TalonSRX(58);
 
-    Robot.left = new SpeedControllerGroup(left1, left2, left3);
-    Robot.left.setInverted(true);
-    Robot.right = new SpeedControllerGroup(right1, right2, right3);
-    Robot.m_drive = new DifferentialDrive(Robot.left, Robot.right);
+    Robot.right2 = new WPI_TalonSRX(57);
+    Robot.right2.follow(Robot.right1);
+
+    Robot.right3 = new WPI_TalonSRX(58);
+    Robot.right3.follow(Robot.right1);
+
+    // Build a full Differental Drive
+    Robot.m_drive = new DifferentialDrive(Robot.left1, Robot.right1);
 
     Robot.test = new WPI_TalonSRX(57);
+
+    Robot.pigeon = new PigeonIMU(right1);
 
     //m_myRobot = new DifferentialDrive(new PWMVictorSPX(0), new PWMVictorSPX(1));
     //m_leftStick = new Joystick(0);
@@ -230,12 +244,16 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
+    //////////////////
+    //  BALL CTRL   //
+    //////////////////
+
     // Ball Intake Control using Buttons
-    if(driver.getRawButton(LogitechMap_X.BUTTON_X)){
+    if(driver.getRawButton(LogitechMap_X.BUTTON_LB)){
       // Ball In
       ballIntake.set(0.5);
     }
-    else if(driver.getRawButton(LogitechMap_X.BUTTON_Y)){
+    else if(driver.getRawButton(LogitechMap_X.BUTTON_RB)){
       // Ball Out
       ballIntake.set(-0.5);
     }
@@ -243,9 +261,32 @@ public class Robot extends TimedRobot {
       // Ball Off
       ballIntake.set(0);
     }
-    
-    Robot.m_drive.arcadeDrive( (driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X)*0.8), (-driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y)*0.8) );
 
+
+    //////////////////
+    //  DRIVE CTRL  //
+    //////////////////
+
+    // Update the Side Value, Swapping Sides
+    if(Robot.directionSwitch.get()){
+      RobotOrientation.getInstance().flipSide();
+    }
+
+    // Drive Shifting, High and Low Range
+    if(Robot.transButtonHigh.get()){
+      transSol.set(Value.kForward);
+    }
+    else if(Robot.transButtonLow.get()){
+      transSol.set(Value.kReverse);
+    }
+
+    double DRIVE_Y = (driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y)*0.8);
+    double DRIVE_X = (-driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X)*0.8);
+
+    DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideA);
+    DRIVE_X = RobotOrientation.getInstance().fix(DRIVE_X, Side.kSideA);
+    
+    Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
   }
 
 }
