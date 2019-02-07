@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
 
     Robot.test = new WPI_TalonSRX(57);
 
-    Robot.pigeon = new PigeonIMU(right1);
+    Robot.pigeon = new PigeonIMU(left1);
     
     leftSide = new Ultrasonic(0, 1);
     rightSide = new Ultrasonic(2, 3);
