@@ -252,11 +252,16 @@ public class Robot extends TimedRobot {
       console.log("TARGET: FACE");
 
       Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
+      Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, /*Gyro*/, 0.5, 90));
+      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 2500));
+      Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, /*Gyro*/, 0.5, -90));
+
+
     }
     else if(OI.target.get() == OI.Target.Side){
       console.log("TARGET: SIDE");
 
-      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 1, 0, 10000));
+      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 1000));
     }
 
     /////////////////////

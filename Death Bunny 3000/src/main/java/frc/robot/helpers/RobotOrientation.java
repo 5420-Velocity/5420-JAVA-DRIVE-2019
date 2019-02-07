@@ -48,13 +48,6 @@ public class RobotOrientation {
     public static void setInstance(RobotOrientation in){
         RobotOrientation.constantInstance = in;
     }
-
-    /**
-     * 
-     */
-    public RobotOrientation (){
-
-    }
    
     /**
      * Set a new Side for the Robot
