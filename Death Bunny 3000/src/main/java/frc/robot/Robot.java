@@ -6,21 +6,14 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
-
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -49,31 +42,19 @@ public class Robot extends TimedRobot {
    * @link https://docs.google.com/spreadsheets/d/1qpUWBg1E4hRL2MkAI9xdoiQkqGg9Q8PkZpfA0f9DALU/edit
    */
 
-  public static Joystick driver;
-  //private XboxController driver;
-  public static JoystickButton inputGrabberToggle;
-  public static Joystick operator;
-
   public static DifferentialDrive m_drive;
   public static WPI_TalonSRX left1, left2, left3; // Left Side Motors
   public static WPI_TalonSRX right1, right2, right3; // Right Side Motors
   public static WPI_TalonSRX test;
   public static DoubleSolenoid transSol; // Put Solenoid to the Close State
-  public static ButtonDebouncer directionSwitch;
-  public static ButtonDebouncer transButtonHigh;
-  public static ButtonDebouncer transButtonLow;
   public static PigeonIMU pigeon;
 
-  public static NetworkTableInstance tableInstance;
-  public static NetworkTable table;
-  public static NetworkTableEntry autoSelect;
-  public static NetworkTableEntry cameraView;
   public static Ultrasonic leftSide; // Left Side Sonar Sensor
   public static Ultrasonic rightSide; // Right Side Sonar Sensor
-  public static Ultrasonic frontSide; // Front Direction Sensor
   public static DigitalInput hatchSwitchAutoClose; // This switch is to auto close the
   public static DigitalInput ballLoaded; // This switch is for when the balll is loaded.
   public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
+  public static Encoder leftEncoder, rightEncoder;
   
   public static VictorSP motorLift, motorTilt, climbMotor, walkingMotor, ballIntake;
 
@@ -96,20 +77,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    Save.getInstance().writeComment("Robot Log Started.");
+    // Init User Input Controls
+    new OI();
 
-    Robot.tableInstance = NetworkTableInstance.getDefault(); // Get the Driver Station Network Table Instance.
-    Robot.table = tableInstance.getTable("SensorData"); // Add the a table just for Sensor Data.
-    Robot.cameraView = Robot.table.getEntry("cameraView");
+    // Generate new Save with USB as Default, Save when Disabled
+    // Save.defaultMode = // Save.Mode.kUSBFirst;
+    // Save.getInstance().ignoreInDisabled = false; // Log Everything
 
-    Robot.driver = new Joystick(Robot.DRIVER);
-    Robot.driver.setRumble(RumbleType.kLeftRumble, 0);
-    Robot.directionSwitch = new ButtonDebouncer(Robot.driver, LogitechMap_X.BUTTON_B, 0.8);
-    Robot.transButtonHigh = new ButtonDebouncer(Robot.driver, LogitechMap_X.BUTTON_Y, 0.8); // Low Range
-    Robot.transButtonLow = new ButtonDebouncer(Robot.driver, LogitechMap_X.BUTTON_X, 0.8);  // High Range
-    Robot.inputGrabberToggle = new JoystickButton(Robot.driver, LogitechMap_X.BUTTON_A);
-
-    Robot.operator = new Joystick(Robot.OPERATOR);
+    // Save.getInstance().writeComment("Robot Log Started.");
 
     // LEFT SIDE Control
     Robot.left1 = new WPI_TalonSRX(52);
@@ -135,22 +110,19 @@ public class Robot extends TimedRobot {
     Robot.test = new WPI_TalonSRX(57);
 
     Robot.pigeon = new PigeonIMU(right1);
-
-    //m_myRobot = new DifferentialDrive(new PWMVictorSPX(0), new PWMVictorSPX(1));
-    //m_leftStick = new Joystick(0);
-    //m_rightStick = new Joystick(1);
     
     leftSide = new Ultrasonic(0, 1);
     rightSide = new Ultrasonic(2, 3);
-    frontSide = new Ultrasonic(4, 5);
+    leftEncoder = new Encoder(4, 5);
+    rightEncoder = new Encoder(6, 7);
 
     hatchSol = new DoubleSolenoid(0, 1);
     winchBreak = new DoubleSolenoid(2, 3);
     transSol = new DoubleSolenoid(4, 5);
 
-    hatchSwitchAutoClose = new DigitalInput(6);
+    hatchSwitchAutoClose = new DigitalInput(8);
 
-    ballLoaded = new DigitalInput(7);
+    ballLoaded = new DigitalInput(9);
 
     motorLift = new VictorSP(1);
     motorTilt = new VictorSP(2);
@@ -163,6 +135,34 @@ public class Robot extends TimedRobot {
     SmartDashboard.setDefaultNumber("Test", 0);
     SmartDashboard.setDefaultNumber("AutoDelay", 0);
     SmartDashboard.setDefaultBoolean("Sol", false);
+    
+    Robot.logInterval++;
+
+    // Save.getInstance().push("Test", false);
+
+    Limelight.getInstance().setLed(Limelight.ledMode.kOff);
+
+    // Setup Auto CTRL
+    OI.Apply();
+  }
+
+  @Override
+  public void robotPeriodic() {
+
+    //// Save.getInstance().push("t", System.currentTimeMillis());
+    // Save.getInstance().push("batt", RobotController.getBatteryVoltage());
+    
+    if(logInterval % CTRL_LOG_INTERVAL == 0){
+      Logger.pushCtrlValues("Driver", OI.driver);
+      Logger.pushCtrlValues("Operator", OI.operator);
+      
+      Robot.logInterval = 0;
+    }
+
+    OI.leftEncoder.setNumber(Robot.leftEncoder.get());
+    OI.rightEncoder.setNumber(Robot.rightEncoder.get());
+
+    // Save.getInstance().sync();
   }
 
   @Override
@@ -174,8 +174,6 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
 
-    Robot.test.set( SmartDashboard.getNumber("Test", 0) );
-
     if(SmartDashboard.getBoolean("Sol", false) == false){
       hatchSol.set(DoubleSolenoid.Value.kForward);
     }
@@ -186,32 +184,99 @@ public class Robot extends TimedRobot {
   }  
 
   @Override
-  public void robotPeriodic() {
-    // Reset the Rumble to 0, No Rumble
-    driver.setRumble(RumbleType.kLeftRumble, 0);
-    driver.setRumble(RumbleType.kRightRumble, 0);
-    operator.setRumble(RumbleType.kLeftRumble, 0);
-    operator.setRumble(RumbleType.kRightRumble, 0);
+  public void autonomousInit() {
+    Robot.gameData = window.getData();
+    Robot.autoCommand = new CommandGroup();
 
-    if(logInterval % CTRL_LOG_INTERVAL == 0){
-      Logger.pushCtrlValues("Driver", Robot.driver);
-      Logger.pushCtrlValues("Operator", Robot.operator);
+    /////////////////////
+    ////// STAGE 1 //////
+    /////////////////////
 
-      Robot.logInterval = 0;
+    // Add Time Delay for a User Input
+    Robot.autoCommand.addSequential( new Delay(OI.autoDelay.getNumber(0)) );
+
+    //////////////////////////////////
+    // If Position is Left / Right  //
+    //////////////////////////////////
+    if(OI.position.get() == 1 || OI.position.get() == 3){
+      console.log("POS 1 || POS 3");
+
+
+      // Level 1
+      if(OI.level.get() == 1){
+        console.log("LEVEL 1");
+
+        // Drive 
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 2000) );
+
+      }
+
+      // Level 2
+      else if(OI.level.get() == 2){
+        console.log("LEVEL 2");
+
+        //drive
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 4000));
+
+      }
+
     }
 
-    Robot.logInterval++;
-  }
+    ///////////////////////////
+    // If Position is Center //
+    ///////////////////////////
 
-  @Override
-  public void autonomousInit() {
+    else if(OI.position.get() == 2){
 
-    // Auto Timer Delay
-		if( SmartDashboard.getNumber("AutoDelay", 0) != 0 ){
-      // Get the Timer Delay from the Dashboard and Delay the Auto.
-			Timer.delay( SmartDashboard.getNumber("AutoDelay", 0) );
-		}
-    Robot.autoCommand = new CommandGroup();
+      console.log("POS 2");
+
+      // Level 1
+      if(OI.level.get() == 1){  
+        console.log("LEVEL 1");
+
+        // Drive 
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 2000) );
+
+      }
+
+    }
+
+    /////////////////////
+    ////// STAGE 2 //////
+    /////////////////////
+
+    if(OI.target.get() == OI.Target.None){
+
+    }
+    else if(OI.target.get() == OI.Target.Face){
+      console.log("TARGET: FACE");
+
+      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 4000));
+    }
+    else if(OI.target.get() == OI.Target.Side){
+      console.log("TARGET: SIDE");
+
+      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 1, 10000));
+    }
+
+    /////////////////////
+    ////// STAGE 3 //////
+    /////////////////////
+
+    if(OI.target.get() == OI.Target.Face){
+
+      console.log("TARGET: FACE (3)");
+
+      Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 500));
+      Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kReverse));
+    }
+    else if(OI.target.get() == OI.Target.Side){
+      console.log("TARGET: SIDE (3)");
+
+      Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
+    }
+
+
 
     // Robot Auto Command Drive Controls
     Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 10));
@@ -221,7 +286,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    Robot.gameData = window.getData();
+
     if(hatchSwitchAutoClose.get() == true){
       new ToggleHatchGrabState(DoubleSolenoid.Value.kForward).start();
     }
@@ -236,7 +301,7 @@ public class Robot extends TimedRobot {
       Robot.autoCommand.cancel();
     }
 
-    inputGrabberToggle.whenPressed(new ToggleHatchGrabState());
+    OI.inputGrabberToggle.whenPressed(new ToggleHatchGrabState());
 
   }
 
@@ -249,11 +314,11 @@ public class Robot extends TimedRobot {
     //////////////////
 
     // Ball Intake Control using Buttons
-    if(driver.getRawButton(LogitechMap_X.BUTTON_LB)){
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
       // Ball In
       ballIntake.set(0.5);
     }
-    else if(driver.getRawButton(LogitechMap_X.BUTTON_RB)){
+    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
       // Ball Out
       ballIntake.set(-0.5);
     }
@@ -268,25 +333,52 @@ public class Robot extends TimedRobot {
     //////////////////
 
     // Update the Side Value, Swapping Sides
-    if(Robot.directionSwitch.get()){
+    if(OI.directionSwitch.get()){
       RobotOrientation.getInstance().flipSide();
     }
 
     // Drive Shifting, High and Low Range
-    if(Robot.transButtonHigh.get()){
+    if(OI.transButtonHigh.get()){
       transSol.set(Value.kForward);
     }
-    else if(Robot.transButtonLow.get()){
+    else if(OI.transButtonLow.get()){
       transSol.set(Value.kReverse);
     }
 
-    double DRIVE_Y = (driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y)*0.8);
-    double DRIVE_X = (-driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X)*0.8);
+    double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y)*0.8);
+    double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X)*0.8);
 
     DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideA);
     DRIVE_X = RobotOrientation.getInstance().fix(DRIVE_X, Side.kSideA);
+
+    // Save.getInstance().push("drive_x", DRIVE_X);
+    // Save.getInstance().push("drive_y", DRIVE_Y);
     
     Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
+
+    if(RobotOrientation.getInstance().getSide() == Side.kSideA) {
+
+      double speed = OI.driver.getRawButton(LogitechMap_X.BUTTON_START)?0.5:0;
+      speed = OI.driver.getRawButton(LogitechMap_X.BUTTON_BACK)?-0.5:0;
+      Robot.ballIntake.set( speed );
+
+    }
+    else {
+
+      // Add a ButtonDeboucer Instace for the Button and Read and not toggle
+      // fast. This is setup to Open Hold the Value when Held.
+      boolean plate = OI.driver.getRawButton(LogitechMap_X.BUTTON_START);
+
+      // Drive Shifting, High and Low Range
+      if(plate == true){
+        hatchSol.set(Value.kForward);
+      }
+      else {
+        hatchSol.set(Value.kReverse);
+      }
+
+    }
+
   }
 
 }

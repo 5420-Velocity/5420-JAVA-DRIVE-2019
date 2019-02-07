@@ -14,15 +14,26 @@ public class Delay extends Command {
 	
 	/**
 	 * The total time to wait in milliSeconds.
+	 * 
 	 * @param milliSeconds
 	 */
 	public Delay(int milliSeconds) {
 		this.milliSeconds = milliSeconds;
 	}
+
+	/**
+	 * The total time to wait in Seconds, Converted to milliSeconds.
+	 * 
+	 * @param seconds
+	 */
+	public Delay(Number seconds){
+		this( (double)seconds );
+	}
 	
 	/**
 	 * The total time to wait in Seconds, Converted to milliSeconds.
-	 * @param Seconds
+	 * 
+	 * @param seconds
 	 */
 	public Delay(double seconds) {
 		this.milliSeconds = (int) (seconds*1000);

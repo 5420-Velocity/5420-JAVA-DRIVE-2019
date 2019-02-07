@@ -12,8 +12,10 @@ import edu.wpi.first.wpilibj.Timer;
  * 
  * This was updated from the following link (section 4.2) to work 
  *  with an Up-to-date Class.
+ * This class also does not Lock any Buttons, It uses getRawButton!
  * 
  * @author Tim Winters
+ * @author Noah Haltead <nhalstead00@gmail.com>
  * @link https://media.readthedocs.org/pdf/frc-pdr/latest/frc-pdr.pdf
  */
 
