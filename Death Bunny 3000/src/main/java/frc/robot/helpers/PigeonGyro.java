@@ -5,7 +5,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.GyroBase;
 
-class PigeonGyro extends GyroBase {
+public class PigeonGyro extends GyroBase {
 
     /**
      * 
@@ -103,6 +103,16 @@ class PigeonGyro extends GyroBase {
      */
     public double getRate(){
         return 0;
+    }
+
+    /**
+     * Get the Pigeon Object
+     * 
+     * @return
+     */
+    public PigeonIMU getPigeon(){
+
+        return this.pigeon;
     }
 
 }

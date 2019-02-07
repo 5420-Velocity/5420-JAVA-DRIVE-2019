@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
   public static WPI_TalonSRX right1, right2, right3; // Right Side Motors
   public static WPI_TalonSRX test;
   public static DoubleSolenoid transSol; // Put Solenoid to the Close State
-  public static PigeonIMU pigeon;
+  public static PigeonGyro pigeon;
 
   public static Ultrasonic leftSide; // Left Side Sonar Sensor
   public static Ultrasonic rightSide; // Right Side Sonar Sensor
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
 
     Robot.test = new WPI_TalonSRX(57);
 
-    Robot.pigeon = new PigeonIMU(left1);
+    Robot.pigeon = new PigeonGyro(left1);
     
     leftSide = new Ultrasonic(0, 1);
     rightSide = new Ultrasonic(2, 3);
@@ -252,9 +252,9 @@ public class Robot extends TimedRobot {
       console.log("TARGET: FACE");
 
       Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
-      Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, /*Gyro*/, 0.5, 90));
+      Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, 90));
       Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 2500));
-      Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, /*Gyro*/, 0.5, -90));
+      Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, -90));
 
 
     }
