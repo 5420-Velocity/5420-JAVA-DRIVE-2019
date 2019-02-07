@@ -1,9 +1,6 @@
 package frc.robot.commands;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.helpers.console;
@@ -15,31 +12,30 @@ import frc.robot.helpers.console.logMode;
  * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  */
-public class AutoDrive extends Command {
+public class AutoDriveEncoder extends Command {
     protected double power;
     protected double turn;
-    protected double time;
+    protected int distance;
     protected long endTime;
     protected boolean isFinished;
-    protected Date EStopEncoderTime;
+    protected Encoder enc;
 
     public DifferentialDrive drive;
 
-    public AutoDrive(DifferentialDrive  drive, double power,  double turn, double timeInMillis) {
-        this.power = power;
-        this.time = timeInMillis;
+    public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, double turn, int ticks) {
         this.drive = drive;
+        this.enc = enc;
+        this.power = power;
         this.turn = turn;
+        this.distance = ticks;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-        console.out(logMode.kDebug, "[AutoDrive] Running Timeout" + this.time);
+        console.out(logMode.kDebug, "[AutoDriveEncoder] Running Encoder Distance" + this.distance);
 
-        // Setup the Stop Motor by Time.
-		Calendar calculateDate = GregorianCalendar.getInstance();
-		calculateDate.add(GregorianCalendar.MILLISECOND, (int) this.time); // Time to Check the Encoder Distance is not Zero
-        EStopEncoderTime = calculateDate.getTime();
+        this.drive.stopMotor(); // Stop Motors, Stops any Rouge Commands Before Execution
+        this.enc.reset();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -48,9 +44,9 @@ public class AutoDrive extends Command {
         // Safety Code, Its made to catch the Human Error of not plugging in the Encoder.
 		//  Encoders will send a 0 value if you don't have an encoder plugged-in to the port.
 		// Do the Safe Check to see if the Encoders are doing their thing or not after x seconds
-		if( new Date().after(EStopEncoderTime) ) {
+		if( this.enc.getRaw() > this.distance ) {
 			// If the Encoder is not Past 10 ticks.
-			console.out(logMode.kDebug, "[AutoDrive] Finished");
+			console.out(logMode.kDebug, "[AutoDriveEncoder] Finished");
 			this.isFinished = true;
         }
         else {

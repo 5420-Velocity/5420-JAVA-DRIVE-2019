@@ -207,7 +207,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 1");
 
         // Drive 
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 2000) );
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000) );
 
       }
 
@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 2");
 
         //drive
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 4000));
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
 
       }
 
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 1");
 
         // Drive 
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 2000) );
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000) );
 
       }
 
@@ -251,12 +251,12 @@ public class Robot extends TimedRobot {
     else if(OI.target.get() == OI.Target.Face){
       console.log("TARGET: FACE");
 
-      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 4000));
+      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
     }
     else if(OI.target.get() == OI.Target.Side){
       console.log("TARGET: SIDE");
 
-      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 1, 10000));
+      Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 1, 0, 10000));
     }
 
     /////////////////////
@@ -267,7 +267,7 @@ public class Robot extends TimedRobot {
 
       console.log("TARGET: FACE (3)");
 
-      Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 500));
+      Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 500));
       Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kReverse));
     }
     else if(OI.target.get() == OI.Target.Side){
@@ -279,7 +279,7 @@ public class Robot extends TimedRobot {
 
 
     // Robot Auto Command Drive Controls
-    Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 10));
+    Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
 
     Robot.autoCommand.start();
   }
