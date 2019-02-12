@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.sensors.PigeonIMU;
 
 import frc.robot.helpers.*;
 import frc.robot.helpers.RobotOrientation.Side;
@@ -54,7 +53,7 @@ public class Robot extends TimedRobot {
   public static DigitalInput hatchSwitchAutoClose; // This switch is to auto close the
   public static DigitalInput ballLoaded; // This switch is for when the balll is loaded.
   public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
-  public static Encoder leftEncoder, rightEncoder;
+  public static Encoder leftEncoder, rightEncoder, liftEncoder;
   
   public static VictorSP motorLift, motorTilt, climbMotor, walkingMotor, ballIntake;
 
@@ -115,13 +114,13 @@ public class Robot extends TimedRobot {
     rightSide = new Ultrasonic(2, 3);
     leftEncoder = new Encoder(4, 5);
     rightEncoder = new Encoder(6, 7);
+    liftEncoder = new Encoder(10, 11);
 
     hatchSol = new DoubleSolenoid(0, 1);
     winchBreak = new DoubleSolenoid(2, 3);
     transSol = new DoubleSolenoid(4, 5);
 
     hatchSwitchAutoClose = new DigitalInput(8);
-
     ballLoaded = new DigitalInput(9);
 
     motorLift = new VictorSP(1);
@@ -161,6 +160,7 @@ public class Robot extends TimedRobot {
 
     OI.leftEncoder.setNumber(Robot.leftEncoder.get());
     OI.rightEncoder.setNumber(Robot.rightEncoder.get());
+    OI.liftEncoder.setNumber(Robot.liftEncoder.get());
 
     // Save.getInstance().sync();
   }

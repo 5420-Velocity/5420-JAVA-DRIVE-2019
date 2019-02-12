@@ -19,6 +19,7 @@ public class Limelight {
     private NetworkTableEntry ty;
     private NetworkTableEntry ta;
     private NetworkTableEntry ts;
+    private NetworkTableEntry tv;
     private NetworkTableEntry ledMode;
     private NetworkTableEntry camMode;
     private NetworkTableEntry pipeline;
@@ -95,6 +96,7 @@ public class Limelight {
         this.ty = this.table.getEntry("ty");
         this.ta = this.table.getEntry("ta");
         this.ts = this.table.getEntry("ts");
+        this.tv = this.table.getEntry("tv");
         this.ledMode = this.table.getEntry("ledMode");
         this.camMode = this.table.getEntry("camMode");
         this.pipeline = this.table.getEntry("pipeline");
@@ -116,6 +118,7 @@ public class Limelight {
 
     /**
      * Offset Angle Vertical
+     *  Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
      * 
      * @return
      */
@@ -157,6 +160,15 @@ public class Limelight {
      */
     public void setMode(Limelight.camMode mode){
         this.camMode.setNumber(mode.value);
+    }
+
+    /**
+     * Returns if it has the target
+     * 
+     * @return Has Target
+     */
+    public boolean hasTarget(){
+        return this.tv.getDouble(0) == 1;
     }
 
     /**

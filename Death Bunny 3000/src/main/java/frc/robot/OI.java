@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.helpers.ButtonDebouncer;
-import frc.robot.helpers.Save;
 import frc.robot.helpers.console;
 import frc.robot.helpers.controllers.LogitechMap_X;
 import frc.robot.helpers.DropSelection;
@@ -47,6 +46,7 @@ public class OI {
     public static NetworkTableEntry cameraView;
     public static NetworkTableEntry leftEncoder;
     public static NetworkTableEntry rightEncoder;
+    public static NetworkTableEntry liftEncoder;
     public static NetworkTableEntry gyro;
 
     public static NetworkTableEntry autoDelay;
@@ -72,6 +72,7 @@ public class OI {
         cameraView = table.getEntry("camView");
         leftEncoder = table.getEntry("leftEncoder");
         rightEncoder = table.getEntry("rightEncoder");
+        liftEncoder = table.getEntry("liftEncoder");
         gyro = table.getEntry("gyro");
         autoDelay = table.getEntry("autoDelay");
 
