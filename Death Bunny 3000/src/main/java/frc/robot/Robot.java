@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 2");
 
         //drive
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 3000));
 
       }
 
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 1");
 
         // Drive 
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000) );
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000));
 
       }
 
@@ -280,7 +280,7 @@ public class Robot extends TimedRobot {
 
       Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
     }
-
+    
 
 
     // Robot Auto Command Drive Controls

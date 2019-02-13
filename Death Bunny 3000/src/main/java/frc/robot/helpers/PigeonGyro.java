@@ -71,6 +71,7 @@ public class PigeonGyro extends GyroBase {
 
     /**
      * Return the Yaw
+     * Required by gyrobase
      * 
      * @return
      */
