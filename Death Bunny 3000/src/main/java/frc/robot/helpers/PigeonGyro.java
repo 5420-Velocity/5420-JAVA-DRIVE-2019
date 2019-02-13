@@ -5,6 +5,11 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.GyroBase;
 
+/**
+ * Make a Pigeon into a Gyro Object
+ * 
+ * @author Noah Halstead <nhalstead00@gmail.com>
+ */
 public class PigeonGyro extends GyroBase {
 
     /**

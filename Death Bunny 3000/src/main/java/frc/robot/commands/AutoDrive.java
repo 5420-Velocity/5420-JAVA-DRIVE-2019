@@ -25,7 +25,7 @@ public class AutoDrive extends Command {
 
     public DifferentialDrive drive;
 
-    public AutoDrive(DifferentialDrive  drive, double power,  double turn, double timeInMillis) {
+    public AutoDrive(DifferentialDrive drive, double power,  double turn, double timeInMillis) {
         this.power = power;
         this.time = timeInMillis;
         this.drive = drive;
