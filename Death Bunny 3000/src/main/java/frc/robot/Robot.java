@@ -256,7 +256,6 @@ public class Robot extends TimedRobot {
       Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 2500));
       Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, -90));
 
-
     }
     else if(OI.target.get() == OI.Target.Side){
       console.log("TARGET: SIDE");
@@ -280,8 +279,6 @@ public class Robot extends TimedRobot {
 
       Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
     }
-
-
 
     // Robot Auto Command Drive Controls
     Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));

@@ -23,6 +23,7 @@ public class Limelight {
     private NetworkTableEntry ledMode;
     private NetworkTableEntry camMode;
     private NetworkTableEntry pipeline;
+    private NetworkTableEntry stream;
 
     /**
      * Represents the LED Modes for the Limelight
@@ -50,6 +51,22 @@ public class Limelight {
         public final int value;
 
         camMode(int value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * Represents the Camera VIdo Output Mode for the Limelight
+     * @since v2018.2
+     */
+    public enum videoMode {
+        Standard(0),     // Side-by-side streams if a webcam is attached to Limelight
+        PIPMain(1),      // The secondary camera stream is placed in the lower-right corner of the primary camera stream.
+        PIPSecondary(2); // PiP Secondary - The primary camera stream is placed in the lower-right corner of the secondary camera stream.
+
+        public final int value;
+
+        videoMode(int value) {
             this.value = value;
         }
     }
@@ -97,6 +114,7 @@ public class Limelight {
         this.ta = this.table.getEntry("ta");
         this.ts = this.table.getEntry("ts");
         this.tv = this.table.getEntry("tv");
+        this.stream = this.table.getEntry("stream");
         this.ledMode = this.table.getEntry("ledMode");
         this.camMode = this.table.getEntry("camMode");
         this.pipeline = this.table.getEntry("pipeline");
@@ -178,6 +196,15 @@ public class Limelight {
      */
     public void setPipeline(int line){
         this.pipeline.setNumber(line);
+    }
+
+    /**
+     * Set the limelight’s Video Output Mode on port 5802
+     * 
+     * @param videoMode
+     */
+    public void setVideo(Limelight.videoMode vmode){
+        this.stream.setNumber(vmode.value);
     }
 
 }
