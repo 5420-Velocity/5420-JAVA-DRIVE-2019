@@ -31,13 +31,13 @@ import frc.robot.user.commands.*;
  * it contains the code necessary to operate a robot with tank drive.
  */
 public class Robot extends TimedRobot {
-  
+
   private static int logInterval = 0;
-  
+
   /**
    * All Input and Output Devices below should be in the
    *  Excel Sheet in the link below.
-   * 
+   *
    * @link https://docs.google.com/spreadsheets/d/1qpUWBg1E4hRL2MkAI9xdoiQkqGg9Q8PkZpfA0f9DALU/edit
    */
 
@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
   public static DigitalInput ballLoaded; // This switch is for when the balll is loaded.
   public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
   public static Encoder leftEncoder, rightEncoder, liftEncoder;
-  
+
   public static VictorSP motorLift, motorTilt, climbMotor, walkingMotor, ballIntake;
 
   public static DoubleSolenoid winchBreak;
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
     Robot.test = new WPI_TalonSRX(57);
 
     Robot.pigeon = new PigeonGyro(left1);
-    
+
     leftSide = new Ultrasonic(0, 1);
     rightSide = new Ultrasonic(2, 3);
     leftEncoder = new Encoder(4, 5);
@@ -134,7 +134,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.setDefaultNumber("Test", 0);
     SmartDashboard.setDefaultNumber("AutoDelay", 0);
     SmartDashboard.setDefaultBoolean("Sol", false);
-    
+
     Robot.logInterval++;
 
     // Save.getInstance().push("Test", false);
@@ -150,11 +150,11 @@ public class Robot extends TimedRobot {
 
     //// Save.getInstance().push("t", System.currentTimeMillis());
     // Save.getInstance().push("batt", RobotController.getBatteryVoltage());
-    
+
     if(logInterval % CTRL_LOG_INTERVAL == 0){
       Logger.pushCtrlValues("Driver", OI.driver);
       Logger.pushCtrlValues("Operator", OI.operator);
-      
+
       Robot.logInterval = 0;
     }
 
@@ -181,7 +181,7 @@ public class Robot extends TimedRobot {
       hatchSol.set(DoubleSolenoid.Value.kReverse);
     }
 
-  }  
+  }
 
   @Override
   public void autonomousInit() {
@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
       if(OI.level.get() == 1){
         console.log("LEVEL 1");
 
-        // Drive 
+        // Drive
         Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000) );
 
       }
@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 2");
 
         //drive
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 3000));
 
       }
 
@@ -231,11 +231,11 @@ public class Robot extends TimedRobot {
       console.log("POS 2");
 
       // Level 1
-      if(OI.level.get() == 1){  
+      if(OI.level.get() == 1){
         console.log("LEVEL 1");
 
-        // Drive 
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000) );
+        // Drive
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000));
 
       }
 
@@ -279,6 +279,8 @@ public class Robot extends TimedRobot {
 
       Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
     }
+
+
 
     // Robot Auto Command Drive Controls
     Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
@@ -355,7 +357,7 @@ public class Robot extends TimedRobot {
 
     // Save.getInstance().push("drive_x", DRIVE_X);
     // Save.getInstance().push("drive_y", DRIVE_Y);
-    
+
     Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
 
     if(RobotOrientation.getInstance().getSide() == Side.kSideA) {
