@@ -161,6 +161,7 @@ public class Robot extends TimedRobot {
     OI.leftEncoder.setNumber(Robot.leftEncoder.get());
     OI.rightEncoder.setNumber(Robot.rightEncoder.get());
     OI.liftEncoder.setNumber(Robot.liftEncoder.get());
+    OI.LimelightDistance.setNumber(Limelight.getInstance().getDistance(OI.LimelightKD, OI.LimelightKA));
 
     // Save.getInstance().sync();
   }

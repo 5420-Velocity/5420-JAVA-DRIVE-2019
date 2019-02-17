@@ -33,6 +33,10 @@ public class OI {
         Right
     }
 
+    // getDistance Param Values
+    public static final double LimelightKD = 4;
+    public static final double LimelightKA = 30;
+
     public static Joystick driver;
     public static JoystickButton inputGrabberToggle;
     public static Joystick operator;
@@ -48,6 +52,7 @@ public class OI {
     public static NetworkTableEntry rightEncoder;
     public static NetworkTableEntry liftEncoder;
     public static NetworkTableEntry gyro;
+    public static NetworkTableEntry LimelightDistance;
 
     public static NetworkTableEntry autoDelay;
     public static DropSelection<Integer> position;
@@ -75,7 +80,9 @@ public class OI {
         liftEncoder = table.getEntry("liftEncoder");
         gyro = table.getEntry("gyro");
         autoDelay = table.getEntry("autoDelay");
+        LimelightDistance = table.getEntry("limelightDistance");
 
+        LimelightDistance.setDefaultNumber(0);
         cameraView.setDefaultNumber(0);
 
         // Create some buttons

@@ -1,5 +1,7 @@
 package frc.robot.helpers;
 
+import java.text.DecimalFormat;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -205,6 +207,28 @@ public class Limelight {
      */
     public void setVideo(Limelight.videoMode vmode){
         this.stream.setNumber(vmode.value);
+    }
+     
+    /**
+     * Return the Distance from the Target
+     *  Both Params should be constant, Both Known Values
+     *  The KnonwArea is based off of the KnownDistance
+     * 
+     * Place the Robot down on the ground and measure from the limelight
+     *  then look at the limelight's web interface for the `ta` value.
+     * Pass the 2 values in as a contant and it will return the % of the
+     *  selected KnownDistance.
+     * 
+     * @link http://docs.limelightvision.io/en/latest/cs_estimating_distance.html#using-area-to-estimate-distance
+     * @param KnownDistance
+     * @param KnownArea
+     * @return The Aprox Distnace away from the Target in View with only 2 decimal places
+     */
+    public double getDistance(double KnownDistance, double KnownArea){
+        double k = KnownDistance * Math.sqrt(KnownArea);
+        double v = k / Math.sqrt(this.getA());
+        DecimalFormat df = new DecimalFormat("#.##");
+        return Double.parseDouble(df.format(v));
     }
 
 }
