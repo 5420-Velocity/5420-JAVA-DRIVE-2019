@@ -106,8 +106,8 @@ public class Robot extends TimedRobot {
 
     Robot.pigeon = new PigeonGyro(left1);
 
-    leftSide = new Ultrasonic(0, 1);
-    rightSide = new Ultrasonic(2, 3);
+    leftSide = new Ultrasonic(18, 19);
+    rightSide = new Ultrasonic(20, 21);
     leftEncoder = new Encoder(4, 5);
     rightEncoder = new Encoder(6, 7);
     frontDistance = new MaxbotixUltrasonic(2);
@@ -120,8 +120,8 @@ public class Robot extends TimedRobot {
 
     hatchSwitchAutoClose = new DigitalInput(8);
     ballLoaded = new DigitalInput(9);
-    upperLimit = new DigitalInput(11);
-    lowerLimit = new DigitalInput(12);
+    upperLimit = new DigitalInput(0);
+    lowerLimit = new DigitalInput(1);
     liftEncoder = new AnalogPotentiometer(0, 360, 30);
 
     motorLift = new VictorSP(1);
