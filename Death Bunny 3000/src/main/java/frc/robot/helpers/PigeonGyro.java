@@ -4,13 +4,22 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
  * Make a Pigeon into a Gyro Object
+ * Implements the Gyro Interface and Extends from GyroBase
  * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  */
-public class PigeonGyro extends GyroBase {
+public class PigeonGyro extends GyroBase implements Gyro {
+
+    /**
+     * Used for the Offset when Resetting the Value
+     * 
+     * @var double
+     */
+    private double offset = 0;
 
     /**
      * 
@@ -81,7 +90,7 @@ public class PigeonGyro extends GyroBase {
      * @return
      */
     public double getAngle(){
-        return this.getYaw();
+        return this.getYaw()+this.offset;
     }
 
     /**
@@ -90,7 +99,7 @@ public class PigeonGyro extends GyroBase {
      * 
      */
     public void reset(){
-        
+        this.offset = -this.getYaw();
     }
 
     /**
