@@ -4,9 +4,8 @@ import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 /**
- * Uses the SendableChooser Object from WPI to
- *  do all of the extra steps that is adding in the NetworkTableEntry,
- *  add entry etc.
+ * Uses the SendableChooser Object from WPI to do all of the extra
+ *  steps that is adding in the NetworkTableEntry, add entry etc.
  * 
  * Just a helper class.
  * 
@@ -19,7 +18,7 @@ public class DropSelection<V> {
      * 
      * @var SenadableChooser
      */
-    private SendableChooser<V> selection = new SendableChooser<V>();
+    private SendableChooser<V> selection;
 
     /**
      * If the Sendable Chooser was sent once
@@ -32,11 +31,20 @@ public class DropSelection<V> {
      * Init by String Table Entry on Default Table.
      * Key found at: /SmartDashboard/{entryName}
      * 
-     * @param entryName
+     * @param entryName Network Table Entry
      */
     public DropSelection(String entryName){
-
+        this.selection = new SendableChooser<V>();
         this.selection.setName(entryName);
+    }
+
+    /**
+     * Init by the Input of a SendableChooser
+     * 
+     * @param sendableChooser
+     */
+    public DropSelection(SendableChooser<V> v){
+        this.selection = v;
     }
 
     /**
@@ -49,23 +57,12 @@ public class DropSelection<V> {
     }
 
     /**
-     * Set the Object name.
-     * 
-     * @param name
-     */
-    public void setName(String name){
-
-        this.selection.setName(name);
-    }
-
-    /**
      * Send data to the selected Entry
      * 
      */
     public void send(){
-        this.sentOnce = true;
 
-        //this.en.setValue(this.selection);
+        this.sentOnce = true;
         SmartDashboard.putData(this.selection);
     }
 
@@ -84,7 +81,8 @@ public class DropSelection<V> {
      * 
      * @param sc
      */
-    public void setChooser( SendableChooser<V> sc ){
+    public void setChooser(SendableChooser<V> sc){
+
         this.selection = sc;
     }
 
