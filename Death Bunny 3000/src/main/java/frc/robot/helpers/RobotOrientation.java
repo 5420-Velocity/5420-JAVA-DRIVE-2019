@@ -12,9 +12,12 @@ public class RobotOrientation {
 
     public Side directionSide = RobotOrientation.Side.kSideA;
 
+    public Boolean sentOnce = false;
+
     public enum Side {
         kSideA, // Front Side on Start
-        kSideB  // Back Side
+        kSideB,  // Back Side
+        kNone // Sent Once
     }
 
     /**
@@ -55,6 +58,7 @@ public class RobotOrientation {
      * @param newSide
      */
     public void setSide(Side newSide){
+        this.sentOnce = false;
         this.directionSide = newSide;
     }
 
@@ -65,10 +69,10 @@ public class RobotOrientation {
      */
     public Side flipSide(){
         if(directionSide == Side.kSideA){
-            this.directionSide = Side.kSideB;
+            this.setSide(Side.kSideB);
         }
         else{
-            this.directionSide = Side.kSideA;
+            this.setSide(Side.kSideA);
         }
 
         return this.directionSide;
@@ -81,6 +85,17 @@ public class RobotOrientation {
      */
     public Side getSide(){
         return this.directionSide;
+    }
+
+    /**
+     * Returns the Side Once
+     */
+    public Side getSideOnce(){
+        if(this.sentOnce == false){
+            this.sentOnce = true;
+            return this.directionSide;
+        }
+        return RobotOrientation.Side.kNone;
     }
 
     /**

@@ -6,10 +6,13 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.VictorSP;
@@ -48,14 +51,15 @@ public class Robot extends TimedRobot {
   public static DoubleSolenoid transSol; // Put Solenoid to the Close State
   public static PigeonGyro pigeon;
 
-  public static Ultrasonic leftSide; // Left Side Sonar Sensor
-  public static Ultrasonic rightSide; // Right Side Sonar Sensor
-  public static DigitalInput hatchSwitchAutoClose; // This switch is to auto close the
-  public static DigitalInput ballLoaded; // This switch is for when the balll is loaded.
+  public static Ultrasonic leftSide, rightSide;
+  public static MaxbotixUltrasonic frontDistance;
+  public static DigitalInput hatchSwitchAutoClose, ballLoaded, upperLimit, lowerLimit;
   public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
-  public static Encoder leftEncoder, rightEncoder, liftEncoder;
+  public static Solenoid robotLiftF, robotLiftR;
+  public static Encoder leftEncoder, rightEncoder;
+  public static AnalogPotentiometer liftEncoder;
 
-  public static VictorSP motorLift, motorTilt, climbMotor, walkingMotor, ballIntake;
+  public static VictorSP motorLift, motorTilt, ballIntake2, motorLock, ballIntake;
 
   public static DoubleSolenoid winchBreak;
 
@@ -72,7 +76,7 @@ public class Robot extends TimedRobot {
 
   public static int DRIVER = 0;
   public static int OPERATOR = 1;
-  public static int CTRL_LOG_INTERVAL = 60;
+  public static int CTRL_LOG_INTERVAL = 40*4;
 
   @Override
   public void robotInit() {
@@ -91,22 +95,14 @@ public class Robot extends TimedRobot {
     Robot.left2 = new WPI_TalonSRX(54);
     Robot.left2.follow(Robot.left1);
 
-    Robot.left3 = new WPI_TalonSRX(55);
-    Robot.left3.follow(Robot.left1);
-
     // Right SIDE Control
     Robot.right1 = new WPI_TalonSRX(56);
 
     Robot.right2 = new WPI_TalonSRX(57);
     Robot.right2.follow(Robot.right1);
 
-    Robot.right3 = new WPI_TalonSRX(58);
-    Robot.right3.follow(Robot.right1);
-
     // Build a full Differental Drive
     Robot.m_drive = new DifferentialDrive(Robot.left1, Robot.right1);
-
-    Robot.test = new WPI_TalonSRX(57);
 
     Robot.pigeon = new PigeonGyro(left1);
 
@@ -114,19 +110,24 @@ public class Robot extends TimedRobot {
     rightSide = new Ultrasonic(2, 3);
     leftEncoder = new Encoder(4, 5);
     rightEncoder = new Encoder(6, 7);
-    liftEncoder = new Encoder(10, 11);
+    frontDistance = new MaxbotixUltrasonic(2);
 
     hatchSol = new DoubleSolenoid(0, 1);
     winchBreak = new DoubleSolenoid(2, 3);
     transSol = new DoubleSolenoid(4, 5);
+    robotLiftF = new Solenoid(6);
+    robotLiftR = new Solenoid(7);
 
     hatchSwitchAutoClose = new DigitalInput(8);
     ballLoaded = new DigitalInput(9);
+    upperLimit = new DigitalInput(11);
+    lowerLimit = new DigitalInput(12);
+    liftEncoder = new AnalogPotentiometer(0, 360, 30);
 
     motorLift = new VictorSP(1);
     motorTilt = new VictorSP(2);
-    climbMotor = new VictorSP(3);
-    walkingMotor = new VictorSP(4);
+    ballIntake2 = new VictorSP(3);
+    motorLock = new VictorSP(4);
     ballIntake = new VictorSP(5);
 
     compressor = new Compressor(0);
@@ -135,7 +136,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.setDefaultNumber("AutoDelay", 0);
     SmartDashboard.setDefaultBoolean("Sol", false);
 
-    Robot.logInterval++;
+    m_drive.setExpiration(0.2); // Default is 0.1
+    //m_drive.setSafetyEnabled(true); // Disable Watchdog auto stop
 
     // Save.getInstance().push("Test", false);
 
@@ -148,9 +150,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-    //// Save.getInstance().push("t", System.currentTimeMillis());
+    // Save.getInstance().push("t", System.currentTimeMillis());
     // Save.getInstance().push("batt", RobotController.getBatteryVoltage());
 
+    Robot.logInterval++;
     if(logInterval % CTRL_LOG_INTERVAL == 0){
       Logger.pushCtrlValues("Driver", OI.driver);
       Logger.pushCtrlValues("Operator", OI.operator);
@@ -158,12 +161,37 @@ public class Robot extends TimedRobot {
       Robot.logInterval = 0;
     }
 
+    // Push Sensor Values
     OI.leftEncoder.setNumber(Robot.leftEncoder.get());
     OI.rightEncoder.setNumber(Robot.rightEncoder.get());
     OI.liftEncoder.setNumber(Robot.liftEncoder.get());
     OI.LimelightDistance.setNumber(Limelight.getInstance().getDistance(OI.LimelightKD, OI.LimelightKA));
+    OI.ballSwitch.setBoolean(Robot.ballLoaded.get());
+    OI.hatchSwitch.setBoolean(Robot.hatchSwitchAutoClose.get());
+    OI.gyro.setNumber(Robot.pigeon.getAngle());
+    OI.distanceFront.setNumber(Robot.frontDistance.getRangeInches());
+    OI.limitLower.setBoolean(Robot.lowerLimit.get());
+    OI.limitUpper.setBoolean(Robot.upperLimit.get());
+
+    if(OI.reset.getBoolean(false)){
+      Robot.pigeon.reset();
+      OI.reset.setBoolean(false);
+    }
+
+    if(OI.resetEncoder.getBoolean(false)){
+      Robot.leftEncoder.reset();
+      Robot.rightEncoder.reset();
+      OI.resetEncoder.setBoolean(false);
+    }
 
     // Save.getInstance().sync();
+  }
+
+  @Override
+  public void disabledPeriodic(){
+
+    Limelight.getInstance().setLed(Limelight.ledMode.kOff);
+
   }
 
   @Override
@@ -306,84 +334,162 @@ public class Robot extends TimedRobot {
       Robot.autoCommand.cancel();
     }
 
-    OI.inputGrabberToggle.whenPressed(new ToggleHatchGrabState());
-
   }
 
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
-    //////////////////
-    //  BALL CTRL   //
-    //////////////////
-
-    // Ball Intake Control using Buttons
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
-      // Ball In
-      ballIntake.set(0.5);
-    }
-    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
-      // Ball Out
-      ballIntake.set(-0.5);
-    }
-    else {
-      // Ball Off
-      ballIntake.set(0);
-    }
-
-
-    //////////////////
-    //  DRIVE CTRL  //
-    //////////////////
-
+    /////////////////
+    /// SIDE CTRL ///
+    /////////////////
     // Update the Side Value, Swapping Sides
     if(OI.directionSwitch.get()){
       RobotOrientation.getInstance().flipSide();
     }
-
-    // Drive Shifting, High and Low Range
-    if(OI.transButtonHigh.get()){
-      transSol.set(Value.kForward);
-    }
-    else if(OI.transButtonLow.get()){
-      transSol.set(Value.kReverse);
-    }
-
-    double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y)*0.8);
-    double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X)*0.8);
-
-    DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideA);
-    DRIVE_X = RobotOrientation.getInstance().fix(DRIVE_X, Side.kSideA);
-
-    // Save.getInstance().push("drive_x", DRIVE_X);
-    // Save.getInstance().push("drive_y", DRIVE_Y);
-
-    Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
-
-    if(RobotOrientation.getInstance().getSide() == Side.kSideA) {
-
-      double speed = OI.driver.getRawButton(LogitechMap_X.BUTTON_START)?0.5:0;
-      speed = OI.driver.getRawButton(LogitechMap_X.BUTTON_BACK)?-0.5:0;
-      Robot.ballIntake.set( speed );
-
-    }
-    else {
-
-      // Add a ButtonDeboucer Instace for the Button and Read and not toggle
-      // fast. This is setup to Open Hold the Value when Held.
-      boolean plate = OI.driver.getRawButton(LogitechMap_X.BUTTON_START);
-
-      // Drive Shifting, High and Low Range
-      if(plate == true){
-        hatchSol.set(Value.kForward);
+    
+    /////////////////
+    ///   LIFT    ///
+    /////////////////
+    if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
+      if(!Robot.upperLimit.get() == false){
+        // Upperlimit is setup to give a signal as true as open.
+        Robot.motorLift.set(0.6); // Up
+        Robot.winchBreak.set(Value.kReverse); // Break Off
       }
       else {
-        hatchSol.set(Value.kReverse);
+        System.out.println("Upper Limit");
+        Robot.motorLift.set(0); // Off
+        Robot.winchBreak.set(Value.kForward); // Break On  
       }
+    }
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
+      if(Robot.lowerLimit.get() == false){
+        Robot.motorLift.set(-0.3); // Down
+        Robot.winchBreak.set(Value.kReverse); // Break Off
+      }
+      else {
+        System.out.println("Lower Limit");
+        Robot.motorLift.set(0); // Off
+        Robot.winchBreak.set(Value.kForward); // Break On  
+      }
+    }
+    else {
+      Robot.motorLift.set(0); // Off
+      Robot.winchBreak.set(Value.kForward); // Break On
+    }
+    
+    //////////////////
+    //  BALL CTRL   //
+    //////////////////
+    // Ball Intake Control using Buttons
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
+      // Ball In
+      if(Robot.ballLoaded.get() == false){
 
+        ballIntake.set(-0.5);
+        ballIntake2.set(0.5);
+      }
+      else {
+        console.log("Ball Loaded, Auto Stop");
+        // Ball Off
+        ballIntake.set(0);
+        ballIntake2.set(0);
+      }
+    }
+    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
+      // Ball Out
+      ballIntake.set(0.8);
+      ballIntake2.set(-0.8);
+    }
+    else {
+      // Ball Off
+      ballIntake.set(0);
+      ballIntake2.set(0);
     }
 
-  }
+    /////////////////
+    ///   HATCH   ///
+    /////////////////
+    if(OI.hatchButton.get()){
+      hatchSol.set(Value.kReverse); // In
+    }
+    else if(OI.hatchButtonOut.get()){
+      hatchSol.set(Value.kForward); // Out
+    }
+    else {
+      if(Robot.hatchSwitchAutoClose.get()){
+        // Defalt State Control, If the User is not Pushing the Button
+        hatchSol.set(Value.kReverse); // In
+      }
+      else {
+        // Defalt State Control, If the User is not Pushing the Button
+        hatchSol.set(Value.kForward); // Out
+      }
+    }
 
+
+    //////////////////
+    //  SHIFT CTRL  //
+    //////////////////
+    if(OI.transButtonHigh.get()){
+      transSol.set(Value.kForward); // High Gear
+    }
+    else if(OI.transButtonLow.get()){
+      transSol.set(Value.kReverse); // LowGear
+    }
+    
+    
+    //////////////////
+    //  DRIVE CTRL  //
+    //////////////////
+    double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+    double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
+    DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideA);
+    //DRIVE_X = RobotOrientation.getInstance().fix(DRIVE_X, Side.kSideA);
+    Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
+    // Save.getInstance().push("drive_x", DRIVE_X);
+    // Save.getInstance().push("drive_y", DRIVE_Y);
+    DRIVE_Y = DRIVE_Y*0.8;
+    DRIVE_X = DRIVE_X*0.8;
+
+    ////////////////////////
+    //////// SIDE A ////////
+    ////////////////////////
+    if(RobotOrientation.getInstance().getSide() == Side.kSideA) {
+
+      OI.cameraView.setNumber(1);
+      OI.cameraViewText.setString("HATCH");
+    }
+    ////////////////////////
+    //////// SIDE B ////////
+    ////////////////////////
+    else {
+
+      OI.cameraView.setNumber(0);
+      OI.cameraViewText.setString("BALL");
+    }
+   
+    
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_START)){
+      Robot.robotLiftR.set(true);
+      System.out.println("UP! UP! AND AWAY!");
+    }
+    else {
+      Robot.robotLiftR.set(false);
+    }
+
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_BACK)){
+      Robot.robotLiftF.set(true);
+      System.out.println("UP! UP! AND AWAY! FRONT");
+    }
+    else {
+      Robot.robotLiftF.set(false);
+    }
+
+    Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+    //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+
+  }
+  
 }

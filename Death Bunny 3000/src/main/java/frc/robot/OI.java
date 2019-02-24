@@ -5,6 +5,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.helpers.ButtonDebouncer;
 import frc.robot.helpers.console;
@@ -44,15 +45,25 @@ public class OI {
     public static ButtonDebouncer directionSwitch;
     public static ButtonDebouncer transButtonHigh;
     public static ButtonDebouncer transButtonLow;
+    public static JoystickButton hatchButton;
+    public static JoystickButton hatchButtonOut;
     
     public static NetworkTableInstance tableInstance;
     public static NetworkTable table;
     public static NetworkTableEntry cameraView;
+    public static NetworkTableEntry cameraViewText;
     public static NetworkTableEntry leftEncoder;
     public static NetworkTableEntry rightEncoder;
     public static NetworkTableEntry liftEncoder;
     public static NetworkTableEntry gyro;
     public static NetworkTableEntry LimelightDistance;
+    public static NetworkTableEntry hatchSwitch;
+    public static NetworkTableEntry ballSwitch;
+    public static NetworkTableEntry reset;
+    public static NetworkTableEntry resetEncoder;
+    public static NetworkTableEntry distanceFront;
+    public static NetworkTableEntry limitUpper;
+    public static NetworkTableEntry limitLower;
 
     public static NetworkTableEntry autoDelay;
     public static DropSelection<Integer> position;
@@ -75,25 +86,41 @@ public class OI {
         tableInstance = NetworkTableInstance.getDefault(); // Get the Driver Station Network Table Instance.
         table = tableInstance.getTable("SmartDashboard"); // Add the a table just for Sensor Data.
         cameraView = table.getEntry("camView");
+        cameraViewText = table.getEntry("camViewText");
         leftEncoder = table.getEntry("leftEncoder");
         rightEncoder = table.getEntry("rightEncoder");
         liftEncoder = table.getEntry("liftEncoder");
         gyro = table.getEntry("gyro");
         autoDelay = table.getEntry("autoDelay");
         LimelightDistance = table.getEntry("limelightDistance");
+        hatchSwitch = table.getEntry("hatchSwitch");
+        ballSwitch = table.getEntry("ballSwitch");
+        reset = table.getEntry("gyroReset");
+        resetEncoder = table.getEntry("encoderReset");
+        distanceFront = table.getEntry("frontDistance");
+        limitUpper = table.getEntry("upperLimit");
+        limitLower = table.getEntry("lowerLimit");
 
         LimelightDistance.setDefaultNumber(0);
         cameraView.setDefaultNumber(0);
+        reset.setDefaultBoolean(false);
+        resetEncoder.setDefaultBoolean(false);
+        distanceFront.setDefaultNumber(0);
+        limitUpper.setDefaultBoolean(false);
+        limitLower.setDefaultBoolean(false);
+
+        driver = new Joystick(Robot.DRIVER);
+        operator = new Joystick(Robot.OPERATOR);
 
         // Create some buttons
-        driver = new Joystick(Robot.DRIVER);
         driver.setRumble(RumbleType.kLeftRumble, 0);
         directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
-        transButtonHigh = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 0.8); // Low Range
-        transButtonLow = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_X, 0.8);  // High Range
+        transButtonHigh = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 0.8); // High Range
+        transButtonLow = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_X, 0.8);  // Low Range
         inputGrabberToggle = new JoystickButton(driver, LogitechMap_X.BUTTON_A);
-
-        operator = new Joystick(Robot.OPERATOR);
+        //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
+        hatchButton = new JoystickButton(operator, LogitechMap_X.BUTTON_A);
+        hatchButtonOut = new JoystickButton(operator, LogitechMap_X.BUTTON_Y);
 
         console.log("OI Setup.");
     }
@@ -104,7 +131,7 @@ public class OI {
      */
     public static void Apply(){
 
-        autoDelay.setNumber(0);
+        autoDelay.setDefaultNumber(0);
 
         // Define the Position Contorls
         position.add("Left", true, 1);
