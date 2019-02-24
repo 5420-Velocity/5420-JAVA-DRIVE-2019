@@ -1,15 +1,13 @@
 package frc.robot.helpers;
 
-import java.text.DecimalFormat;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
- * console
- * Replicates some of the same functions that JavaScript
- *  has in its `console` object.
+ * Limelight
+ * Interface to work with the Limelight, Use Limelight.getInstance() to
+ *  get the default Limelight network table.
  * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  * @link http://docs.limelightvision.io/en/latest/getting_started.html#networking-setup
@@ -227,8 +225,7 @@ public class Limelight {
     public double getDistance(double KnownDistance, double KnownArea){
         double k = KnownDistance * Math.sqrt(KnownArea);
         double v = k / Math.sqrt(this.getA());
-        DecimalFormat df = new DecimalFormat("#.##");
-        return Double.parseDouble(df.format(v));
+        return (double) Math.round(v * 100) / 100;
     }
 
 }
