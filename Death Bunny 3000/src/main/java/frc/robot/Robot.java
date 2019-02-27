@@ -309,8 +309,6 @@ public class Robot extends TimedRobot {
       Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
     }
 
-
-
     // Robot Auto Command Drive Controls
     Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
 
