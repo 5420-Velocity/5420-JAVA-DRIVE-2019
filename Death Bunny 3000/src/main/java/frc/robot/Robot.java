@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
   public static Solenoid robotLiftF, robotLiftR;
   public static Encoder leftEncoder, rightEncoder;
   public static AnalogPotentiometer liftEncoder;
+  public static BoschMotor bTest;
 
   public static VictorSP motorLift, motorTilt, ballIntake2, motorLock, ballIntake;
 
@@ -124,6 +125,8 @@ public class Robot extends TimedRobot {
     lowerLimit = new DigitalInput(1);
     liftEncoder = new AnalogPotentiometer(0, 360, 30);
 
+  bTest = new BoschMotor(6, 2); // MOVED
+
     motorLift = new VictorSP(1);
     motorTilt = new VictorSP(2);
     ballIntake2 = new VictorSP(3);
@@ -173,6 +176,9 @@ public class Robot extends TimedRobot {
     OI.limitLower.setBoolean(Robot.lowerLimit.get());
     OI.limitUpper.setBoolean(Robot.upperLimit.get());
 
+    OI.boschEncoder.setNumber(Robot.bTest.encoderGet());
+    Robot.bTest.set(OI.boschSpeed.getNumber(0.0));
+
     if(OI.reset.getBoolean(false)){
       Robot.pigeon.reset();
       OI.reset.setBoolean(false);
@@ -183,6 +189,10 @@ public class Robot extends TimedRobot {
       Robot.rightEncoder.reset();
       OI.resetEncoder.setBoolean(false);
     }
+
+    OI.limelightV.setBoolean(Limelight.getInstance().hasTarget());
+    OI.limelightA.setNumber(Limelight.getInstance().getA());
+    OI.limelightS.setNumber(Limelight.getInstance().getS());
 
     // Save.getInstance().sync();
   }
@@ -349,10 +359,16 @@ public class Robot extends TimedRobot {
     /////////////////
     ///   LIFT    ///
     /////////////////
-    if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
+    if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB) && OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
+      // Go Up bypass the Upper Limit
+      System.out.print("BYPASS UPPER LIMIT, UP");
+      Robot.motorLift.set(0.4); // Up
+      Robot.winchBreak.set(Value.kReverse); // Break Off
+    }
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
       if(!Robot.upperLimit.get() == false){
         // Upperlimit is setup to give a signal as true as open.
-        Robot.motorLift.set(0.6); // Up
+        Robot.motorLift.set(0.9); // Up
         Robot.winchBreak.set(Value.kReverse); // Break Off
       }
       else {
@@ -363,7 +379,7 @@ public class Robot extends TimedRobot {
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
       if(Robot.lowerLimit.get() == false){
-        Robot.motorLift.set(-0.3); // Down
+        Robot.motorLift.set(-0.35); // Down
         Robot.winchBreak.set(Value.kReverse); // Break Off
       }
       else {
@@ -432,9 +448,11 @@ public class Robot extends TimedRobot {
     //////////////////
     if(OI.transButtonHigh.get()){
       transSol.set(Value.kForward); // High Gear
+      OI.driveShift.setString("HIGH");
     }
     else if(OI.transButtonLow.get()){
       transSol.set(Value.kReverse); // LowGear
+      OI.driveShift.setString("LOW");
     }
     
     

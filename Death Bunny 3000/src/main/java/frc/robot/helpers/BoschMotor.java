@@ -171,6 +171,15 @@ public class BoschMotor implements SpeedController {
      *
      * @param speed The speed to set. Value should be between -1.0 and 1.0.
      */
+    public void set(Number inValue) {
+        this.set(inValue.doubleValue());
+    }
+
+    /**
+     * Common interface for setting the speed of a speed controller.
+     *
+     * @param speed The speed to set. Value should be between -1.0 and 1.0.
+     */
     public void set(double speed) {
         this.updateDistance();
         this.controller.set(speed);

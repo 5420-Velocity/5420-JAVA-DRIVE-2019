@@ -65,7 +65,17 @@ public class OI {
     public static NetworkTableEntry limitUpper;
     public static NetworkTableEntry limitLower;
 
+    public static NetworkTableEntry boschSpeed;
+    public static NetworkTableEntry boschEncoder;
+
     public static NetworkTableEntry autoDelay;
+
+    public static NetworkTableEntry limelightA;
+    public static NetworkTableEntry limelightS;
+    public static NetworkTableEntry limelightV;
+
+    public static NetworkTableEntry driveShift;
+
     public static DropSelection<Integer> position;
     public static DropSelection<Integer> level;
     public static DropSelection<Target> target;
@@ -101,6 +111,15 @@ public class OI {
         limitUpper = table.getEntry("upperLimit");
         limitLower = table.getEntry("lowerLimit");
 
+        boschSpeed = table.getEntry("boschSpeed");
+        boschEncoder = table.getEntry("boschEncoder");
+
+        limelightA = table.getEntry("llA");
+        limelightS = table.getEntry("llS");
+        limelightV = table.getEntry("llV");
+
+        driveShift = table.getEntry("driveShift");
+
         LimelightDistance.setDefaultNumber(0);
         cameraView.setDefaultNumber(0);
         reset.setDefaultBoolean(false);
@@ -121,6 +140,15 @@ public class OI {
         //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
         hatchButton = new JoystickButton(operator, LogitechMap_X.BUTTON_A);
         hatchButtonOut = new JoystickButton(operator, LogitechMap_X.BUTTON_Y);
+
+        boschSpeed.setDefaultNumber(0.0);
+        boschEncoder.setDefaultNumber(0.0);
+
+        limelightA.setDefaultNumber(0);
+        limelightS.setDefaultNumber(0);
+        limelightV.setDefaultBoolean(false);
+
+        driveShift.setDefaultString("LAST-STATE");
 
         console.log("OI Setup.");
     }
