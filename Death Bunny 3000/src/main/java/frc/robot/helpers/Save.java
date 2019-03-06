@@ -30,7 +30,7 @@ import java.util.HashMap;
  * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  */
-public class Save {
+public class Save extends SimpleJson {
 
     /**
      * File IO Stream in Java, Allows you to read and write
@@ -69,13 +69,6 @@ public class Save {
     private Map<String, String> lastPushValues;
 
     /**
-     * Buffer
-     * 
-     * @var HashMap
-     */
-    private Map<String, String> pendingPushValues;
-
-    /**
      * Allows you to create one instance of the call and call it 
      *  later without needing to recall a new instance or save it.
      * 
@@ -110,30 +103,20 @@ public class Save {
      * @var boolean
      */
     private Boolean pendingWrites = false;
-    
-    /**
-     * Return the Static Instance of the Save Object.
-     * Save System resources and memory by using just one object.
-     * 
-     * @return Save
-     */
-    public static Save getInstance(){
-        if(Save.constantInstance == null){
-            // Make a new Instance
-            Save.constantInstance = new Save("telemetry", Save.defaultMode);
-        }
-        return Save.constantInstance;
-    }
 
     /**
-     * Return the Static Instance of the Save Object.
-     * Save System resources and memory by using just one object.
+     * Used to Allow or Deny Changes
      * 
-     * @param in
+     * @var Map
      */
-    public static void setInstance(Save in){
-        Save.constantInstance = in;
-    }
+    protected Map<String, Boolean> readonly;
+
+    /**
+     * Used to Allow or Deny Duplocate Inserts of Data
+     * 
+     * @var Map
+     */
+    protected Map<String, Boolean> allowDuplicates;
 
     public enum Mode {
         kInternalTemporary("/var/volatile/tmp"),
@@ -148,6 +131,18 @@ public class Save {
         }
     }
 
+    public enum Flags {
+        Readonly,
+        ForceUppercase,
+        ForceLowercase,
+        AllowDuplicates;
+    }
+    
+    /**
+     * Init With Constructor with the Default Mode
+     * 
+     * @param name
+     */
     public Save(String name){
         this(name, Save.defaultMode);
     }
@@ -160,6 +155,10 @@ public class Save {
      * @param type
      */
     public Save(String name, Mode fileLocation){
+
+        this.readonly = new HashMap<String, Boolean>();
+        this.allowDuplicates = new HashMap<String, Boolean>();
+
         // Check to see if the File Exists.
         // 
         this.filename = name;
@@ -187,23 +186,84 @@ public class Save {
         this.timer = new Timer();
         this.timer.start();
 
-        this.lastPushValues = new HashMap<String, String>();
-        this.pendingPushValues =  new HashMap<String, String>();
+        this.clear();
 
         System.out.println("Final Save to file: " + this.getFilename());
     }
+    
+    /**
+     * Return the Static Instance of the Save Object.
+     * Save System resources and memory by using just one object.
+     * 
+     * @return Save
+     */
+    public static Save getInstance(){
+        if(Save.constantInstance == null){
+            // Make a new Instance
+            Save.constantInstance = new Save("telemetry", Save.defaultMode);
+        }
+        return Save.constantInstance;
+    }
 
     /**
-     * Push Exception to String, First StackTrace and Suppressed Message
+     * Return the Static Instance of the Save Object.
+     * Save System resources and memory by using just one object.
      * 
-     * @param e Exception
-     * @return
+     * @param in
      */
-    public Save push(Exception e){
-        this.writeComment(e.getSuppressed()[0].toString());
-        this.writeComment(e.getStackTrace()[0].toString());
+    public static void setInstance(Save in){
+        Save.constantInstance = in;
+    }
 
-        return this;
+    /**
+     * Set a Flag
+     * 
+     * @param key String
+     * @param f Flag Set
+     */
+    public void setFlag(String key, Flags f){
+
+        if(f == Flags.Readonly){
+            this.readonly.put(key, true);
+        }
+    }
+
+    /**
+     * Set a Flag with a Boolean
+     * 
+     * @param key String
+     * @param f Flag Set
+     * @param value Option
+     */
+    public void setFlag(String key, Flags f, Boolean value){
+
+        if(f == Flags.Readonly){
+            this.readonly.put(key, value);
+        }
+    }
+
+    /**
+     * Clear a Selected Flag
+     * 
+     * @param key String
+     */
+    public void clearFlag(String key, Flags f){
+        
+        if(f == Flags.Readonly){
+            this.readonly.put(key, false);
+        }
+    }
+
+    /**
+     * Removes all Flags for a given Key
+     * 
+     * @param key String
+     */
+    public void clearFlags(String key){
+
+        for (Flags f : Flags.values()) { 
+            this.clearFlag(key, f); 
+        }
     }
     
     /**
@@ -211,9 +271,8 @@ public class Save {
      * 
      * @param NetworkTableEntry
      * @param NetworkTableType
-     * @return Save Return the Self Instance to Call Functions back to back.
      */
-    public Save push(NetworkTableEntry value, NetworkTableType type){
+    public void push(NetworkTableEntry value, NetworkTableType type){
 
         // Used as Temp Stoage to be Converted to String
         Object valueT = null;
@@ -234,12 +293,15 @@ public class Save {
             case kStringArray:
             case kRpc:
             case kUnassigned:
+                System.out.println("Datatype Not Supported for Datatype to String");
+                break;
+            default:
+                System.out.println("[Save] Unknown Datatype.");
         }
 
         // Convert to String
         String valueR = String.format("%s", valueT);
-
-        return this.push(value.getName(), valueR);
+        this.push(value.getName(), valueR);
     }
 
     /**
@@ -247,113 +309,50 @@ public class Save {
      * 
      * @param String Key
      * @param SpeedController Value
-     * @return Save Return the Self Instance to Call Functions back to back.
      */
-    public Save push(String key, SpeedController value){
+    public void push(String key, SpeedController value){
         
-        return this.push(key, value.get());
-    }
-    
-    /**
-     * Write Value based on Key Input
-     * Internally converts long to String.
-     * 
-     * @param String Key
-     * @param long Value
-     * @return Save Return the Self Instance to Call Functions back to back.
-     */
-    public Save push(String key, long value){
-
-        return this.push(key, Long.toString(value) );
+        this.push(key, value.get());
     }
 
     /**
-     * Write Value based on Key Input
-     * Internally converts Float to String.
+     * Checks flags and Applies Modifications If Needed
+     *  Check to see if the value is already pushed, Prevent Dups.
      * 
-     * @param String Key
-     * @param Float Value
-     * @return Save Return the Self Instance to Call Functions back to back.
+     * @param key String
+     * @param value String
+     * @param t Json Type
      */
-    public Save push(String key, Float value){
-        return this.push(key, String.valueOf(value.toString()) );
-    }
+    @Override
+    protected void push(String key, String value, SimpleJson.Type t){
 
-    /**
-     * Write Value based on Key Input
-     * 
-     * @param String Key
-     * @param Double Value
-     * @return Save Return the Self Instance to Call Functions back to back.
-     */
-    public Save push(String key, Double value){
-
-        String valueR = String.format("%.2f", value);
-
-        return this.push(key, valueR);
-    }
-
-    /**
-     * Write Value based on Key Input
-     * 
-     * @param String Key
-     * @param int Value
-     * @return Save Return the Self Instance to Call Functions back to back.
-     */
-    public Save push(String key, int value){
-        
-        String valueR = String.format("%s", value);
-
-        return this.push(key, valueR);
-    }
-
-    /**
-     * Write Value based on Key Input
-     * 
-     * @param String Key
-     * @param boolean Value
-     * @return Save Return the Self Instance to Call Functions back to back.
-     */
-    public Save push(String key, Boolean value){
-        
-        String valueR = value.toString();
-
-        return this.push(key, valueR);
-    }
-
-    /**
-     * Write Value based on Key Input
-     * Looks at this.ignoreInDisabled to see if it needs to ignore writes.
-     * 
-     * @param String Key
-     * @param String Value
-     * @return Save Return the Self Instance to Call Functions back to back.
-     */
-    public Save push(String key, String value){
-
-        if(this.ignoreInDisabled == true && Save.getMode() == "disable"){
-            // Don't write to Telem File, Save Data and Time.
-            return this;
+        if(this.readonly.get(key) != null && this.readonly.get(key) == true){
+            // Readonly is Set and is True, Skip Write.
+            return;
         }
 
-        // Set the value if its different from tha last value.
-        if(!this.lastPushValues.containsKey(key) || this.lastPushValues.get(key) != value){
-            this.pendingWrites = true;
-            this.pendingPushValues.put(key, value);
+        if(this.lastPushValues.get(key) != null && value == this.lastPushValues.get(key)){
+            // Write Dupliate being Made.
+            // Check to see if this is allowed to be a duplicate entry.    
+            if(this.allowDuplicates.get(key) == null || this.allowDuplicates.get(key) == false){
+                // Do not allow Duplicate Values in the Given Key.
+                // If the allowDuplicates is not defined or is False.
+                return;
+            }
         }
 
-        return this;
+        this.pendingWrites = true;
+        super.push(key, value, t);
     }
 
     /**
      * Write Values from Buffer to the selected Output Device
      * 
-     * @return Save Return the Self Instance to Call Functions back to back.
      */
     public void sync(){
 
         if(this.pendingWrites == false){
-            // Return, No Writes
+            // Return, No Writes pending
             return;
         }
 
@@ -363,21 +362,20 @@ public class Save {
         this.push("state", Save.getEnv());
         this.push("mtime", Save.getMatchtime());
 
-        this.lastPushValues = this.pendingPushValues;
+        this.lastPushValues = this.write;
 
-        // Generate JSON From Object
-        //this.writeRaw(JSONObject.wrap(this.pendingPushValues).toString());
+        // Generate JSON From Input, Push to the File
+        this.writeRaw(super.toString());
 
         this.pendingWrites = false;
-        this.pendingPushValues.clear();
-
+        super.clear(); // Clear the JSON Objects
     }
 
     /**
      * Returns the Full Filename with the Selected File
      *  path as well as the file proper filename.
      * 
-     * @return
+     * @return Full Filename
      */
     public String getFilename(){
         if(this.filename.length() == 0 )
@@ -394,29 +392,24 @@ public class Save {
     }
     
     /**
-     * Clear Pending Writes
-     * Good to do when Changing Mode States
+     * Clear Buffer Write
+     * Cleared when writing to the File.
      * 
-     * @return Save Return the Self Instance to Call Functions back to back.
      */
-    public Save clearBuffer(){
+    public void clearBuffer(){
         
-        this.pendingPushValues.clear();
+        super.clear();
         this.pendingWrites = false;
-        return this;
     }
     
     /**
      * Clear Push Cache
      * This what prevents duplicate values being written to the file.
      * 
-     * @return Save Return the Self Instance to Call Functions back to back.
      */
-    public Save clearPush(){
+    public void clearPush(){
         
         this.lastPushValues.clear();
-        this.pendingWrites = false;
-        return this;
     }
     
     /**
@@ -431,18 +424,6 @@ public class Save {
     
     /**
      * Write string data to File.
-     * Write Directly to the file, Assume it is noting in order.
-     * 
-     * @param String Log Data
-     * @return Save Return the Self Instance to Call Functions back to back.
-     */
-    public Save writeComment(String input){
-        this.writeRaw("# " + input);
-        return this;
-    }
-    
-    /**
-     * Write string data to File.
      * This function will wrtie directly to the file,
      *  no write buffer
      * 
@@ -453,8 +434,8 @@ public class Save {
     public Save writeRaw(String... input){
         
         String buffer = "";
-        for (Object single : input) {
-            buffer += single.toString();
+        for (String single : input) {
+            buffer += single;
         }
         
         try {
@@ -472,7 +453,10 @@ public class Save {
      * 
      */
     public void close(){
-        this.sync();
+        this.sync(); // Write File Data
+        this.clearBuffer(); // Clear Write Buffer
+        this.clearPush(); // Clear Duplciate Write Records (This index prevents duplicate writes)
+
         try {
             this.fileStream.close();
         }
