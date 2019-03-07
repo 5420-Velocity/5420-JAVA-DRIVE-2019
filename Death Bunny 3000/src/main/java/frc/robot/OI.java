@@ -5,10 +5,11 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.helpers.ButtonDebouncer;
 import frc.robot.helpers.console;
+import frc.robot.helpers.controllers.DPadButton;
+import frc.robot.helpers.controllers.DPadButtonDebouce;
 import frc.robot.helpers.controllers.LogitechMap_X;
 import frc.robot.helpers.DropSelection;
 
@@ -29,6 +30,7 @@ public class OI {
         Mid,
         Close
     }
+
     public enum FaceTarget {
         Left,
         Right
@@ -45,11 +47,18 @@ public class OI {
     public static ButtonDebouncer directionSwitch;
     public static ButtonDebouncer transButtonHigh;
     public static ButtonDebouncer transButtonLow;
+
+    public static DPadButtonDebouce liftTop;
+    public static DPadButtonDebouce liftMid;
+    public static DPadButtonDebouce liftMidAlt;
+    public static DPadButtonDebouce liftBottom;
+
     public static JoystickButton hatchButton;
     public static JoystickButton hatchButtonOut;
     
     public static NetworkTableInstance tableInstance;
     public static NetworkTable table;
+
     public static NetworkTableEntry cameraView;
     public static NetworkTableEntry cameraViewText;
     public static NetworkTableEntry leftEncoder;
@@ -64,16 +73,12 @@ public class OI {
     public static NetworkTableEntry distanceFront;
     public static NetworkTableEntry limitUpper;
     public static NetworkTableEntry limitLower;
-
     public static NetworkTableEntry boschSpeed;
     public static NetworkTableEntry boschEncoder;
-
     public static NetworkTableEntry autoDelay;
-
     public static NetworkTableEntry limelightA;
     public static NetworkTableEntry limelightS;
     public static NetworkTableEntry limelightV;
-
     public static NetworkTableEntry driveShift;
 
     public static DropSelection<Integer> position;
@@ -110,14 +115,11 @@ public class OI {
         distanceFront = table.getEntry("frontDistance");
         limitUpper = table.getEntry("upperLimit");
         limitLower = table.getEntry("lowerLimit");
-
         boschSpeed = table.getEntry("boschSpeed");
         boschEncoder = table.getEntry("boschEncoder");
-
         limelightA = table.getEntry("llA");
         limelightS = table.getEntry("llS");
         limelightV = table.getEntry("llV");
-
         driveShift = table.getEntry("driveShift");
 
         LimelightDistance.setDefaultNumber(0);
@@ -131,7 +133,8 @@ public class OI {
         driver = new Joystick(Robot.DRIVER);
         operator = new Joystick(Robot.OPERATOR);
 
-        // Create some buttons
+        //// Create Buttons ////
+
         driver.setRumble(RumbleType.kLeftRumble, 0);
         directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
         transButtonHigh = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 0.8); // High Range
@@ -140,6 +143,13 @@ public class OI {
         //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
         hatchButton = new JoystickButton(operator, LogitechMap_X.BUTTON_A);
         hatchButtonOut = new JoystickButton(operator, LogitechMap_X.BUTTON_Y);
+
+        liftTop = new DPadButtonDebouce(operator, DPadButton.Direction.Up);
+        liftBottom = new DPadButtonDebouce(operator, DPadButton.Direction.Down);
+        liftMid = new DPadButtonDebouce(operator, DPadButton.Direction.Right);
+        liftMidAlt = new DPadButtonDebouce(operator, DPadButton.Direction.Left);
+
+        //// Configure Controls ////
 
         boschSpeed.setDefaultNumber(0.0);
         boschEncoder.setDefaultNumber(0.0);

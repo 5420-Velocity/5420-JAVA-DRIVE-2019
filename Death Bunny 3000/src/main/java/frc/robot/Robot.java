@@ -488,7 +488,9 @@ public class Robot extends TimedRobot {
       OI.cameraViewText.setString("BALL");
     }
    
-    
+    ///////////////////////////////////////
+    ////  Front and Rear Lift Control  ////
+    ///////////////////////////////////////
     if(OI.driver.getRawButton(LogitechMap_X.BUTTON_START)){
       Robot.robotLiftR.set(true);
       System.out.println("UP! UP! AND AWAY!");
@@ -507,6 +509,19 @@ public class Robot extends TimedRobot {
 
     Robot.bTest.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
     //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+
+    //////////////////////
+    //// Lift Control ////
+    //////////////////////
+    if(OI.liftTop.get()){
+      System.out.println("Top");
+    }
+    else if(OI.liftMid.get() || OI.liftMidAlt.get()){
+      System.out.println("Mid");
+    }
+    else if(OI.liftBottom.get()){
+      System.out.println("Bottom");
+    }
 
   }
   
