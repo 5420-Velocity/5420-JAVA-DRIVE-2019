@@ -125,13 +125,14 @@ public class Robot extends TimedRobot {
     lowerLimit = new DigitalInput(1);
     liftEncoder = new AnalogPotentiometer(0, 360, 30);
 
-  bTest = new BoschMotor(6, 2); // MOVED
-
+    
     motorLift = new VictorSP(1);
-    motorTilt = new VictorSP(2);
+    motorTilt = new VictorSP(4);
     ballIntake2 = new VictorSP(3);
-    motorLock = new VictorSP(4);
+    motorLock = new VictorSP(2);
     ballIntake = new VictorSP(5);
+    
+    bTest = new BoschMotor(motorTilt, 2); // Pass motor in to take contorl and add extra controls
 
     compressor = new Compressor(0);
 
@@ -177,7 +178,6 @@ public class Robot extends TimedRobot {
     OI.limitUpper.setBoolean(Robot.upperLimit.get());
 
     OI.boschEncoder.setNumber(Robot.bTest.encoderGet());
-    Robot.bTest.set(OI.boschSpeed.getNumber(0.0));
 
     if(OI.reset.getBoolean(false)){
       Robot.pigeon.reset();
@@ -219,6 +219,8 @@ public class Robot extends TimedRobot {
     else {
       hatchSol.set(DoubleSolenoid.Value.kReverse);
     }
+
+    Robot.bTest.set(OI.boschSpeed.getNumber(0.0));
 
   }
 
@@ -503,7 +505,7 @@ public class Robot extends TimedRobot {
       Robot.robotLiftF.set(false);
     }
 
-    Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+    Robot.bTest.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
     //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
 
   }

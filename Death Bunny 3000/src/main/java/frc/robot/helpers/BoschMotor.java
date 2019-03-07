@@ -37,6 +37,17 @@ public class BoschMotor implements SpeedController {
     public BoschMotor(int PWMInput, int DIOInput){
         this(PWMInput, DIOInput, false);
     }
+    
+
+    /**
+     * Generate instance using the PWM Ouput and the DIO Input
+     * 
+     * @param PWMInput
+     * @param DIOInput
+     */
+    public BoschMotor(PWMSpeedController PWMInput, int DIOInput){
+        this(PWMInput, new DigitalInput(DIOInput), false);
+    }
 
     /**
      * Generate instance using the PWM Output and the DIO Input with
@@ -75,11 +86,11 @@ public class BoschMotor implements SpeedController {
         int count = this.count.get();
         double speed = this.controller.get();
         this.count.reset();
-
-        if (speed >= 0) {
+        
+        if (speed > 0) {
             pending = count;
         }
-        else if(speed <= 0) {
+        else if(speed < 0) {
             pending = -count;
         }
 
