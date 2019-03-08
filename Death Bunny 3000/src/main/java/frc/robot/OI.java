@@ -53,6 +53,9 @@ public class OI {
     public static DPadButtonDebouce liftMidAlt;
     public static DPadButtonDebouce liftBottom;
 
+    public static DPadButtonDebouce driveSlowForward;
+    public static DPadButtonDebouce driveSlowReverse;
+
     public static JoystickButton hatchButton;
     public static JoystickButton hatchButtonOut;
     
@@ -97,7 +100,7 @@ public class OI {
         targetFace = new DropSelection<FaceTarget>("targetFace");
 
 
-        // Put Some buttons on the SmartDashboard
+        // Put Some buttons on the SmartDashboard and get the Table Entries
         tableInstance = NetworkTableInstance.getDefault(); // Get the Driver Station Network Table Instance.
         table = tableInstance.getTable("SmartDashboard"); // Add the a table just for Sensor Data.
         cameraView = table.getEntry("camView");
@@ -148,6 +151,9 @@ public class OI {
         liftBottom = new DPadButtonDebouce(operator, DPadButton.Direction.Down);
         liftMid = new DPadButtonDebouce(operator, DPadButton.Direction.Right);
         liftMidAlt = new DPadButtonDebouce(operator, DPadButton.Direction.Left);
+
+        driveSlowForward = new DPadButtonDebouce(operator, DPadButton.Direction.Up);
+        driveSlowReverse = new DPadButtonDebouce(operator, DPadButton.Direction.Down);
 
         //// Configure Controls ////
 

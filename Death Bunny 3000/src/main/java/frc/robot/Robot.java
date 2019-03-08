@@ -464,12 +464,23 @@ public class Robot extends TimedRobot {
     double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
     double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
     DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideA);
-    //DRIVE_X = RobotOrientation.getInstance().fix(DRIVE_X, Side.kSideA);
-    Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
-    // Save.getInstance().push("drive_x", DRIVE_X);
-    // Save.getInstance().push("drive_y", DRIVE_Y);
-    DRIVE_Y = DRIVE_Y*0.8;
-    DRIVE_X = DRIVE_X*0.8;
+
+    if(OI.driveSlowForward.get()){
+      // Button Mode Forward
+      System.out.println("Slow Forward");
+      Robot.m_drive.arcadeDrive( 0.4, 0 );
+    }
+    else if(OI.driveSlowReverse.get()){
+      // Button Mode Reverse
+      System.out.println("Slow Reverse");
+      Robot.m_drive.arcadeDrive( -0.4, 0 );
+    }
+    else {
+      // Joystick Mode
+      DRIVE_Y = DRIVE_Y*0.8;
+      DRIVE_X = DRIVE_X*0.8;
+      Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
+    }
 
     ////////////////////////
     //////// SIDE A ////////
