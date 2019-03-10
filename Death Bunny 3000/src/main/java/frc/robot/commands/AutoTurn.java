@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+// TODO: Add Safety Code based on time to Stop Robot if no Gyro is Present or gets Stuck
 public class AutoTurn extends Command {
 
 	private boolean isDone = false;

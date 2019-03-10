@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.helpers.console;
 import frc.robot.helpers.console.logMode;
 
+// TODO: Add Safety Code based on time to Stop Robot if no Encoder is Present
 /**
  * AutoDrive
  * This class will Drive the Robot
