@@ -521,7 +521,7 @@ public class Robot extends TimedRobot {
     Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
     //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
 
-    double contorlArm = OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
+    double contorlArm = -OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
     if(contorlArm > 0){
       if(ballUpperLimit.get() == true){
         // Allow if button is true, Wired for Cut Wire Saftey
