@@ -53,12 +53,11 @@ public class Robot extends TimedRobot {
 
   public static Ultrasonic leftSide, rightSide;
   public static MaxbotixUltrasonic frontDistance;
-  public static DigitalInput hatchSwitchAutoClose, ballLoaded, upperLimit, lowerLimit;
+  public static DigitalInput hatchSwitchAutoClose, ballLoaded, upperLimit, lowerLimit, ballUpperLimit, ballLowerLimit;
   public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
   public static Solenoid robotLiftF, robotLiftR;
   public static Encoder leftEncoder, rightEncoder;
   public static AnalogPotentiometer liftEncoder;
-  public static BoschMotor bTest;
 
   public static VictorSP motorLift, motorTilt, ballIntake2, motorLock, ballIntake;
 
@@ -119,10 +118,12 @@ public class Robot extends TimedRobot {
     robotLiftF = new Solenoid(6);
     robotLiftR = new Solenoid(7);
 
-    hatchSwitchAutoClose = new DigitalInput(8);
-    ballLoaded = new DigitalInput(9);
     upperLimit = new DigitalInput(0);
     lowerLimit = new DigitalInput(1);
+    hatchSwitchAutoClose = new DigitalInput(8);
+    ballLoaded = new DigitalInput(9);
+    ballUpperLimit = new DigitalInput(10);
+    ballLowerLimit = new DigitalInput(11);
     liftEncoder = new AnalogPotentiometer(0, 360, 30);
 
     
@@ -131,8 +132,6 @@ public class Robot extends TimedRobot {
     ballIntake2 = new VictorSP(3);
     motorLock = new VictorSP(2);
     ballIntake = new VictorSP(5);
-    
-    bTest = new BoschMotor(motorTilt, 2); // Pass motor in to take contorl and add extra controls
 
     compressor = new Compressor(0);
 
@@ -177,7 +176,7 @@ public class Robot extends TimedRobot {
     OI.limitLower.setBoolean(Robot.lowerLimit.get());
     OI.limitUpper.setBoolean(Robot.upperLimit.get());
 
-    OI.boschEncoder.setNumber(Robot.bTest.encoderGet());
+    //OI.boschEncoder.setNumber(Robot.bTest.encoderGet());
 
     if(OI.reset.getBoolean(false)){
       Robot.pigeon.reset();
@@ -220,13 +219,14 @@ public class Robot extends TimedRobot {
       hatchSol.set(DoubleSolenoid.Value.kReverse);
     }
 
-    Robot.bTest.set(OI.boschSpeed.getNumber(0.0));
+    Robot.motorTilt.set(OI.boschSpeed.getDouble(0.0));
 
   }
 
   @Override
   public void autonomousInit() {
-    Robot.gameData = window.getData();
+    
+    /*Robot.gameData = window.getData();
     Robot.autoCommand = new CommandGroup();
 
     /////////////////////
@@ -325,16 +325,16 @@ public class Robot extends TimedRobot {
     Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
 
     Robot.autoCommand.start();
+    */
   }
 
   @Override
   public void autonomousPeriodic() {
 
-    if(hatchSwitchAutoClose.get() == true){
-      new ToggleHatchGrabState(DoubleSolenoid.Value.kForward).start();
-    }
+    /*Scheduler.getInstance().run();*/
 
-    Scheduler.getInstance().run();
+    this.teleopPeriodic(); // Run Robot Telelop Code
+
   }
 
   @Override
@@ -463,7 +463,7 @@ public class Robot extends TimedRobot {
     //////////////////
     double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
     double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
-    DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideA);
+    DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideB);
 
     if(OI.driveSlowForward.get()){
       // Button Mode Forward
@@ -477,8 +477,8 @@ public class Robot extends TimedRobot {
     }
     else {
       // Joystick Mode
-      DRIVE_Y = DRIVE_Y*0.8;
-      DRIVE_X = DRIVE_X*0.8;
+      DRIVE_Y = DRIVE_Y*0.95;
+      DRIVE_X = DRIVE_X*0.95;
       Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
     }
 
@@ -518,8 +518,23 @@ public class Robot extends TimedRobot {
       Robot.robotLiftF.set(false);
     }
 
-    Robot.bTest.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+    Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
     //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+
+    double contorlArm = OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
+    if(contorlArm > 0){
+      if(ballUpperLimit.get() == true){
+        // Allow if button is true, Wired for Cut Wire Saftey
+        Robot.motorTilt.set(contorlArm);
+      }
+    }
+    else if (contorlArm < 0){
+      // Allow if button is true, Wired for Cut Wire Saftey
+      if(ballLowerLimit.get() == true){
+        Robot.motorTilt.set(contorlArm);
+      }
+    }
+
 
     //////////////////////
     //// Lift Control ////
