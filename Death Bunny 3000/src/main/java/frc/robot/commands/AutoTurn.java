@@ -1,10 +1,15 @@
 package frc.robot.commands;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Date;
+
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.helpers.console;
+import frc.robot.helpers.console.logMode;
 
-// TODO: Add Safety Code based on time to Stop Robot if no Gyro is Present or gets Stuck
 public class AutoTurn extends Command {
 
 	private boolean isDone = false;
@@ -12,10 +17,13 @@ public class AutoTurn extends Command {
     private GyroBase Gyro;
 	private double Turn = 0;
 	private double degTarget;
+	protected boolean isFinished;
+	protected Date EStopTime;
 	
 	/**
 	 * Set the Speed and Turn DEG for a Target
-	 * This will turn in place to the set DEG.
+	 *  This will turn in place to the set DEG.
+	 *  This is a Turn in place using Tank Drive.
 	 * 
 	 * @param drive   Differential Drive Instance
 	 * @param gyro    Gyro Instance
@@ -37,25 +45,43 @@ public class AutoTurn extends Command {
         }
 		
 		this.degTarget = turnDEG;
+
+		// Setup the Stop Motor by Time when the encoder does not update.
+        Calendar calculateDate = GregorianCalendar.getInstance();
+		calculateDate.add(GregorianCalendar.MILLISECOND, (int) 5); // Time to Check the Encoder Distance is not Zero
+        EStopTime = calculateDate.getTime();
 	}	
 	
 	@Override
 	public void initialize(){
-        this.drive.stopMotor(); // Stop Motors, Stops any Rouge Commands Before Execution
+		console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Running Gyro Turn to " + this.degTarget);
+		this.drive.stopMotor(); // Stop Motors, Stops any Rouge Commands Before Execution
+		this.Gyro.calibrate();
 	}
 	
 	@Override
 	protected void execute() {
 		
+		// Check to see if its past the EStopTime
+        if( new Date().after(EStopTime) ) {
+            // If the Encoder is not Past 5 Degs.
+            if(this.Gyro.getAngle() < 5){
+                console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Command Timed Out!!!");
+                this.isFinished = true;
+                return;
+            }
+        }
+
 		// Do the Drive Operation.
-		if(Math.abs(Gyro.getAngle()) <= Math.abs(this.degTarget) ){ 
-			this.drive.tankDrive(-this.Turn , this.Turn);
+		if(Math.abs(Gyro.getAngle()) >= Math.abs(this.degTarget) ){ 
+			console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Completed Task");
+			this.drive.arcadeDrive(0, 0);
+			this.isFinished = true;
 		}
 		else {
-			this.drive.arcadeDrive(0, 0);
-			this.isDone = true;
+			this.drive.tankDrive(-this.Turn , this.Turn);
 		}
-		
+		this.drive.feedWatchdog();
 	}
 	
 	@Override
@@ -65,7 +91,9 @@ public class AutoTurn extends Command {
 
 	// Called once after isFinished returns true OR interrupted() is called.
     protected void end() {
-        this.drive.arcadeDrive(0, 0);
+		this.drive.arcadeDrive(0, 0);
+		this.drive.stopMotor();
+		console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Finished Command");
     }
 
 }

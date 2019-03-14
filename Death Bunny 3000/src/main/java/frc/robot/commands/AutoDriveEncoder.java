@@ -1,12 +1,15 @@
 package frc.robot.commands;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Date;
+
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.helpers.console;
 import frc.robot.helpers.console.logMode;
 
-// TODO: Add Safety Code based on time to Stop Robot if no Encoder is Present
 /**
  * AutoDrive
  * This class will Drive the Robot
@@ -20,20 +23,52 @@ public class AutoDriveEncoder extends Command {
     protected long endTime;
     protected boolean isFinished;
     protected Encoder enc;
+    protected Date EStopTime;
 
     public DifferentialDrive drive;
 
+    /**
+     * AutoDriveEncoder
+     * Drive the Robot using the Encoder with the Given Differential Drive
+     * 
+     * @param drive Drive Control
+     * @param enc Encoder to Follow
+     * @param power Power Control Value
+     * @param turn Turn Control for the Drive, Used as a correction value
+     * @param ticks Total Distance to go on the Encoder
+     */
     public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, double turn, int ticks) {
+        this(drive, enc, power, turn, ticks, 4);
+    }
+
+    /**
+     * AutoDriveEncoder
+     * Drive the Robot using the Encoder with the Given Differential Drive
+     * 
+     * @param drive Drive Control
+     * @param enc Encoder to Follow
+     * @param power Power Control Value
+     * @param turn Turn Control for the Drive, Used as a correction value
+     * @param ticks Total Distance to go on the Encoder
+     * @param time Total time to spend on the job, this is a saftey part to 
+     *    protect the robot from driving without an encoder
+     */
+    public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, double turn, int ticks, int time) {
         this.drive = drive;
         this.enc = enc;
         this.power = power;
         this.turn = turn;
-        this.distance = ticks;
+        this.distance = Math.abs(ticks);
+
+        // Setup the Stop Motor by Time when the encoder does not update.
+        Calendar calculateDate = GregorianCalendar.getInstance();
+		calculateDate.add(GregorianCalendar.MILLISECOND, (int) time); // Time to Check the Encoder Distance is not Zero
+        EStopTime = calculateDate.getTime();
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-        console.out(logMode.kDebug, "[AutoDriveEncoder] Running Encoder Distance" + this.distance);
+        console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Running Encoder Distance " + this.distance);
 
         this.drive.stopMotor(); // Stop Motors, Stops any Rouge Commands Before Execution
         this.enc.reset();
@@ -42,12 +77,18 @@ public class AutoDriveEncoder extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
 
-        // Safety Code, Its made to catch the Human Error of not plugging in the Encoder.
-		//  Encoders will send a 0 value if you don't have an encoder plugged-in to the port.
-		// Do the Safe Check to see if the Encoders are doing their thing or not after x seconds
-		if( this.enc.getRaw() > this.distance ) {
-			// If the Encoder is not Past 10 ticks.
-			console.out(logMode.kDebug, "[AutoDriveEncoder] Finished");
+        // Check to see if its past the EStopTime
+        if( new Date().after(EStopTime) ) {
+            // If the Encoder is not Past 10 ticks.
+            if(this.enc.get() < 10){
+                console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Command Timed Out!!! Encoder did not move past 10 ticks.");
+                this.isFinished = true;
+                return;
+            }
+        }
+
+		if( Math.abs(this.enc.get()) > this.distance ) {
+			console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Completed Task");
 			this.isFinished = true;
         }
         else {
@@ -66,5 +107,6 @@ public class AutoDriveEncoder extends Command {
     protected void end() {
         this.drive.arcadeDrive(0, 0);
         this.drive.stopMotor();
+        console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Finished Command");
     }
 }
