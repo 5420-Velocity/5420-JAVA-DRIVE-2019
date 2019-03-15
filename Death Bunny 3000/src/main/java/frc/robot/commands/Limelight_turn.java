@@ -10,23 +10,23 @@ public class Limelight_turn extends Command {
     private DifferentialDrive driveSystem;
 
     private double kp = -0.1f;
-    private double tx = Limelight.getInstance().getX();
+    private Limelight limelight;
 
     private double leftSpeed;
     private double rightSpeed;
 
     private double minCommand = 0.05;
 
-    public Limelight_turn(DifferentialDrive drive){
-        this(drive, 0);
-
+    public Limelight_turn(DifferentialDrive drive, Limelight limelight){
+        this(drive, limelight, 0.2);
     }
 
-    public Limelight_turn(DifferentialDrive drive, double speed){
+    public Limelight_turn(DifferentialDrive drive, Limelight limelight, double speed){
 
         this.driveSystem = drive;
         this.leftSpeed = speed;
         this.rightSpeed = -speed;
+        this.limelight = limelight;
     }
 
     protected void initialize() {
@@ -35,14 +35,14 @@ public class Limelight_turn extends Command {
 
     protected void execute(){
 
-        double headingError = tx;
+        double headingError = this.limelight.getX();
         double steeringAdjust = 0;
 
-        if (tx > 1.0){
+        if (Math.signum(headingError) == 1.0){
             steeringAdjust = kp * headingError - minCommand;
         }
 
-        else if (tx < 1.0){
+        else if (Math.signum(headingError) == 1.0){
             steeringAdjust = kp * headingError + minCommand;
         }
 

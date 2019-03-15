@@ -83,6 +83,8 @@ public class OI {
     public static NetworkTableEntry limelightS;
     public static NetworkTableEntry limelightV;
     public static NetworkTableEntry driveShift;
+    public static NetworkTableEntry ballUppwerLimit;
+    public static NetworkTableEntry ballLowerLimit;
 
     public static DropSelection<Integer> position;
     public static DropSelection<Integer> level;
@@ -124,6 +126,8 @@ public class OI {
         limelightS = table.getEntry("llS");
         limelightV = table.getEntry("llV");
         driveShift = table.getEntry("driveShift");
+        ballUppwerLimit = table.getEntry("ballUpperLimit");
+        ballLowerLimit = table.getEntry("ballLowerLimit");
 
         LimelightDistance.setDefaultNumber(0);
         cameraView.setDefaultNumber(0);
@@ -163,6 +167,9 @@ public class OI {
         limelightA.setDefaultNumber(0);
         limelightS.setDefaultNumber(0);
         limelightV.setDefaultBoolean(false);
+
+        ballUppwerLimit.setDefaultBoolean(false);
+        ballLowerLimit.setDefaultBoolean(false);
 
         driveShift.setDefaultString("LAST-STATE");
 

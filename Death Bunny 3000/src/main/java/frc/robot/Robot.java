@@ -66,6 +66,8 @@ public class Robot extends TimedRobot {
   public static Compressor compressor;
   public static CommandGroup autoCommand;
 
+  public static Limelight limelightMain;
+
   public static char[] gameData;
 
   // Used to Store the Table Entries for the Network Table.
@@ -144,7 +146,9 @@ public class Robot extends TimedRobot {
 
     // Save.getInstance().push("Test", false);
 
-    Limelight.getInstance().setLed(Limelight.ledMode.kOff);
+    limelightMain = new Limelight("limelight-one");
+
+    Robot.limelightMain.setLed(Limelight.ledMode.kOff);
 
     // Setup Auto CTRL
     OI.Apply();
@@ -168,13 +172,19 @@ public class Robot extends TimedRobot {
     OI.leftEncoder.setNumber(Robot.leftEncoder.get());
     OI.rightEncoder.setNumber(Robot.rightEncoder.get());
     OI.liftEncoder.setNumber(Robot.liftEncoder.get());
-    OI.LimelightDistance.setNumber(Limelight.getInstance().getDistance(OI.LimelightKD, OI.LimelightKA));
     OI.ballSwitch.setBoolean(Robot.ballLoaded.get());
     OI.hatchSwitch.setBoolean(Robot.hatchSwitchAutoClose.get());
     OI.gyro.setNumber(Robot.pigeon.getAngle());
     OI.distanceFront.setNumber(Robot.frontDistance.getRangeInches());
     OI.limitLower.setBoolean(Robot.lowerLimit.get());
     OI.limitUpper.setBoolean(Robot.upperLimit.get());
+    OI.ballUppwerLimit.setBoolean(ballUpperLimit.get());
+    OI.ballLowerLimit.setBoolean(ballLowerLimit.get());
+
+    OI.LimelightDistance.setNumber(Robot.limelightMain.getDistance(OI.LimelightKD, OI.LimelightKA));
+    OI.limelightV.setBoolean(Robot.limelightMain.hasTarget());
+    OI.limelightA.setNumber(Robot.limelightMain.getA());
+    OI.limelightS.setNumber(Robot.limelightMain.getS());
 
     //OI.boschEncoder.setNumber(Robot.bTest.encoderGet());
 
@@ -189,17 +199,13 @@ public class Robot extends TimedRobot {
       OI.resetEncoder.setBoolean(false);
     }
 
-    OI.limelightV.setBoolean(Limelight.getInstance().hasTarget());
-    OI.limelightA.setNumber(Limelight.getInstance().getA());
-    OI.limelightS.setNumber(Limelight.getInstance().getS());
-
     // Save.getInstance().sync();
   }
 
   @Override
   public void disabledPeriodic(){
 
-    Limelight.getInstance().setLed(Limelight.ledMode.kOff);
+    Robot.limelightMain.setLed(Limelight.ledMode.kOff);
 
   }
 
@@ -226,7 +232,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     
-    /*Robot.gameData = window.getData();
+    Robot.gameData = window.getData();
     Robot.autoCommand = new CommandGroup();
 
     /////////////////////
@@ -324,16 +330,19 @@ public class Robot extends TimedRobot {
     // Robot Auto Command Drive Controls
     Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
 
-    Robot.autoCommand.start();
-    */
+    // Add to Stack
+    Scheduler.getInstance().add(Robot.autoCommand);
+    
   }
 
   @Override
   public void autonomousPeriodic() {
 
-    /*Scheduler.getInstance().run();*/
+    Scheduler.getInstance().run();
 
-    this.teleopPeriodic(); // Run Robot Telelop Code
+    if(Robot.autoCommand.isCompleted()){
+      this.teleopPeriodic(); // Run Robot Telelop Code
+    }
 
   }
 
@@ -518,7 +527,7 @@ public class Robot extends TimedRobot {
       Robot.robotLiftF.set(false);
     }
 
-    Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+    //Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
     //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
 
     double contorlArm = -OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
@@ -527,13 +536,20 @@ public class Robot extends TimedRobot {
         // Allow if button is true, Wired for Cut Wire Saftey
         Robot.motorTilt.set(contorlArm);
       }
+      else {
+        Robot.motorTilt.set(0);
+      }
     }
     else if (contorlArm < 0){
       // Allow if button is true, Wired for Cut Wire Saftey
-      if(ballLowerLimit.get() == true){
+      /*if(ballLowerLimit.get() == true){*/
         Robot.motorTilt.set(contorlArm);
-      }
+      /*}*/
     }
+    else {
+      Robot.motorTilt.set(0);
+    }
+    //Robot.motorTilt.set(contorlArm);
 
 
     //////////////////////
