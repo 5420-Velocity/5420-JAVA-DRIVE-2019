@@ -80,6 +80,8 @@ public class Robot extends TimedRobot {
   public static int OPERATOR = 1;
   public static int CTRL_LOG_INTERVAL = 40*4;
 
+  public static boolean liftOnce = false;
+
   @Override
   public void robotInit() {
     // Init User Input Controls
@@ -210,6 +212,11 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void disabledInit(){
+
+  }
+
+  @Override
   public void disabledPeriodic(){
 
     Robot.limelightMain.setLed(Limelight.ledMode.kOff);
@@ -220,6 +227,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Enable Compressor Control
     compressor.setClosedLoopControl(true);
+
   }
 
   @Override
@@ -289,7 +297,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 1");
 
         // Drive
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000));
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 800));
 
       }
 
@@ -360,6 +368,8 @@ public class Robot extends TimedRobot {
       Robot.autoCommand.cancel();
     }
 
+    Robot.limelightMain.setLed(Limelight.ledMode.kOn);
+
   }
 
   @Override
@@ -427,13 +437,17 @@ public class Robot extends TimedRobot {
         // Ball Off
         ballIntake.set(0);
         ballIntake2.set(0);
-        Scheduler.getInstance().add( new MotorDrive(Robot.motorTilt, 0.5, 500) );     
+        if(liftOnce == false){
+          Scheduler.getInstance().add( new MotorDrive(Robot.motorTilt, 0.8, 2000, "contorlArm") );
+          liftOnce = true;
+        }
       }
     }
     else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
       // Ball Out
       ballIntake.set(0.8);
       ballIntake2.set(-0.8);
+      liftOnce = false;
     }
     else {
       // Ball Off
@@ -540,24 +554,23 @@ public class Robot extends TimedRobot {
 
     double contorlArm = -OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
     if(contorlArm > 0){
-      if(ballUpperLimit.get() == true){
+      if(ballUpperLimit.get() != true){
         // Allow if button is true, Wired for Cut Wire Saftey
-        Robot.motorTilt.set(contorlArm);
-      }
-      else {
-        Robot.motorTilt.set(0);
+        contorlArm = 0;
       }
     }
-    else if (contorlArm < 0){
-      // Allow if button is true, Wired for Cut Wire Saftey
-      /*if(ballLowerLimit.get() == true){*/
-        Robot.motorTilt.set(contorlArm);
-      /*}*/
-    }
-    else {
+    else if (contorlArm > 0){
       Robot.motorTilt.set(0);
     }
-    //Robot.motorTilt.set(contorlArm);
+
+    if(Locker.isLocked("contorlArm") == false){
+      Robot.motorTilt.set(contorlArm);
+    }
+    else {
+      if(contorlArm != 0){
+        console.log("User Control Ignored, Locked");
+      }
+    }
 
 
     //////////////////////
