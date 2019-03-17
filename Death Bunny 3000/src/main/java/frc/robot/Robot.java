@@ -147,8 +147,7 @@ public class Robot extends TimedRobot {
     // Save.getInstance().push("Test", false);
 
     limelightMain = new Limelight("limelight-one");
-
-    Robot.limelightMain.setLed(Limelight.ledMode.kOff);
+    limelightMain.setDistanceControl(OI.LimelightKD, OI.LimelightKA);
 
     // Setup Auto CTRL
     OI.Apply();
@@ -181,7 +180,7 @@ public class Robot extends TimedRobot {
     OI.ballUppwerLimit.setBoolean(ballUpperLimit.get());
     OI.ballLowerLimit.setBoolean(ballLowerLimit.get());
 
-    OI.LimelightDistance.setNumber(Robot.limelightMain.getDistance(OI.LimelightKD, OI.LimelightKA));
+    OI.LimelightDistance.setNumber(Robot.limelightMain.getDistance());
     OI.limelightV.setBoolean(Robot.limelightMain.hasTarget());
     OI.limelightA.setNumber(Robot.limelightMain.getA());
     OI.limelightS.setNumber(Robot.limelightMain.getS());
@@ -197,6 +196,14 @@ public class Robot extends TimedRobot {
       Robot.leftEncoder.reset();
       Robot.rightEncoder.reset();
       OI.resetEncoder.setBoolean(false);
+    }
+
+
+    if(OI.limelightLEDOn.getBoolean(false) == true){
+      Robot.limelightMain.setLed(Limelight.ledMode.kOff);
+    }
+    else {
+      Robot.limelightMain.setLed(Limelight.ledMode.kOn);
     }
 
     // Save.getInstance().sync();
@@ -328,7 +335,7 @@ public class Robot extends TimedRobot {
     }
 
     // Robot Auto Command Drive Controls
-    Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
+    //Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
 
     // Add to Stack
     Scheduler.getInstance().add(Robot.autoCommand);
@@ -421,7 +428,7 @@ public class Robot extends TimedRobot {
         ballIntake.set(0);
         ballIntake2.set(0);
         Scheduler.getInstance().add( new MotorDrive(Robot.motorTilt, 0.5, 500) );     
-       }
+      }
     }
     else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
       // Ball Out

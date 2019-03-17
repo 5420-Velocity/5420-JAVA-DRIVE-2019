@@ -5,9 +5,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import edu.wpi.first.wpilibj.PWMSpeedController;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.helpers.console;
 import frc.robot.helpers.console.logMode;
 

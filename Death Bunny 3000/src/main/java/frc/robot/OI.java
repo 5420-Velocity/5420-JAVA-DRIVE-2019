@@ -38,7 +38,7 @@ public class OI {
 
     // getDistance Param Values
     public static final double LimelightKD = 4;
-    public static final double LimelightKA = 30;
+    public static final double LimelightKA = 2.5409;
 
     public static Joystick driver;
     public static JoystickButton inputGrabberToggle;
@@ -85,6 +85,7 @@ public class OI {
     public static NetworkTableEntry driveShift;
     public static NetworkTableEntry ballUppwerLimit;
     public static NetworkTableEntry ballLowerLimit;
+    public static NetworkTableEntry limelightLEDOn;
 
     public static DropSelection<Integer> position;
     public static DropSelection<Integer> level;
@@ -128,6 +129,7 @@ public class OI {
         driveShift = table.getEntry("driveShift");
         ballUppwerLimit = table.getEntry("ballUpperLimit");
         ballLowerLimit = table.getEntry("ballLowerLimit");
+        limelightLEDOn = table.getEntry("limelightLEDOn");
 
         LimelightDistance.setDefaultNumber(0);
         cameraView.setDefaultNumber(0);
@@ -163,6 +165,8 @@ public class OI {
 
         boschSpeed.setDefaultNumber(0.0);
         boschEncoder.setDefaultNumber(0.0);
+
+        limelightLEDOn.setDefaultBoolean(false);
 
         limelightA.setDefaultNumber(0);
         limelightS.setDefaultNumber(0);
