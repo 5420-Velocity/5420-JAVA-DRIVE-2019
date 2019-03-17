@@ -420,7 +420,8 @@ public class Robot extends TimedRobot {
         // Ball Off
         ballIntake.set(0);
         ballIntake2.set(0);
-      }
+        Scheduler.getInstance().add( new MotorDrive(Robot.motorTilt, 0.5, 500) );     
+       }
     }
     else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
       // Ball Out
