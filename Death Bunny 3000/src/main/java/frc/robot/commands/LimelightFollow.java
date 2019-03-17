@@ -10,8 +10,9 @@ public class LimelightFollow extends Command {
     private int cruiseVel = 400;
     private int pipeline = 0;
     private double angleError;
+    private Limelight limelight;
 
-    public LimelightFollow(double timeout) {
+    public LimelightFollow(Limelight limelight, double timeout) {
         this(timeout, 0);
     }
 
@@ -22,14 +23,14 @@ public class LimelightFollow extends Command {
 
     protected void initialize() {
 
-        Limelight.getInstance().setLed(Limelight.ledMode.kOn);
-        Limelight.getInstance().setMode(Limelight.camMode.kVision);
-        Limelight.getInstance().setPipeline(this.pipeline);
+        limelight.setLed(Limelight.ledMode.kOn);
+        limelight.setMode(Limelight.camMode.kVision);
+        limelight.setPipeline(this.pipeline);
 
     }
 
     protected void execute() {
-        angleError = Limelight.getInstance().getX() - 8;
+        angleError = limelight.getX() - 8;
         double turn = angleError * turnSensitivty;
         Robot.m_drive.arcadeDrive(cruiseVel + turn, cruiseVel - turn);
     }

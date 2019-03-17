@@ -7,27 +7,28 @@ import frc.robot.helpers.Limelight;
 
 public class TurnToTarget extends InstantCommand {
 
-    private double angleError;
     private double angleDividend = 0.1;
     private int pipeline = 0;
     private DifferentialDrive m_drive;
     private double turnSpeed;
+    private Limelight limelight;
 
-    public TurnToTarget(DifferentialDrive drive, double turnSpeed) {
+    public TurnToTarget(DifferentialDrive drive, Limelight limelight, double turnSpeed) {
         this.m_drive = drive;
         this.turnSpeed = turnSpeed;
+        this.limelight = limelight;
     }
 
     protected void initialize() {
 
-        Limelight.getInstance().setLed(Limelight.ledMode.kOn);
-        Limelight.getInstance().setMode(Limelight.camMode.kVision);
-        Limelight.getInstance().setPipeline(this.pipeline);
+        limelight.setLed(Limelight.ledMode.kOn);
+        limelight.setMode(Limelight.camMode.kVision);
+        limelight.setPipeline(this.pipeline);
     }
 
     protected void execute() {
 
-        angleError = Limelight.getInstance().getX() - 8;
+        double angleError = limelight.getX() - 8;
         SmartDashboard.putNumber("ANGLE ERROR", angleError);
         double turn = angleError * angleDividend;
 
@@ -37,7 +38,7 @@ public class TurnToTarget extends InstantCommand {
 
     protected void end(){
 
-        Limelight.getInstance().setLed(Limelight.ledMode.kOff);
+        limelight.setLed(Limelight.ledMode.kOff);
 
     }
 

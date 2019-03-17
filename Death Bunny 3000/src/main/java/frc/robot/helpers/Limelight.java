@@ -9,6 +9,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * Interface to work with the Limelight, Use Limelight.getInstance() to
  *  get the default Limelight network table.
  * 
+ * This Class has LEDs setup for Version 2019.6.1
+ * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  * @link http://docs.limelightvision.io/en/latest/getting_started.html#networking-setup
  */
@@ -25,14 +27,19 @@ public class Limelight {
     private NetworkTableEntry pipeline;
     private NetworkTableEntry stream;
 
+    private double KnownDistance;
+    private double KnownArea;
+
     /**
      * Represents the LED Modes for the Limelight
      */
     public enum ledMode {
-        kAuto(0),
-        kOff(1),
-        kBlink(2),
-        kOn(3);
+        kAuto(1), // DEPRECATED
+        kBlink(1), // DEPRECATED
+        kOff(0),
+        kOn(1),
+        kLeft(2),
+        kRight(3);
 
         public final int value;
 
@@ -206,6 +213,17 @@ public class Limelight {
     public void setVideo(Limelight.videoMode vmode){
         this.stream.setNumber(vmode.value);
     }
+
+    /**
+     * Set the Distance Calculation Parts for the getDistance function
+     * 
+     * @param KnownDistance
+     * @param KnownArea
+     */
+    public void setDistanceControl(double KnownDistance, double KnownArea){
+        this.KnownDistance = KnownDistance;
+        this.KnownArea = KnownArea;
+    }
      
     /**
      * Return the Distance from the Target
@@ -218,12 +236,14 @@ public class Limelight {
      *  selected KnownDistance.
      * 
      * @link http://docs.limelightvision.io/en/latest/cs_estimating_distance.html#using-area-to-estimate-distance
-     * @param KnownDistance
-     * @param KnownArea
      * @return The Aprox Distnace away from the Target in View with only 2 decimal places
      */
-    public double getDistance(double KnownDistance, double KnownArea){
-        double k = KnownDistance * Math.sqrt(KnownArea);
+    public double getDistance(){
+        if(Math.abs(this.getA()) < 0.02){
+            return 0.0;
+        }
+
+        double k = this.KnownDistance * Math.sqrt(this.KnownArea);
         double v = k / Math.sqrt(this.getA());
         return (double) Math.round(v * 100) / 100;
     }

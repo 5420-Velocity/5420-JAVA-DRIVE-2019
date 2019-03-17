@@ -16,4 +16,31 @@ public class Limelight_LedCameraMode extends InstantCommand {
         Limelight.getInstance().setLed(mode);
     }
 
+    private Limelight limelight;
+    private Limelight.ledMode cMode;
+
+    /**
+     * Set the Pipeline, Run Commnad Once and Quit, Fast and Easy.
+     * 
+     * @param pipeline
+     */
+    public Limelight_LedCameraMode(Limelight limelight){
+        this(limelight, Limelight.ledMode.kOn);
+    }
+
+    /**
+     * Set the Pipeline, Run Commnad Once and Quit, Fast and Easy.
+     * 
+     * @param pipeline
+     */
+    public Limelight_LedCameraMode(Limelight limelight, Limelight.ledMode cMode){
+        this.limelight = limelight;
+        this.cMode = cMode;
+    }
+
+    @Override
+    public void initialize() {
+        limelight.setLed(cMode);
+    }
+
 }
