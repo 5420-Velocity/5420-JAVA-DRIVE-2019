@@ -470,8 +470,14 @@ public class Robot extends TimedRobot {
         hatchSol.set(Value.kReverse); // In
       }
       else {
-        // Defalt State Control, If the User is not Pushing the Button
-        hatchSol.set(Value.kForward); // Out
+        if(window.getTime() != -1 && window.getTime() < 10){
+          // Hatch Close in the Last Part of the Match Time.
+          hatchSol.set(Value.kReverse); // In
+        }
+        else {
+          // Defalt State Control, If the User is not Pushing the Button
+          hatchSol.set(Value.kForward); // Out
+        }
       }
     }
 
