@@ -22,8 +22,8 @@ public class Limelight {
     private NetworkTableEntry ta;
     private NetworkTableEntry ts;
     private NetworkTableEntry tv;
-    private NetworkTableEntry ledMode;
-    private NetworkTableEntry camMode;
+    private NetworkTableEntry ledModeNT;
+    private NetworkTableEntry camModeNT;
     private NetworkTableEntry pipeline;
     private NetworkTableEntry stream;
 
@@ -122,8 +122,8 @@ public class Limelight {
         this.ts = this.table.getEntry("ts");
         this.tv = this.table.getEntry("tv");
         this.stream = this.table.getEntry("stream");
-        this.ledMode = this.table.getEntry("ledMode");
-        this.camMode = this.table.getEntry("camMode");
+        this.ledModeNT = this.table.getEntry("ledMode");
+        this.camModeNT = this.table.getEntry("camMode");
         this.pipeline = this.table.getEntry("pipeline");
 
         if(Limelight.constantInstance == null){
@@ -175,16 +175,64 @@ public class Limelight {
      * @param ledMode
      */
     public void setLed(Limelight.ledMode mode){
-        this.ledMode.setNumber(mode.value);
+        this.ledModeNT.setNumber(mode.value);
     }
 
     /**
-     * Sets limelight’s operation mode
+     * Get the LED Mode to a Set ENUM Value.
+     * 
+     * Returns if the LED is on, This is General,
+     *   On or Off, Not On Left or On Right
+     * 
+     * @return ledMode
+     */
+    public Limelight.ledMode getLed(){
+        Number t = this.ledModeNT.getNumber(0);
+        if(t.intValue() == 1){
+            return Limelight.ledMode.kOn;
+        }
+        else if(t.intValue() == 2){
+            return Limelight.ledMode.kLeft;
+        }
+        else if(t.intValue() == 3){
+            return Limelight.ledMode.kRight;
+        }
+        else {
+            return Limelight.ledMode.kOff;
+        }
+    }
+
+    /**
+     * Get if the LED is on.
+     * 
+     * @return Is LED On
+     */
+    public boolean isLedOn(){
+        Number t = this.ledModeNT.getNumber(0);
+        if(t.intValue() == 1 || t.intValue() == 2 || t.intValue() == 3){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets limelight’s LED mode usinng ENUM
      * 
      * @param mode
      */
     public void setMode(Limelight.camMode mode){
-        this.camMode.setNumber(mode.value);
+        this.setMode(mode.value);
+    }
+
+    /**
+     * Sets limelight’s LED mode using an Int
+     * 
+     * @param modeCode
+     */
+    public void setMode(int modeCode){
+        this.camModeNT.setNumber(modeCode);
     }
 
     /**
