@@ -539,7 +539,7 @@ public class Robot extends TimedRobot {
     ///////////////////////////////////////
     ////  Front and Rear Lift Control  ////
     ///////////////////////////////////////
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_START)){
+    if(OI.liftBack.get()){
       Robot.robotLiftR.set(true);
       System.out.println("UP! UP! AND AWAY!");
     }
@@ -547,7 +547,7 @@ public class Robot extends TimedRobot {
       Robot.robotLiftR.set(false);
     }
 
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_BACK)){
+    if(OI.liftFront.get()){
       Robot.robotLiftF.set(true);
       System.out.println("UP! UP! AND AWAY! FRONT");
     }
