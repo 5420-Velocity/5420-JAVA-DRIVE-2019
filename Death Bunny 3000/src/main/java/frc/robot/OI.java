@@ -21,18 +21,21 @@ import frc.robot.helpers.DropSelection;
 public class OI {
 
     public enum Target {
+        NotDefined,
         None,
         Side,
         Face
     }
 
     public enum SideTarget {
+        NotDefined,
         Far,
         Mid,
         Close
     }
 
     public enum FaceTarget {
+        NotDefined,
         Left,
         Right
     }
@@ -197,27 +200,32 @@ public class OI {
         autoDelay.setDefaultNumber(0);
 
         // Define the Position Contorls
-        position.add("Left", true, 1);
+        position.add("None", true, 0);
+        position.add("Left", 1);
         position.add("Center", 2);
         position.add("Right", 3);
 
         // Define the Levels Contorls
-        level.add("Level 1 (Low)", true, 1);
+        level.add("None", true, 0);
+        level.add("Level 1 (Low)", 1);
         level.add("Level 2 (Med)", 2);
         level.add("Level 3 (High)", 3);
 
         // Add options to target the Hab eithrer by the Face or Side
+        target.add("None", true, OI.Target.NotDefined);
         target.add("No Auto", OI.Target.None);
         target.add("Face of Hab", OI.Target.Face);
-        target.add("Side of Hab", true, OI.Target.Side);
+        target.add("Side of Hab", OI.Target.Side);
 
         // targetSide Options
+        targetSide.add("None", true, OI.SideTarget.NotDefined);
         targetSide.add("Far", OI.SideTarget.Far);
         targetSide.add("Middle", OI.SideTarget.Mid);
-        targetSide.add("Close", true, OI.SideTarget.Close);
+        targetSide.add("Close", OI.SideTarget.Close);
 
         // targetFace Options
-        targetFace.add("Left", true, OI.FaceTarget.Left);
+        targetFace.add("None", true, OI.FaceTarget.NotDefined);
+        targetFace.add("Left", OI.FaceTarget.Left);
         targetFace.add("Right", OI.FaceTarget.Right);
 
         
