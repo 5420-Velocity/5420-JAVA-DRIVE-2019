@@ -56,8 +56,10 @@ public class OI {
     public static DPadButtonDebouce liftMidAlt;
     public static DPadButtonDebouce liftBottom;
 
-    public static DPadButtonDebouce driveSlowForward;
-    public static DPadButtonDebouce driveSlowReverse;
+    public static DPadButton driveSlowForward;
+    public static DPadButton driveSlowReverse;
+    public static DPadButton driveSlowLeft;
+    public static DPadButton driveSlowRight;
 
     public static JoystickButton hatchButton;
     public static JoystickButton hatchButtonOut;
@@ -165,8 +167,10 @@ public class OI {
         liftMid = new DPadButtonDebouce(operator, DPadButton.Direction.Right);
         liftMidAlt = new DPadButtonDebouce(operator, DPadButton.Direction.Left);
 
-        driveSlowForward = new DPadButtonDebouce(operator, DPadButton.Direction.Up);
-        driveSlowReverse = new DPadButtonDebouce(operator, DPadButton.Direction.Down);
+        driveSlowForward = new DPadButton(driver, DPadButton.Direction.Up);
+        driveSlowReverse = new DPadButton(driver, DPadButton.Direction.Down);
+        driveSlowLeft = new DPadButton(driver, DPadButton.Direction.Left);
+        driveSlowRight = new DPadButton(driver, DPadButton.Direction.Right);
 
         //// Configure Controls ////
 
@@ -183,6 +187,8 @@ public class OI {
         ballLowerLimit.setDefaultBoolean(false);
 
         driveShift.setDefaultString("LAST-STATE");
+
+        limelightLEDOn.setDefaultBoolean(false);
 
         console.log("OI Setup.");
     }

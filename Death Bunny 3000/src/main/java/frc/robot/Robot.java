@@ -200,14 +200,6 @@ public class Robot extends TimedRobot {
       OI.resetEncoder.setBoolean(false);
     }
 
-
-    if(OI.limelightLEDOn.getBoolean(false) == true){
-      Robot.limelightMain.setLed(Limelight.ledMode.kOff);
-    }
-    else {
-      Robot.limelightMain.setLed(Limelight.ledMode.kOn);
-    }
-
     // Save.getInstance().sync();
   }
 
@@ -219,7 +211,12 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic(){
 
-    Robot.limelightMain.setLed(Limelight.ledMode.kOff);
+    if(OI.limelightLEDOn.getBoolean(false) == false){
+      Robot.limelightMain.setLed(Limelight.ledMode.kOff);
+    }
+    else {
+      Robot.limelightMain.setLed(Limelight.ledMode.kOn);
+    }
 
   }
 
@@ -228,6 +225,23 @@ public class Robot extends TimedRobot {
     // Enable Compressor Control
     compressor.setClosedLoopControl(true);
 
+    System.out.println("Set LED Mode On");
+
+    Robot.limelightMain.setLed(Limelight.ledMode.kOn);
+
+    // Drive the Robot Forward for a Set Point of 10,000 Ticks using the Right Encoder
+    System.out.println("Testing Init Start");
+
+    // Drive the Robot using an Encoder to a set point.
+    Scheduler.getInstance().add(new AutoDriveEncoder(Robot.m_drive, Robot.leftEncoder, 0.5, 0, 10000));
+
+    // Using the Given Drive, Turn to the Object until the value is within a margin.
+    //Scheduler.getInstance().add(new Limelight_turn(Robot.m_drive, Robot.limelightMain));
+
+    // Drive and follow the object detected in the LL program.
+    //Scheduler.getInstance().add(new LimelightFollow(Robot.m_drive, Robot.limelightMain, 0));
+
+    System.out.println("Testing Init Finish");
   }
 
   @Override
@@ -239,8 +253,6 @@ public class Robot extends TimedRobot {
     else {
       hatchSol.set(DoubleSolenoid.Value.kReverse);
     }
-
-    Robot.motorTilt.set(OI.boschSpeed.getDouble(0.0));
 
   }
 
@@ -363,12 +375,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    // Turn Limelight Off
+    Robot.limelightMain.setLed(Limelight.ledMode.kOff);
+
     // Stop Auto Commands
+
     if(Robot.autoCommand != null){
       Robot.autoCommand.cancel();
     }
-
-    Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
   }
 
@@ -407,7 +421,7 @@ public class Robot extends TimedRobot {
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
       if(Robot.lowerLimit.get() == false){
-        Robot.motorLift.set(-0.35); // Down
+        Robot.motorLift.set(-0.5); // Down
         Robot.winchBreak.set(Value.kReverse); // Break Off
       }
       else {
@@ -438,7 +452,8 @@ public class Robot extends TimedRobot {
         ballIntake.set(0);
         ballIntake2.set(0);
         if(liftOnce == false){
-          Scheduler.getInstance().add( new MotorDrive(Robot.motorTilt, 0.8, 2000, "contorlArm") );
+          // Disabled since the button in the lift was too sensitive.
+          //Scheduler.getInstance().add( new MotorDrive(Robot.motorTilt, 0.8, 2000, "controlArm") );
           liftOnce = true;
         }
       }
@@ -505,19 +520,34 @@ public class Robot extends TimedRobot {
     if(OI.driveSlowForward.get()){
       // Button Mode Forward
       System.out.println("Slow Forward");
-      Robot.m_drive.arcadeDrive( 0.4, 0 );
+      DRIVE_Y = 0.6;
+      DRIVE_X = 0;
     }
     else if(OI.driveSlowReverse.get()){
       // Button Mode Reverse
       System.out.println("Slow Reverse");
-      Robot.m_drive.arcadeDrive( -0.4, 0 );
+      DRIVE_Y = -0.6;
+      DRIVE_X = 0;
+    }
+    else if(OI.driveSlowLeft.get()){
+      // Button Mode Reverse
+      System.out.println("Slow Left");
+      DRIVE_Y = 0;
+      DRIVE_X = 0.6;
+    }
+    else if(OI.driveSlowRight.get()){
+      // Button Mode Reverse
+      System.out.println("Slow Right");
+      DRIVE_Y = 0;
+      DRIVE_X = -0.6;
+      ;
     }
     else {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.95;
       DRIVE_X = DRIVE_X*0.95;
-      Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
     }
+    Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
 
     ////////////////////////
     //////// SIDE A ////////
@@ -558,22 +588,30 @@ public class Robot extends TimedRobot {
     //Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
     //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
 
-    double contorlArm = -OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
-    if(contorlArm > 0){
+    double controlArm = -OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
+    if(controlArm > 0){
       if(ballUpperLimit.get() != true){
         // Allow if button is true, Wired for Cut Wire Saftey
-        contorlArm = 0;
+        controlArm = 0;
+      }
+      else{
+        // Limit the Up to %50 max power
+        controlArm = controlArm*0.5;
       }
     }
-    else if (contorlArm > 0){
+    else if (controlArm > 0){
       Robot.motorTilt.set(0);
     }
+    else {
+      // Limit the Down to 85% max power
+      controlArm = controlArm*0.85;
+    }
 
-    if(Locker.isLocked("contorlArm") == false){
-      Robot.motorTilt.set(contorlArm);
+    if(Locker.isLocked("controlArm") == false){
+      Robot.motorTilt.set(controlArm);
     }
     else {
-      if(contorlArm != 0){
+      if(controlArm != 0){
         console.log("User Control Ignored, Locked");
       }
     }

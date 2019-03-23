@@ -18,7 +18,6 @@ import frc.robot.helpers.console.logMode;
  */
 public class AutoDriveEncoder extends Command {
     protected double power;
-    protected double turn;
     protected int distance;
     protected long endTime;
     protected boolean isFinished;
@@ -34,11 +33,10 @@ public class AutoDriveEncoder extends Command {
      * @param drive Drive Control
      * @param enc Encoder to Follow
      * @param power Power Control Value
-     * @param turn Turn Control for the Drive, Used as a correction value
      * @param ticks Total Distance to go on the Encoder
      */
-    public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, double turn, int ticks) {
-        this(drive, enc, power, turn, ticks, 4);
+    public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, int ticks) {
+        this(drive, enc, power, ticks, 4);
     }
 
     /**
@@ -48,16 +46,14 @@ public class AutoDriveEncoder extends Command {
      * @param drive Drive Control
      * @param enc Encoder to Follow
      * @param power Power Control Value
-     * @param turn Turn Control for the Drive, Used as a correction value
      * @param ticks Total Distance to go on the Encoder
      * @param time Total time to spend on the job, this is a saftey part to 
      *    protect the robot from driving without an encoder
      */
-    public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, double turn, int ticks, int time) {
+    public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, int ticks, int time) {
         this.drive = drive;
         this.enc = enc;
         this.power = power;
-        this.turn = turn;
         this.distance = Math.abs(ticks);
 
         // Setup the Stop Motor by Time when the encoder does not update.
@@ -81,20 +77,36 @@ public class AutoDriveEncoder extends Command {
         if( new Date().after(EStopTime) ) {
             // If the Encoder is not Past 10 ticks.
             if(this.enc.get() < 10){
-                console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Command Timed Out!!! Encoder did not move past 10 ticks.");
+                console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Command Timed Out! Encoder did not move past 10 ticks.");
                 this.isFinished = true;
                 return;
             }
         }
 
-		if( Math.abs(this.enc.get()) > this.distance ) {
+		/*if( Math.abs(this.enc.get()) > this.distance ) {
 			console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Completed Task");
 			this.isFinished = true;
         }
         else {
-            this.drive.arcadeDrive(power, turn);
+            this.drive.arcadeDrive(power, 0);
+        }*/
+
+        double t = this.distance - this.enc.get();
+    		
+        if(Math.abs(t) > this.distance) {
+            if(Math.signum(t) == -1) {
+                this.drive.arcadeDrive(power, 0);
+            }
+            else if(Math.signum(t) == 1) {
+                this.drive.arcadeDrive(power, 0);
+            }
         }
-        this.drive.feedWatchdog();
+        else {
+            console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Completed Task");
+            this.isFinished = true;
+        }
+
+        this.drive.feedWatchdog(); // Feed the Dog
     }
 
     // Make this return true when this Command no longer needs to run execute()

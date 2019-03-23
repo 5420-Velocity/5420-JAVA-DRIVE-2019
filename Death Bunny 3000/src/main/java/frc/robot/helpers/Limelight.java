@@ -1,5 +1,7 @@
 package frc.robot.helpers;
 
+import java.net.URL;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -27,6 +29,10 @@ public class Limelight {
     private NetworkTableEntry pipeline;
     private NetworkTableEntry stream;
 
+    private NetworkTableEntry Interface;
+    private NetworkTableEntry VideoStream;
+    private NetworkTableEntry PipelineName;
+
     private double KnownDistance;
     private double KnownArea;
 
@@ -34,12 +40,10 @@ public class Limelight {
      * Represents the LED Modes for the Limelight
      */
     public enum ledMode {
-        kAuto(1), // DEPRECATED
-        kBlink(1), // DEPRECATED
-        kOff(0),
-        kOn(1),
-        kLeft(2),
-        kRight(3);
+        kAuto(0),
+        kOff(1),
+        kBlink(2),
+        kOn(3);
 
         public final int value;
 
@@ -115,6 +119,8 @@ public class Limelight {
      * @param NetworkTable
      */
     public Limelight(String tableName){
+        NetworkTableInstance ds  = NetworkTableInstance.getDefault(); // Get the Driver Station Network Table Instance.
+
         this.table = NetworkTableInstance.getDefault().getTable(tableName);
         this.tx = this.table.getEntry("tx");
         this.ty = this.table.getEntry("ty");
@@ -126,10 +132,31 @@ public class Limelight {
         this.camModeNT = this.table.getEntry("camMode");
         this.pipeline = this.table.getEntry("pipeline");
 
+        this.Interface = ds.getEntry(tableName + "_Interface");
+        this.PipelineName = ds.getEntry(tableName + "_PipelineName");
+        this.VideoStream  = ds.getEntry(tableName + "_Stream");
+
         if(Limelight.constantInstance == null){
             // Save this Instance to the Static Part if it's not set.
             Limelight.constantInstance = this;
         }
+    }
+
+    /**
+     * Get the IP Address of the Limelight
+     * 
+     * @return IP Address
+     */
+    public String getIP(){
+        String host = "";
+        try {
+            URL url = new URL(this.Interface.getString(""));
+            host = url.getHost();
+        }
+        catch(Exception e){
+            
+        }
+        return host;
     }
 
     /**
@@ -189,16 +216,16 @@ public class Limelight {
     public Limelight.ledMode getLed(){
         Number t = this.ledModeNT.getNumber(0);
         if(t.intValue() == 1){
-            return Limelight.ledMode.kOn;
+            return Limelight.ledMode.kOff;
         }
         else if(t.intValue() == 2){
-            return Limelight.ledMode.kLeft;
+            return Limelight.ledMode.kBlink;
         }
         else if(t.intValue() == 3){
-            return Limelight.ledMode.kRight;
+            return Limelight.ledMode.kOn;
         }
         else {
-            return Limelight.ledMode.kOff;
+            return Limelight.ledMode.kAuto;
         }
     }
 
@@ -254,12 +281,48 @@ public class Limelight {
     }
 
     /**
+     * Get the limelight’s current pipeline 0-9
+     * 
+     * @return Pipeline Index
+     */
+    public int getPipeline(){
+        return this.pipeline.getNumber(0.0).intValue();
+    }
+
+    /**
+     * Get the Pipeline Name in selection.
+     * 
+     * @return Pipeline Name
+     */
+    public String getPipelineName(){
+        return this.PipelineName.getString("");
+    }
+
+    /**
      * Set the limelight’s Video Output Mode on port 5802
      * 
      * @param videoMode
      */
     public void setVideo(Limelight.videoMode vmode){
         this.stream.setNumber(vmode.value);
+    }
+
+    /**
+     * Get the Stream URL for the Limelight
+     * 
+     * @return Stream URL
+     */
+    public String getStreamUrl(){
+        return this.VideoStream.getString("");
+    }
+
+    /**
+     * Get the Interface URL for the Limelight
+     * 
+     * @return Interface URL
+     */
+    public String getInterfaceUrl(){
+        return this.Interface.getString("");
     }
 
     /**
