@@ -48,8 +48,6 @@ public class OI {
     public static ButtonDebouncer directionSwitch;
     public static ButtonDebouncer transButtonHigh;
     public static ButtonDebouncer transButtonLow;
-    public static ButtonToggle liftFront;
-    public static ButtonToggle liftBack;
 
     public static DPadButtonDebouce liftTop;
     public static DPadButtonDebouce liftMid;
@@ -153,9 +151,6 @@ public class OI {
         directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
         transButtonHigh = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 0.8); // High Range
         transButtonLow = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_X, 0.8);  // Low Range
-
-        liftBack = new ButtonToggle(driver, LogitechMap_X.BUTTON_START, 0.8);
-        liftFront = new ButtonToggle(driver, LogitechMap_X.BUTTON_BACK, 0.8);
 
         inputGrabberToggle = new JoystickButton(driver, LogitechMap_X.BUTTON_A);
         //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
