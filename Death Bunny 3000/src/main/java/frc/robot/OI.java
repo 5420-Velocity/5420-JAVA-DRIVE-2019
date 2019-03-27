@@ -92,6 +92,7 @@ public class OI {
     public static NetworkTableEntry ballUppwerLimit;
     public static NetworkTableEntry ballLowerLimit;
     public static NetworkTableEntry limelightLEDOn;
+    public static NetworkTableEntry debugLogEnabled;
 
     public static DropSelection<Integer> position;
     public static DropSelection<Integer> level;
@@ -136,6 +137,7 @@ public class OI {
         ballUppwerLimit = table.getEntry("ballUpperLimit");
         ballLowerLimit = table.getEntry("ballLowerLimit");
         limelightLEDOn = table.getEntry("limelightLEDOn");
+        debugLogEnabled = table.getEntry("debugLog");
 
         LimelightDistance.setDefaultNumber(0);
         cameraView.setDefaultNumber(0);
@@ -188,7 +190,9 @@ public class OI {
 
         limelightLEDOn.setDefaultBoolean(false);
 
-        console.log("OI Setup.");
+        debugLogEnabled.setDefaultBoolean(false);
+
+        System.out.println("OI Setup.");
     }
 
     /**

@@ -25,6 +25,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 import frc.robot.helpers.*;
 import frc.robot.helpers.RobotOrientation.Side;
+import frc.robot.helpers.console.logMode;
 import frc.robot.helpers.controllers.*;
 import frc.robot.commands.*;
 import frc.robot.user.commands.*;
@@ -151,6 +152,8 @@ public class Robot extends TimedRobot {
     limelightMain = new Limelight("limelight-one");
     limelightMain.setDistanceControl(OI.LimelightKD, OI.LimelightKA);
 
+    console.allowLog = logMode.kOff;
+
     // Setup Auto CTRL
     OI.Apply();
   }
@@ -200,6 +203,13 @@ public class Robot extends TimedRobot {
       OI.resetEncoder.setBoolean(false);
     }
 
+    if(OI.debugLogEnabled.getBoolean(false) == false){
+      console.allowLog = logMode.kOff;
+    }
+    else {
+      console.allowLog = logMode.kAll;
+    }
+
     // Save.getInstance().sync();
   }
 
@@ -225,12 +235,12 @@ public class Robot extends TimedRobot {
     // Enable Compressor Control
     compressor.setClosedLoopControl(true);
 
-    System.out.println("Set LED Mode On");
+    console.out(logMode.kDebug, "Set LED Mode On");
 
     Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
     // Drive the Robot Forward for a Set Point of 10,000 Ticks using the Right Encoder
-    System.out.println("Testing Init Start");
+    console.out(logMode.kDebug, "Testing Init Start");
 
     // Drive the Robot using an Encoder to a set point.
     Scheduler.getInstance().add(new AutoDriveEncoder(Robot.m_drive, Robot.leftEncoder, 0.5, 0, 10000));
@@ -241,11 +251,13 @@ public class Robot extends TimedRobot {
     // Drive and follow the object detected in the LL program.
     //Scheduler.getInstance().add(new LimelightFollow(Robot.m_drive, Robot.limelightMain, 0));
 
-    System.out.println("Testing Init Finish");
+    console.out(logMode.kDebug, "Testing Init Finish");
   }
 
   @Override
   public void testPeriodic() {
+
+    Scheduler.getInstance().run();
 
     if(SmartDashboard.getBoolean("Sol", false) == false){
       hatchSol.set(DoubleSolenoid.Value.kForward);
@@ -390,6 +402,15 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_A)){
+      // Add Code to run the robot.
+      //Scheduler.getInstance().add();
+
+    }
+    else {
+      // Add code to Cancel the Program
+    }
+
     /////////////////
     /// SIDE CTRL ///
     /////////////////
@@ -414,7 +435,7 @@ public class Robot extends TimedRobot {
         Robot.winchBreak.set(Value.kReverse); // Break Off
       }
       else {
-        System.out.println("Upper Limit");
+        console.out(logMode.kDebug, "Upper Limit");
         Robot.motorLift.set(0); // Off
         Robot.winchBreak.set(Value.kForward); // Break On  
       }
@@ -425,7 +446,7 @@ public class Robot extends TimedRobot {
         Robot.winchBreak.set(Value.kReverse); // Break Off
       }
       else {
-        System.out.println("Lower Limit");
+        console.out(logMode.kDebug, "Lower Limit");
         Robot.motorLift.set(0); // Off
         Robot.winchBreak.set(Value.kForward); // Break On  
       }
@@ -519,25 +540,25 @@ public class Robot extends TimedRobot {
 
     if(OI.driveSlowForward.get()){
       // Button Mode Forward
-      System.out.println("Slow Forward");
+      console.out(logMode.kDebug, "Slow Forward");
       DRIVE_Y = 0.6;
       DRIVE_X = 0;
     }
     else if(OI.driveSlowReverse.get()){
       // Button Mode Reverse
-      System.out.println("Slow Reverse");
+      console.out(logMode.kDebug, "Slow Reverse");
       DRIVE_Y = -0.6;
       DRIVE_X = 0;
     }
     else if(OI.driveSlowLeft.get()){
       // Button Mode Reverse
-      System.out.println("Slow Left");
+      console.out(logMode.kDebug, "Slow Left");
       DRIVE_Y = 0;
       DRIVE_X = 0.6;
     }
     else if(OI.driveSlowRight.get()){
       // Button Mode Reverse
-      System.out.println("Slow Right");
+      console.out(logMode.kDebug, "Slow Right");
       DRIVE_Y = 0;
       DRIVE_X = -0.6;
       ;
@@ -571,7 +592,7 @@ public class Robot extends TimedRobot {
     ///////////////////////////////////////
     if(OI.driver.getRawButton(LogitechMap_X.BUTTON_START)){
       Robot.robotLiftR.set(true);
-      System.out.println("UP! UP! AND AWAY!");
+      console.out(logMode.kDebug, "UP! UP! AND AWAY!");
     }
     else {
       Robot.robotLiftR.set(false);
@@ -579,7 +600,7 @@ public class Robot extends TimedRobot {
 
     if(OI.driver.getRawButton(LogitechMap_X.BUTTON_BACK)){
       Robot.robotLiftF.set(true);
-      System.out.println("UP! UP! AND AWAY! FRONT");
+      console.out(logMode.kDebug, "UP! UP! AND AWAY! FRONT");
     }
     else {
       Robot.robotLiftF.set(false);
@@ -621,13 +642,13 @@ public class Robot extends TimedRobot {
     //// Lift Control ////
     //////////////////////
     if(OI.liftTop.get()){
-      System.out.println("Top");
+      console.out(logMode.kDebug, "Top");
     }
     else if(OI.liftMid.get() || OI.liftMidAlt.get()){
-      System.out.println("Mid");
+      console.out(logMode.kDebug, "Mid");
     }
     else if(OI.liftBottom.get()){
-      System.out.println("Bottom");
+      console.out(logMode.kDebug, "Bottom");
     }
 
   }
