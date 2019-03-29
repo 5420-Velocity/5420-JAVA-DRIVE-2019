@@ -568,6 +568,18 @@ public class Robot extends TimedRobot {
       DRIVE_Y = DRIVE_Y*0.95;
       DRIVE_X = DRIVE_X*0.95;
     }
+
+
+    /**
+     * Auto Turn Control using Limelight
+     *
+     * p = 
+     *    0.5 = P * tX
+     * 0.5 is the target speed @ tX distance.
+     */
+    if(OI.autoTurnCtrl.get() == true){
+      DRIVE_X = 0.045 * Robot.limelightMain.getX();
+    }
     Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
 
     ////////////////////////

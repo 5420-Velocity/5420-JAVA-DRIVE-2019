@@ -263,12 +263,21 @@ public class Limelight {
     }
 
     /**
+     * Returns target value
+     * 
+     * @return Target Value
+     */
+    public double getV(){
+        return this.tv.getDouble(0);
+    }
+
+    /**
      * Returns if it has the target
      * 
      * @return Has Target
      */
     public boolean hasTarget(){
-        return this.tv.getDouble(0) == 1;
+        return this.tv.getDouble(0) >= 1;
     }
 
     /**

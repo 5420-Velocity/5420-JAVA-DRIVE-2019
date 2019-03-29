@@ -46,6 +46,7 @@ public class OI {
 
     public static Joystick driver;
     public static JoystickButton inputGrabberToggle;
+    public static JoystickButton autoTurnCtrl;
     public static Joystick operator;
     
     public static ButtonDebouncer directionSwitch;
@@ -161,6 +162,7 @@ public class OI {
         //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
         hatchButton = new JoystickButton(operator, LogitechMap_X.BUTTON_A);
         hatchButtonOut = new JoystickButton(operator, LogitechMap_X.BUTTON_Y);
+        autoTurnCtrl = new JoystickButton(driver, LogitechMap_X.BUTTON_B);
 
         liftTop = new DPadButtonDebouce(operator, DPadButton.Direction.Up);
         liftBottom = new DPadButtonDebouce(operator, DPadButton.Direction.Down);
