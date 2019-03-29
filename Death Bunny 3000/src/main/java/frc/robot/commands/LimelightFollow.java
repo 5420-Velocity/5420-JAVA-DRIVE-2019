@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Robot;
 import frc.robot.helpers.Limelight;
+import frc.robot.helpers.console;
 
 public class LimelightFollow extends Command {
 
@@ -40,7 +41,7 @@ public class LimelightFollow extends Command {
     }
 
     protected void initialize() {
-        System.out.println(this.getName() + ": Class has init the Execution.");
+        console.out(console.logMode.kDebug, this.getName() + ": Class has init the Execution.");
         limelight.setLed(Limelight.ledMode.kOn);
         limelight.setMode(Limelight.camMode.kVision);
         limelight.setPipeline(this.pipeline);
@@ -60,7 +61,7 @@ public class LimelightFollow extends Command {
     protected void end(){
         this.drive.stopMotor();
         limelight.setLed(Limelight.ledMode.kOff);
-        System.out.println(this.getName() + ": Class has finished Execution.");
+        console.out(console.logMode.kDebug, this.getName() + ": Class has finished Execution.");
     }
 
 }
