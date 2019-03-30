@@ -52,8 +52,7 @@ public class Robot extends TimedRobot {
   public static DoubleSolenoid transSol; // Put Solenoid to the Close State
   public static PigeonGyro pigeon;
 
-  public static Ultrasonic leftSide, rightSide;
-  public static MaxbotixUltrasonic frontDistance;
+  public static Ultrasonic frontSide;
   public static DigitalInput hatchSwitchAutoClose, ballLoaded, upperLimit, lowerLimit, ballUpperLimit, ballLowerLimit;
   public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
   public static Solenoid robotLiftF, robotLiftR;
@@ -111,11 +110,9 @@ public class Robot extends TimedRobot {
 
     Robot.pigeon = new PigeonGyro(left1);
 
-    leftSide = new Ultrasonic(18, 19);
-    rightSide = new Ultrasonic(20, 21);
+    frontSide = new Ultrasonic(18, 19);
     leftEncoder = new Encoder(4, 5);
     rightEncoder = new Encoder(6, 7);
-    frontDistance = new MaxbotixUltrasonic(2);
 
     hatchSol = new DoubleSolenoid(0, 1);
     winchBreak = new DoubleSolenoid(2, 3);
@@ -179,7 +176,7 @@ public class Robot extends TimedRobot {
     OI.ballSwitch.setBoolean(Robot.ballLoaded.get());
     OI.hatchSwitch.setBoolean(Robot.hatchSwitchAutoClose.get());
     OI.gyro.setNumber(Robot.pigeon.getAngle());
-    OI.distanceFront.setNumber(Robot.frontDistance.getRangeInches());
+    OI.distanceFront.setNumber(Robot.frontSide.getRangeInches());
     OI.limitLower.setBoolean(Robot.lowerLimit.get());
     OI.limitUpper.setBoolean(Robot.upperLimit.get());
     OI.ballUppwerLimit.setBoolean(ballUpperLimit.get());
@@ -388,7 +385,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // Turn Limelight Off
-    Robot.limelightMain.setLed(Limelight.ledMode.kOff);
+    Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
     // Stop Auto Commands
 
@@ -577,10 +574,14 @@ public class Robot extends TimedRobot {
      * 0.5 is the target speed @ tX distance.
      */
     if(OI.autoTurnCtrl.get() == true){
-      DRIVE_X = 0.045 * Robot.limelightMain.getX();
+      DRIVE_X = -0.2 * Robot.limelightMain.getX();
+      System.out.println(">> " + DRIVE_X);
+    }
+    else {
+      System.out.println(":: " + DRIVE_X);
     }
     Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
-    
+
 
     ////////////////////////
     //////// SIDE A ////////
@@ -665,4 +666,16 @@ public class Robot extends TimedRobot {
 
   }
   
+
+  /**
+   * Is Value between the given input.
+   * 
+   * @param Input
+   * @param trueZone
+   * @return
+   */
+  public boolean between(double Input, double trueZone){
+    return (Math.abs(Input) < trueZone);
+  }
+
 }
