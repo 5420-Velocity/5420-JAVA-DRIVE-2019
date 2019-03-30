@@ -39,6 +39,11 @@ public class Limelight {
 
     /**
      * Represents the LED Modes for the Limelight
+     * 
+     * kAuto
+     * kOff
+     * kBlink
+     * kOn
      */
     public enum ledMode {
         kAuto(0),
@@ -55,6 +60,9 @@ public class Limelight {
 
     /**
      * Represents the Camera Mode for the Limelight
+     * 
+     * kVision - Vision processor
+     * kCamera - Driver Camera (Increases exposure, disables vision processing)
      */
     public enum camMode {
         kVision(0),
@@ -70,6 +78,10 @@ public class Limelight {
     /**
      * Represents the Camera VIdo Output Mode for the Limelight
      * @since v2018.2
+     * 
+     * Standard
+     * PIPMain
+     * PIPSecondary
      */
     public enum videoMode {
         Standard(0),     // Side-by-side streams if a webcam is attached to Limelight
@@ -111,7 +123,6 @@ public class Limelight {
      */
     public Limelight(){
         this("limelight");
-        
     }
 
     /**
@@ -166,7 +177,7 @@ public class Limelight {
      *  Horizontal Offset From Crosshair To Target
      *  (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
      * 
-     * @return
+     * @return X Offset from tartget
      */
     public double getX(){
         return this.tx.getDouble(0.0);
