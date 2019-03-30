@@ -574,8 +574,18 @@ public class Robot extends TimedRobot {
      * 0.5 is the target speed @ tX distance.
      */
     if(OI.autoTurnCtrl.get() == true){
-      DRIVE_X = -0.2 * Robot.limelightMain.getX();
-      System.out.println(">> " + DRIVE_X);
+
+      DRIVE_X = -0.18 * Robot.limelightMain.getX();
+
+      // Covers the Sensor if its not connected.
+      double range = Robot.limelightMain.getDistance();
+      if(range > 200){
+        range = 1;
+      }
+      DRIVE_Y = 0.18 * range;
+
+      System.out.println(">> " + DRIVE_X + "  " + DRIVE_Y);
+
     }
     else {
       System.out.println(":: " + DRIVE_X);
