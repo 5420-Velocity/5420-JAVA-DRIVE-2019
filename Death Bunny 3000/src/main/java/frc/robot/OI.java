@@ -162,7 +162,7 @@ public class OI {
         //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
         hatchButton = new JoystickButton(operator, LogitechMap_X.BUTTON_A);
         hatchButtonOut = new JoystickButton(operator, LogitechMap_X.BUTTON_Y);
-        autoTurnCtrl = new JoystickButton(driver, LogitechMap_X.BUTTON_B);
+        autoTurnCtrl = new JoystickButton(driver, LogitechMap_X.BUTTON_A);
 
         liftTop = new DPadButtonDebouce(operator, DPadButton.Direction.Up);
         liftBottom = new DPadButtonDebouce(operator, DPadButton.Direction.Down);
