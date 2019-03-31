@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -471,7 +474,7 @@ public class Robot extends TimedRobot {
         ballIntake2.set(0);
         if(liftOnce == false){
           // Disabled since the button in the lift was too sensitive.
-          //Scheduler.getInstance().add( new MotorDrive(Robot.motorTilt, 0.8, 2000, "controlArm") );
+         //m Scheduler.getInstance().add( new MotorDriveLimit(Robot.motorTilt, 0.8, 2000, ballUpperLimit, "") );
           liftOnce = true;
         }
       }
@@ -564,6 +567,8 @@ public class Robot extends TimedRobot {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.95;
       DRIVE_X = DRIVE_X*0.95;
+      m_drive.feed();
+
     }
 
     /**
