@@ -12,10 +12,7 @@ import frc.robot.helpers.Limelight;
  */
 
 public class Limelight_turn extends Command {
-    final double STEER_K = 0.03;                    // how hard to turn toward the target
-    final double DRIVE_K = 0.26;                    // how hard to drive fwd toward the target
-    final double DESIRED_TARGET_AREA = 13.0;        // Area of the target when the robot reaches the wall
-    final double MAX_DRIVE = 0.7;                   // Simple speed limit so we don't drive too fast
+    final double STEER_K = 0.03; // how hard to turn toward the target
 
     private boolean isFinished = false;
     private DifferentialDrive driveSystem;
@@ -44,7 +41,8 @@ public class Limelight_turn extends Command {
          // Start with proportional steering
          double steer_cmd = this.limelight.getX() * STEER_K;
          turnSpeed = steer_cmd;
- 
+        
+        //only drive when there is a valid target
         if(this.limelight.hasTarget() == true) {
             this.driveSystem.arcadeDrive(0, turnSpeed);
         }

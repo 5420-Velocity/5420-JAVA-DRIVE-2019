@@ -397,5 +397,4 @@ public class Limelight {
         double v = k / Math.sqrt(this.getA());
         return (double) Math.round(v * 100) / 100;
     }
-
 }
