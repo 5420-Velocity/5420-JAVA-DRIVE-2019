@@ -93,6 +93,7 @@ public class OI {
     public static NetworkTableEntry ballUppwerLimit;
     public static NetworkTableEntry ballLowerLimit;
     public static NetworkTableEntry limelightLEDOn;
+    public static NetworkTableEntry LLCtrl;
     public static NetworkTableEntry debugLogEnabled;
 
     public static DropSelection<Integer> position;
@@ -138,6 +139,7 @@ public class OI {
         ballUppwerLimit = table.getEntry("ballUpperLimit");
         ballLowerLimit = table.getEntry("ballLowerLimit");
         limelightLEDOn = table.getEntry("limelightLEDOn");
+        LLCtrl = table.getEntry("LLCtrl");
         debugLogEnabled = table.getEntry("debugLog");
 
         LimelightDistance.setDefaultNumber(0);
@@ -147,6 +149,7 @@ public class OI {
         distanceFront.setDefaultNumber(0);
         limitUpper.setDefaultBoolean(false);
         limitLower.setDefaultBoolean(false);
+        LLCtrl.setDefaultBoolean(false);
 
         driver = new Joystick(Robot.DRIVER);
         operator = new Joystick(Robot.OPERATOR);

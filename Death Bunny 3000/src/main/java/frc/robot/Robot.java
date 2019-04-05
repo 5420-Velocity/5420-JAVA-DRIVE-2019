@@ -421,7 +421,7 @@ public class Robot extends TimedRobot {
     /////////////////
     if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB) && OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
       // Go Up bypass the Upper Limit
-      System.out.print("BYPASS UPPER LIMIT, UP");
+      console.out(logMode.kDebug, "BYPASS UPPER LIMIT, UP");
       Robot.motorLift.set(0.4); // Up
       Robot.winchBreak.set(Value.kReverse); // Break Off
     }
@@ -562,8 +562,8 @@ public class Robot extends TimedRobot {
     }
     else {
       // Joystick Mode
-      DRIVE_Y = DRIVE_Y*0.95;
-      DRIVE_X = DRIVE_X*0.95;
+      DRIVE_Y = DRIVE_Y*0.90;
+      DRIVE_X = DRIVE_X*0.90;
     }
 
     /**
@@ -584,11 +584,12 @@ public class Robot extends TimedRobot {
       }
       DRIVE_Y = 0.18 * range;
 
-      System.out.println(">> " + DRIVE_X + "  " + DRIVE_Y);
-
+      console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
+      OI.LLCtrl.setBoolean(true);
     }
     else {
-      System.out.println(":: " + DRIVE_X);
+      console.out(logMode.kDebug, ":: " + DRIVE_X);
+      OI.LLCtrl.setBoolean(false);
     }
     Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
 
