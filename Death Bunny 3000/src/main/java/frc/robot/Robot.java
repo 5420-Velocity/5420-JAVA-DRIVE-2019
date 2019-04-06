@@ -290,7 +290,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 1");
 
         // Drive
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 2000) );
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 2000) );
 
       }
 
@@ -299,7 +299,7 @@ public class Robot extends TimedRobot {
         console.log("LEVEL 2");
 
         //drive
-        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 3000));
+        Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 3000));
 
       }
 
@@ -538,32 +538,32 @@ public class Robot extends TimedRobot {
     if(OI.driveSlowForward.get()){
       // Button Mode Forward
       console.out(logMode.kDebug, "Slow Forward");
-      DRIVE_Y = 0.6;
+      DRIVE_Y = 0.3;
       DRIVE_X = 0;
     }
     else if(OI.driveSlowReverse.get()){
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Reverse");
-      DRIVE_Y = -0.6;
+      DRIVE_Y = -0.3;
       DRIVE_X = 0;
     }
     else if(OI.driveSlowLeft.get()){
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Left");
       DRIVE_Y = 0;
-      DRIVE_X = 0.6;
+      DRIVE_X = 0.3;
     }
     else if(OI.driveSlowRight.get()){
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Right");
       DRIVE_Y = 0;
-      DRIVE_X = -0.6;
+      DRIVE_X = -0.3;
       ;
     }
     else {
       // Joystick Mode
-      DRIVE_Y = DRIVE_Y*0.90;
-      DRIVE_X = DRIVE_X*0.90;
+      DRIVE_Y = DRIVE_Y*0.75;
+      DRIVE_X = DRIVE_X*0.95;
     }
 
     /**
@@ -575,7 +575,7 @@ public class Robot extends TimedRobot {
      */
     if(OI.autoTurnCtrl.get() == true){
 
-      DRIVE_X = -0.18 * Robot.limelightMain.getX();
+      DRIVE_X = -0.048 * Robot.limelightMain.getX();
 
       // Covers the Sensor if its not connected.
       double range = Robot.limelightMain.getDistance();
@@ -641,7 +641,7 @@ public class Robot extends TimedRobot {
       }
       else{
         // Limit the Up to %50 max power
-        controlArm = controlArm*0.5;
+        controlArm = controlArm*0.85;
       }
     }
     else if (controlArm > 0){
