@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -128,7 +131,7 @@ public class Robot extends TimedRobot {
     ballLowerLimit = new DigitalInput(11);
     liftEncoder = new AnalogPotentiometer(0, 360, 30);
 
-    
+
     motorLift = new VictorSP(1);
     motorTilt = new VictorSP(4);
     ballIntake2 = new VictorSP(3);
@@ -267,7 +270,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    
+
     Robot.gameData = window.getData();
     Robot.autoCommand = new CommandGroup();
 
@@ -368,7 +371,7 @@ public class Robot extends TimedRobot {
 
     // Add to Stack
     Scheduler.getInstance().add(Robot.autoCommand);
-    
+
   }
 
   @Override
@@ -415,7 +418,7 @@ public class Robot extends TimedRobot {
     if(OI.directionSwitch.get()){
       RobotOrientation.getInstance().flipSide();
     }
-    
+
     /////////////////
     ///   LIFT    ///
     /////////////////
@@ -434,7 +437,7 @@ public class Robot extends TimedRobot {
       else {
         console.out(logMode.kDebug, "Upper Limit");
         Robot.motorLift.set(0); // Off
-        Robot.winchBreak.set(Value.kForward); // Break On  
+        Robot.winchBreak.set(Value.kForward); // Break On
       }
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
@@ -445,14 +448,14 @@ public class Robot extends TimedRobot {
       else {
         console.out(logMode.kDebug, "Lower Limit");
         Robot.motorLift.set(0); // Off
-        Robot.winchBreak.set(Value.kForward); // Break On  
+        Robot.winchBreak.set(Value.kForward); // Break On
       }
     }
     else {
       Robot.motorLift.set(0); // Off
       Robot.winchBreak.set(Value.kForward); // Break On
     }
-    
+
     //////////////////
     //  BALL CTRL   //
     //////////////////
@@ -471,7 +474,7 @@ public class Robot extends TimedRobot {
         ballIntake2.set(0);
         if(liftOnce == false){
           // Disabled since the button in the lift was too sensitive.
-          //Scheduler.getInstance().add( new MotorDrive(Robot.motorTilt, 0.8, 2000, "controlArm") );
+         //m Scheduler.getInstance().add( new MotorDriveLimit(Robot.motorTilt, 0.8, 2000, ballUpperLimit, "") );
           liftOnce = true;
         }
       }
@@ -526,8 +529,8 @@ public class Robot extends TimedRobot {
       transSol.set(Value.kReverse); // LowGear
       OI.driveShift.setString("LOW");
     }
-    
-    
+
+
     //////////////////
     //  DRIVE CTRL  //
     //////////////////
@@ -569,7 +572,7 @@ public class Robot extends TimedRobot {
     /**
      * Auto Turn Control using Limelight
      *
-     * p = 
+     * p =
      *    0.5 = P * tX
      * 0.5 is the target speed @ tX distance.
      */
@@ -610,7 +613,7 @@ public class Robot extends TimedRobot {
       OI.cameraView.setNumber(0);
       OI.cameraViewText.setString("BALL");
     }
-   
+
     ///////////////////////////////////////
     ////  Front and Rear Lift Control  ////
     ///////////////////////////////////////
@@ -676,11 +679,11 @@ public class Robot extends TimedRobot {
     }
 
   }
-  
+
 
   /**
    * Is Value between the given input.
-   * 
+   *
    * @param Input
    * @param trueZone
    * @return

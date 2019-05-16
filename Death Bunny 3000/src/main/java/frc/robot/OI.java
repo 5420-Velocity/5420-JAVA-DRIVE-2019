@@ -231,7 +231,7 @@ public class OI {
         targetSide.add("Far", OI.SideTarget.Far);
         targetSide.add("Middle", OI.SideTarget.Mid);
         targetSide.add("Close", OI.SideTarget.Close);
-
+ 
         // targetFace Options
         targetFace.add("None", true, OI.FaceTarget.NotDefined);
         targetFace.add("Left", OI.FaceTarget.Left);
