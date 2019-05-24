@@ -23,6 +23,7 @@ public class AutoDriveEncoder extends Command {
     protected boolean isFinished;
     protected Encoder enc;
     protected Date EStopTime;
+    protected int time;
 
     public DifferentialDrive drive;
 
@@ -55,19 +56,20 @@ public class AutoDriveEncoder extends Command {
         this.enc = enc;
         this.power = power;
         this.distance = Math.abs(ticks);
-
-        // Setup the Stop Motor by Time when the encoder does not update.
-        Calendar calculateDate = GregorianCalendar.getInstance();
-		calculateDate.add(GregorianCalendar.MILLISECOND, (int) time); // Time to Check the Encoder Distance is not Zero
-        EStopTime = calculateDate.getTime();
+        this.time = time;
     }
-
+    
     // Called just before this Command runs the first time
     protected void initialize() {
         console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Running Encoder Distance " + this.distance);
-
+        
         this.drive.stopMotor(); // Stop Motors, Stops any Rouge Commands Before Execution
         this.enc.reset();
+
+        // Setup the Stop Motor by Time when the encoder does not update.
+        Calendar calculateDate = GregorianCalendar.getInstance();
+        calculateDate.add(GregorianCalendar.MILLISECOND, (int) this.time); // Time to Check the Encoder Distance is not Zero
+        EStopTime = calculateDate.getTime();
     }
 
     // Called repeatedly when this Command is scheduled to run

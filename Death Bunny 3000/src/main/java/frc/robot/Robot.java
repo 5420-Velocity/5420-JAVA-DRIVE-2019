@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.*;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.helpers.*;
 import frc.robot.helpers.RobotOrientation.Side;
@@ -49,8 +51,8 @@ public class Robot extends TimedRobot {
    */
 
   public static DifferentialDrive m_drive;
-  public static WPI_TalonSRX left1, left2, left3; // Left Side Motors
-  public static WPI_TalonSRX right1, right2, right3; // Right Side Motors
+  public static CANSparkMax left1, left2, left3; // Left Side Motors
+  public static CANSparkMax right1, right2, right3; // Right Side Motors
   public static WPI_TalonSRX test;
   public static DoubleSolenoid transSol; // Put Solenoid to the Close State
   public static PigeonGyro pigeon;
@@ -97,21 +99,19 @@ public class Robot extends TimedRobot {
     // Save.getInstance().writeComment("Robot Log Started.");
 
     // LEFT SIDE Control
-    Robot.left1 = new WPI_TalonSRX(52);
-
-    Robot.left2 = new WPI_TalonSRX(54);
+    Robot.left1 = new CANSparkMax(80, MotorType.kBrushless);
+    Robot.left2 = new CANSparkMax(81, MotorType.kBrushless);
     Robot.left2.follow(Robot.left1);
 
     // Right SIDE Control
-    Robot.right1 = new WPI_TalonSRX(56);
-
-    Robot.right2 = new WPI_TalonSRX(57);
+    Robot.right1 = new CANSparkMax(82, MotorType.kBrushless);
+    Robot.right2 = new CANSparkMax(83, MotorType.kBrushless);
     Robot.right2.follow(Robot.right1);
 
     // Build a full Differental Drive
     Robot.m_drive = new DifferentialDrive(Robot.left1, Robot.right1);
 
-    Robot.pigeon = new PigeonGyro(left1);
+    Robot.pigeon = new PigeonGyro(99);
 
     frontSide = new Ultrasonic(18, 19);
     leftEncoder = new Encoder(4, 5);
@@ -130,8 +130,7 @@ public class Robot extends TimedRobot {
     ballUpperLimit = new DigitalInput(10);
     ballLowerLimit = new DigitalInput(11);
     liftEncoder = new AnalogPotentiometer(0, 360, 30);
-
-
+        
     motorLift = new VictorSP(1);
     motorTilt = new VictorSP(4);
     ballIntake2 = new VictorSP(3);
