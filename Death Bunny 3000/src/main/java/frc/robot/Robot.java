@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
   public static CANSparkMax left1, left2, left3; // Left Side Motors
   public static CANSparkMax right1, right2, right3; // Right Side Motors
   public static WPI_TalonSRX test;
-  public static DoubleSolenoid transSol; // Put Solenoid to the Close State
+  public static Solenoid transSol; // Put Solenoid to the Close State
   public static PigeonGyro pigeon;
 
   public static Ultrasonic frontSide;
@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
   public static VictorSP motorLift, motorTilt, ballIntake2, motorLock, ballIntake;
 
-  public static DoubleSolenoid winchBreak;
+  public static Solenoid winchBreak;
 
   public static Compressor compressor;
   public static CommandGroup autoCommand;
@@ -99,27 +99,33 @@ public class Robot extends TimedRobot {
     // Save.getInstance().writeComment("Robot Log Started.");
 
     // LEFT SIDE Control
-    Robot.left1 = new CANSparkMax(80, MotorType.kBrushless);
-    Robot.left2 = new CANSparkMax(81, MotorType.kBrushless);
+    Robot.left1 = new CANSparkMax(20, MotorType.kBrushless);
+    Robot.left1.restoreFactoryDefaults();
+    Robot.left2 = new CANSparkMax(21, MotorType.kBrushless);
+    Robot.left2.restoreFactoryDefaults();
     Robot.left2.follow(Robot.left1);
 
     // Right SIDE Control
-    Robot.right1 = new CANSparkMax(82, MotorType.kBrushless);
-    Robot.right2 = new CANSparkMax(83, MotorType.kBrushless);
+    Robot.right1 = new CANSparkMax(22, MotorType.kBrushless);
+    Robot.right1.restoreFactoryDefaults();
+    Robot.right2 = new CANSparkMax(23, MotorType.kBrushless);
+    Robot.right2.restoreFactoryDefaults();
     Robot.right2.follow(Robot.right1);
 
     // Build a full Differental Drive
     Robot.m_drive = new DifferentialDrive(Robot.left1, Robot.right1);
+    Robot.m_drive.setSafetyEnabled(false);
+    
 
-    Robot.pigeon = new PigeonGyro(99);
+    Robot.pigeon = new PigeonGyro(24);
 
     frontSide = new Ultrasonic(18, 19);
     leftEncoder = new Encoder(4, 5);
     rightEncoder = new Encoder(6, 7);
 
     hatchSol = new DoubleSolenoid(0, 1);
-    winchBreak = new DoubleSolenoid(2, 3);
-    transSol = new DoubleSolenoid(4, 5);
+    winchBreak = new Solenoid(4);
+    transSol = new Solenoid(5);
     robotLiftF = new Solenoid(6);
     robotLiftR = new Solenoid(7);
 
@@ -214,7 +220,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit(){
-
+    Robot.m_drive.arcadeDrive(0, 0);
   }
 
   @Override
@@ -425,34 +431,34 @@ public class Robot extends TimedRobot {
       // Go Up bypass the Upper Limit
       console.out(logMode.kDebug, "BYPASS UPPER LIMIT, UP");
       Robot.motorLift.set(0.4); // Up
-      Robot.winchBreak.set(Value.kReverse); // Break Off
+      Robot.winchBreak.set(true); // Break Off
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
       if(!Robot.upperLimit.get() == false){
         // Upperlimit is setup to give a signal as true as open.
         Robot.motorLift.set(0.9); // Up
-        Robot.winchBreak.set(Value.kReverse); // Break Off
+        Robot.winchBreak.set(true); // Break Off
       }
       else {
         console.out(logMode.kDebug, "Upper Limit");
         Robot.motorLift.set(0); // Off
-        Robot.winchBreak.set(Value.kForward); // Break On
+        Robot.winchBreak.set(false); // Break On
       }
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
       if(Robot.lowerLimit.get() == false){
         Robot.motorLift.set(-0.5); // Down
-        Robot.winchBreak.set(Value.kReverse); // Break Off
+        Robot.winchBreak.set(true); // Break Off
       }
       else {
         console.out(logMode.kDebug, "Lower Limit");
         Robot.motorLift.set(0); // Off
-        Robot.winchBreak.set(Value.kForward); // Break On
+        Robot.winchBreak.set(false); // Break On
       }
     }
     else {
       Robot.motorLift.set(0); // Off
-      Robot.winchBreak.set(Value.kForward); // Break On
+      Robot.winchBreak.set(false); // Break On
     }
 
     //////////////////
@@ -521,11 +527,11 @@ public class Robot extends TimedRobot {
     //  SHIFT CTRL  //
     //////////////////
     if(OI.transButtonHigh.get()){
-      transSol.set(Value.kForward); // High Gear
+      transSol.set(false); // High Gear
       OI.driveShift.setString("HIGH");
     }
     else if(OI.transButtonLow.get()){
-      transSol.set(Value.kReverse); // LowGear
+      transSol.set(true); // LowGear
       OI.driveShift.setString("LOW");
     }
 
@@ -564,7 +570,7 @@ public class Robot extends TimedRobot {
     }
     else {
       // Joystick Mode
-      DRIVE_Y = DRIVE_Y*0.75;
+      //DRIVE_Y = DRIVE_Y*0.75;
       DRIVE_X = DRIVE_X*0.95;
     }
 
