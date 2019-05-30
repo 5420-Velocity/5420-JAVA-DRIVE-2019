@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
 
   public static Ultrasonic frontSide;
   public static DigitalInput hatchSwitchAutoClose, ballLoaded, upperLimit, lowerLimit, ballUpperLimit, ballLowerLimit;
-  public static DoubleSolenoid hatchSol; // Put Solenoid to the Open State
+  public static DoubleSolenoid hatchSol, hatchSolPusher; // Put Solenoid to the Open State
   public static Solenoid robotLiftF, robotLiftR;
   public static Encoder leftEncoder, rightEncoder;
   public static AnalogPotentiometer liftEncoder;
@@ -124,6 +124,7 @@ public class Robot extends TimedRobot {
     rightEncoder = new Encoder(6, 7);
 
     hatchSol = new DoubleSolenoid(0, 1);
+    hatchSolPusher = new DoubleSolenoid(2, 3);
     winchBreak = new Solenoid(4);
     transSol = new Solenoid(5);
     robotLiftF = new Solenoid(6);
@@ -504,8 +505,10 @@ public class Robot extends TimedRobot {
     }
     else if(OI.hatchButtonOut.get()){
       hatchSol.set(Value.kForward); // Out
+      hatchSolPusher.set(Value.kForward); // Push Out
     }
     else {
+      hatchSolPusher.set(Value.kReverse); // Push In
       if(Robot.hatchSwitchAutoClose.get()){
         // Defalt State Control, If the User is not Pushing the Button
         hatchSol.set(Value.kReverse); // In
@@ -570,7 +573,7 @@ public class Robot extends TimedRobot {
     }
     else {
       // Joystick Mode
-      //DRIVE_Y = DRIVE_Y*0.75;
+      DRIVE_Y = DRIVE_Y*0.80;
       DRIVE_X = DRIVE_X*0.95;
     }
 
