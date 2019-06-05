@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.helpers.*;
@@ -101,15 +102,19 @@ public class Robot extends TimedRobot {
     // LEFT SIDE Control
     Robot.left1 = new CANSparkMax(20, MotorType.kBrushless);
     Robot.left1.restoreFactoryDefaults();
+    Robot.left1.setIdleMode(IdleMode.kBrake);
     Robot.left2 = new CANSparkMax(21, MotorType.kBrushless);
+    Robot.left2.setIdleMode(IdleMode.kBrake);
     Robot.left2.restoreFactoryDefaults();
     Robot.left2.follow(Robot.left1);
 
     // Right SIDE Control
     Robot.right1 = new CANSparkMax(22, MotorType.kBrushless);
     Robot.right1.restoreFactoryDefaults();
+    Robot.right1.setIdleMode(IdleMode.kBrake);
     Robot.right2 = new CANSparkMax(23, MotorType.kBrushless);
     Robot.right2.restoreFactoryDefaults();
+    Robot.right2.setIdleMode(IdleMode.kBrake);
     Robot.right2.follow(Robot.right1);
 
     // Build a full Differental Drive
@@ -415,6 +420,7 @@ public class Robot extends TimedRobot {
     }
     else {
       // Add code to Cancel the Program
+
     }
 
     /////////////////
@@ -574,7 +580,7 @@ public class Robot extends TimedRobot {
     else {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.80;
-      DRIVE_X = DRIVE_X*0.95;
+      DRIVE_X = DRIVE_X*0.80;
     }
 
     /**
