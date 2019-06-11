@@ -30,6 +30,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.helpers.*;
+import frc.robot.helpers.Edge.EdgeMode;
 import frc.robot.helpers.RobotOrientation.Side;
 import frc.robot.helpers.console.logMode;
 import frc.robot.helpers.controllers.*;
@@ -64,6 +65,8 @@ public class Robot extends TimedRobot {
   public static Solenoid robotLiftF, robotLiftR;
   public static Encoder leftEncoder, rightEncoder;
   public static AnalogPotentiometer liftEncoder;
+
+  public static Edge ballLoadedEdge;
 
   public static VictorSP motorLift, motorTilt, ballIntake2, motorLock, ballIntake;
 
@@ -111,7 +114,7 @@ public class Robot extends TimedRobot {
     // Right SIDE Control
     Robot.right1 = new CANSparkMax(22, MotorType.kBrushless);
     Robot.right1.restoreFactoryDefaults();
-    Robot.right1.setIdleMode(IdleMode.kBrake);
+    Robot.left2.setIdleMode(IdleMode.kBrake);
     Robot.right2 = new CANSparkMax(23, MotorType.kBrushless);
     Robot.right2.restoreFactoryDefaults();
     Robot.right2.setIdleMode(IdleMode.kBrake);
@@ -139,6 +142,7 @@ public class Robot extends TimedRobot {
     lowerLimit = new DigitalInput(1);
     hatchSwitchAutoClose = new DigitalInput(8);
     ballLoaded = new DigitalInput(9);
+    ballLoadedEdge = new Edge(ballLoaded, EdgeMode.kRisiing);
     ballUpperLimit = new DigitalInput(10);
     ballLowerLimit = new DigitalInput(11);
     liftEncoder = new AnalogPotentiometer(0, 360, 30);
@@ -155,7 +159,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.setDefaultNumber("AutoDelay", 0);
     SmartDashboard.setDefaultBoolean("Sol", false);
 
-    m_drive.setExpiration(0.2); // Default is 0.1
+    m_drive.setExpiration(0.25); // Default is 0.1
     //m_drive.setSafetyEnabled(true); // Disable Watchdog auto stop
 
     // Save.getInstance().push("Test", false);
@@ -179,6 +183,8 @@ public class Robot extends TimedRobot {
     if(logInterval % CTRL_LOG_INTERVAL == 0){
       Logger.pushCtrlValues("Driver", OI.driver);
       Logger.pushCtrlValues("Operator", OI.operator);
+      System.out.println("TMP-L: " + Robot.left1.getMotorTemperature());
+      System.out.println("TMP-R: " + Robot.right1.getMotorTemperature());
 
       Robot.logInterval = 0;
     }
@@ -471,11 +477,19 @@ public class Robot extends TimedRobot {
     //////////////////
     //  BALL CTRL   //
     //////////////////
+    if(ballLoadedEdge.get() == true){
+      console.log("...Added  MotorDrive Command...");
+      Scheduler.getInstance().add(new MotorDrive(motorTilt, -0.5, 1500, "motorTilt"));
+    }
+    else if(Robot.ballLoaded.get() == false && ballLowerLimit.get() == false){
+      // Auto run the Ball Intake when @ the lower limit and when the ball is not loaded.
+      ballIntake.set(-0.5);
+      ballIntake2.set(0.5);
+    }
     // Ball Intake Control using Buttons
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
+    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
       // Ball In
       if(Robot.ballLoaded.get() == false){
-
         ballIntake.set(-0.5);
         ballIntake2.set(0.5);
       }
@@ -555,13 +569,13 @@ public class Robot extends TimedRobot {
     if(OI.driveSlowForward.get()){
       // Button Mode Forward
       console.out(logMode.kDebug, "Slow Forward");
-      DRIVE_Y = 0.3;
+      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideB);
       DRIVE_X = 0;
     }
     else if(OI.driveSlowReverse.get()){
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Reverse");
-      DRIVE_Y = -0.3;
+      DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideB);
       DRIVE_X = 0;
     }
     else if(OI.driveSlowLeft.get()){
