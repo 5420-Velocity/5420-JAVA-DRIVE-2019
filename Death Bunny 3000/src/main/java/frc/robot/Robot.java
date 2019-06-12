@@ -477,9 +477,9 @@ public class Robot extends TimedRobot {
     //////////////////
     //  BALL CTRL   //
     //////////////////
-    if(ballLoadedEdge.get() == true){
+    if(ballLoadedEdge.get() == true && ballLowerLimit.get() == false){
       console.log("...Added  MotorDrive Command...");
-      Scheduler.getInstance().add(new MotorDrive(motorTilt, -0.5, 1500, "motorTilt"));
+      Scheduler.getInstance().add(new MotorDrive(motorTilt, 0.6, 1500, "motorTilt"));
     }
     else if(Robot.ballLoaded.get() == false && ballLowerLimit.get() == false){
       // Auto run the Ball Intake when @ the lower limit and when the ball is not loaded.
@@ -676,14 +676,17 @@ public class Robot extends TimedRobot {
       }
     }
     else if (controlArm > 0){
-      Robot.motorTilt.set(0);
+      // Run Off code IF the Locker is not in use.
+      if(Locker.isLocked("motorTilt") == false){
+        Robot.motorTilt.set(0);
+      }
     }
     else {
       // Limit the Down to 85% max power
       controlArm = controlArm*0.85;
     }
 
-    if(Locker.isLocked("controlArm") == false){
+    if(Locker.isLocked("motorTilt") == false){
       Robot.motorTilt.set(controlArm);
     }
     else {
