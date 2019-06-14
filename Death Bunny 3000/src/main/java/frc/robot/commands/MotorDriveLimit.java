@@ -1,14 +1,8 @@
 package frc.robot.commands;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PWMSpeedController;
 import frc.robot.Robot;
-import frc.robot.helpers.console;
-import frc.robot.helpers.console.logMode;
 
 /**
  * MotorDrive

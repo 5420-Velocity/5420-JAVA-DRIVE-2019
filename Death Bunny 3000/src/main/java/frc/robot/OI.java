@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.helpers.ButtonDebouncer;
-import frc.robot.helpers.ButtonToggle;
-import frc.robot.helpers.console;
 import frc.robot.helpers.controllers.DPadButton;
 import frc.robot.helpers.controllers.DPadButtonDebouce;
 import frc.robot.helpers.controllers.LogitechMap_X;

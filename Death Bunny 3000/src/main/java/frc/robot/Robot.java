@@ -11,14 +11,10 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.Watchdog;
-import edu.wpi.first.wpilibj.Watchdog;
-import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -35,7 +31,6 @@ import frc.robot.helpers.RobotOrientation.Side;
 import frc.robot.helpers.console.logMode;
 import frc.robot.helpers.controllers.*;
 import frc.robot.commands.*;
-import frc.robot.user.commands.*;
 
 /**
  * This is a demo program showing the use of the RobotDrive class, specifically
