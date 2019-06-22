@@ -153,8 +153,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.setDefaultNumber("Test", 0);
     SmartDashboard.setDefaultNumber("AutoDelay", 0);
     SmartDashboard.setDefaultBoolean("Sol", false);
-
-    m_drive.setExpiration(0.25); // Default is 0.1
+    
     //m_drive.setSafetyEnabled(true); // Disable Watchdog auto stop
 
     // Save.getInstance().push("Test", false);
@@ -564,13 +563,13 @@ public class Robot extends TimedRobot {
     if(OI.driveSlowForward.get()){
       // Button Mode Forward
       console.out(logMode.kDebug, "Slow Forward");
-      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideB);
+      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideA);
       DRIVE_X = 0;
     }
     else if(OI.driveSlowReverse.get()){
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Reverse");
-      DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideB);
+      DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideA);
       DRIVE_X = 0;
     }
     else if(OI.driveSlowLeft.get()){
@@ -588,8 +587,8 @@ public class Robot extends TimedRobot {
     }
     else {
       // Joystick Mode
-      DRIVE_Y = DRIVE_Y*0.80;
-      DRIVE_X = DRIVE_X*0.80;
+      DRIVE_Y = DRIVE_Y*0.60;
+      DRIVE_X = DRIVE_X*0.50;
     }
 
     /**
@@ -605,11 +604,13 @@ public class Robot extends TimedRobot {
 
       // Covers the Sensor if its not connected.
       double range = Robot.limelightMain.getDistance();
-      if(range > 200){
-        range = 1;
+      if(range < 2){
+        range = 1.5;
       }
-      DRIVE_Y = 0.18 * range;
+      System.out.println("F" + range);
+      DRIVE_Y = 0.14 * range;
 
+      System.out.println(DRIVE_Y);
       console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
       OI.LLCtrl.setBoolean(true);
     }
