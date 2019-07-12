@@ -102,15 +102,15 @@ public class Robot extends TimedRobot {
     Robot.left1.restoreFactoryDefaults();
     Robot.left1.setIdleMode(IdleMode.kBrake);
     Robot.left2 = new CANSparkMax(21, MotorType.kBrushless);
-    Robot.left2.setIdleMode(IdleMode.kBrake);
     Robot.left2.restoreFactoryDefaults();
+    Robot.left2.setIdleMode(IdleMode.kBrake);
     Robot.left2.follow(Robot.left1);
 
     // Right SIDE Control
-    Robot.right1 = new CANSparkMax(22, MotorType.kBrushless);
+    Robot.right1 = new CANSparkMax(23, MotorType.kBrushless);
     Robot.right1.restoreFactoryDefaults();
-    Robot.left2.setIdleMode(IdleMode.kBrake);
-    Robot.right2 = new CANSparkMax(23, MotorType.kBrushless);
+    Robot.right1.setIdleMode(IdleMode.kBrake);
+    Robot.right2 = new CANSparkMax(22, MotorType.kBrushless);
     Robot.right2.restoreFactoryDefaults();
     Robot.right2.setIdleMode(IdleMode.kBrake);
     Robot.right2.follow(Robot.right1);
@@ -137,11 +137,10 @@ public class Robot extends TimedRobot {
     lowerLimit = new DigitalInput(1);
     hatchSwitchAutoClose = new DigitalInput(8);
     ballLoaded = new DigitalInput(9);
-    ballLoadedEdge = new Edge(ballLoaded, EdgeMode.kRisiing);
+    ballLoadedEdge = new Edge(ballLoaded, EdgeMode.kRising);
     ballUpperLimit = new DigitalInput(10);
     ballLowerLimit = new DigitalInput(11);
-    liftEncoder = new AnalogPotentiometer(0, 360, 30);
-        
+    liftEncoder = new AnalogPotentiometer(0, 360, 30);        
     motorLift = new VictorSP(1);
     motorTilt = new VictorSP(4);
     ballIntake2 = new VictorSP(3);
@@ -543,13 +542,13 @@ public class Robot extends TimedRobot {
     //////////////////
     //  SHIFT CTRL  //
     //////////////////
-    if(OI.transButtonHigh.get()){
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_Y)){
       transSol.set(false); // High Gear
       OI.driveShift.setString("HIGH");
     }
-    else if(OI.transButtonLow.get()){
+    else {
       transSol.set(true); // LowGear
-      OI.driveShift.setString("LOW");
+      //OI.driveShift.setString("LOW");
     }
 
 
@@ -563,13 +562,13 @@ public class Robot extends TimedRobot {
     if(OI.driveSlowForward.get()){
       // Button Mode Forward
       console.out(logMode.kDebug, "Slow Forward");
-      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideA);
+      DRIVE_Y = RobotOrientation.getInstance().fix(0.45, Side.kSideA);
       DRIVE_X = 0;
     }
     else if(OI.driveSlowReverse.get()){
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Reverse");
-      DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideA);
+      DRIVE_Y = RobotOrientation.getInstance().fix(-0.45, Side.kSideA);
       DRIVE_X = 0;
     }
     else if(OI.driveSlowLeft.get()){
@@ -587,9 +586,10 @@ public class Robot extends TimedRobot {
     }
     else {
       // Joystick Mode
-      DRIVE_Y = DRIVE_Y*0.60;
+      DRIVE_Y = DRIVE_Y*0.80;
       DRIVE_X = DRIVE_X*0.50;
     }
+    
 
     /**
      * Auto Turn Control using Limelight

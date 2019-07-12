@@ -5,6 +5,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.helpers.ButtonDebouncer;
 import frc.robot.helpers.controllers.DPadButton;
@@ -48,8 +49,6 @@ public class OI {
     public static Joystick operator;
     
     public static ButtonDebouncer directionSwitch;
-    public static ButtonDebouncer transButtonHigh;
-    public static ButtonDebouncer transButtonLow;
     
 
     public static DPadButtonDebouce liftTop;
@@ -157,8 +156,6 @@ public class OI {
 
         driver.setRumble(RumbleType.kLeftRumble, 0);
         directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
-        transButtonHigh = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 0.8); // High Range
-        transButtonLow = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_X, 0.8);  // Low Range
 
         inputGrabberToggle = new JoystickButton(driver, LogitechMap_X.BUTTON_A);
         //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
