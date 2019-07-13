@@ -4,26 +4,26 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- * DPadButtonDebouce
- * Allows you to use the DPadButton with a Debouce add in to
+ * DPadButtonDebounce
+ * Allows you to use the DPadButton with a Debounce add in to
  *  help make the button better for single actions.
  * 
  * On Press
  * 
  * @author Noah Halstead <nhalstead00@gmail.com>
  */
-public class DPadButtonDebouce extends DPadButton {
+public class DPadButtonDebounce extends DPadButton {
 
-    private double deboucePeriod;
+    private double debouncePeriod;
     private double latest;
 
-    public DPadButtonDebouce(Joystick joy, Direction dir){
+    public DPadButtonDebounce(Joystick joy, Direction dir){
         this(joy, dir, 0.8);
     }
 
-    public DPadButtonDebouce(Joystick joy, Direction dir, double debouceTime){
+    public DPadButtonDebounce(Joystick joy, Direction dir, double debounceTime){
         super(joy, dir);
-        this.deboucePeriod = debouceTime;
+        this.debouncePeriod = debounceTime;
     }
 
     /**
@@ -35,10 +35,10 @@ public class DPadButtonDebouce extends DPadButton {
 
         double now = Timer.getFPGATimestamp();
 
-        // Only Update and Return a Press Event, Ignoring a Debouce, 
+        // Only Update and Return a Press Event, Ignoring a Debounce,
         //  when the button is pressed.
         if(super.get() == true){
-            if((now-latest) > this.deboucePeriod){
+            if((now-latest) > this.debouncePeriod){
                 latest = now;
                 return true;
             }

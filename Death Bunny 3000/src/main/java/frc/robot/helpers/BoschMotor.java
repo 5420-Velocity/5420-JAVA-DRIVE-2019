@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Victor;
 /**
  * Allows you to Control the Bosch Seat Motor (am-3564) with the Seat Motor DIO Kit (am-3812).
  * 
- * This class implrenments SpeedController but have some controls that an Encoder 
+ * This class implements SpeedController but have some controls that an Encoder 
  *  would have prefixed with encoder followed by the command.
  * encoderGet()       -> Return the Encoder Count
  * encoderDirection() -> Direction of the Counting
@@ -29,7 +29,7 @@ public class BoschMotor implements SpeedController {
     private int position = 0;
 
     /**
-     * Generate instance using the PWM Ouput and the DIO Input
+     * Generate instance using the PWM Output and the DIO Input
      * 
      * @param PWMInput
      * @param DIOInput
@@ -40,7 +40,7 @@ public class BoschMotor implements SpeedController {
     
 
     /**
-     * Generate instance using the PWM Ouput and the DIO Input
+     * Generate instance using the PWM Output and the DIO Input
      * 
      * @param PWMInput
      * @param DIOInput
@@ -51,7 +51,7 @@ public class BoschMotor implements SpeedController {
 
     /**
      * Generate instance using the PWM Output and the DIO Input with
-     *  Optinal EncoderInverted Value.
+     *  Optical EncoderInverted Value.
      * 
      * @param PWMInput
      * @param DIOInput
@@ -62,7 +62,7 @@ public class BoschMotor implements SpeedController {
     }
 
     /**
-     * Create new Instace using the PWMSpeedController and the DigitalInput, this
+     * Create new Instance using the PWMSpeedController and the DigitalInput, this
      *  also takes a boolean to Set if the Encoder is Inverted to the Drive Control.
      * 
      * @param controller
@@ -180,7 +180,7 @@ public class BoschMotor implements SpeedController {
     /**
      * Common interface for setting the speed of a speed controller.
      *
-     * @param speed The speed to set. Value should be between -1.0 and 1.0.
+     * @param inValue The speed to set. Value should be between -1.0 and 1.0.
      */
     public void set(Number inValue) {
         this.set(inValue.doubleValue());

@@ -38,7 +38,7 @@ public class ButtonDebouncer {
     }
     
     /**
-     * Map Button on Joystick with a Period of a Debouce Period
+     * Map Button on Joystick with a Period of a Debounce Period
      * 
      * @param joystick
      * @param buttonNum
@@ -52,7 +52,7 @@ public class ButtonDebouncer {
     }
 
     /**
-     * Define a Debouce Period
+     * Define a Debounce Period
      * 
      * @param period
      */
@@ -62,14 +62,14 @@ public class ButtonDebouncer {
 
     /**
      * The Value of the Button Selected, If its past
-     *  the debouce period.
+     *  the debounce period.
      * 
      * @return
      */
     public boolean get(){
         double now = Timer.getFPGATimestamp();
 
-        // Only Update and Return a Press Event, Ignoring a Debouce, 
+        // Only Update and Return a Press Event, Ignoring a Debounce,
         //  when the button is pressed.
         if(joystick.getRawButton(buttonNum) == true){
             if((now-latest) > debouncePeriod){

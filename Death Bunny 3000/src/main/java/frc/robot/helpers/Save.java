@@ -112,7 +112,7 @@ public class Save extends SimpleJson {
     protected Map<String, Boolean> readonly;
 
     /**
-     * Used to Allow or Deny Duplocate Inserts of Data
+     * Used to Allow or Deny Duplicate Inserts of Data
      * 
      * @var Map
      */
@@ -120,7 +120,7 @@ public class Save extends SimpleJson {
 
     public enum Mode {
         kInternalTemporary("/var/volatile/tmp"),
-        kInternalPerminate("/home/lvuser"),
+        kInternalPermanent("/home/lvuser"),
         kUSBFirst("/u"),
         kUSBLast("/v");
 
@@ -135,7 +135,7 @@ public class Save extends SimpleJson {
         Readonly,
         ForceUppercase,
         ForceLowercase,
-        AllowDuplicates;
+        AllowDuplicates
     }
     
     /**
@@ -152,7 +152,7 @@ public class Save extends SimpleJson {
      * Build a new Instance of Save to Write Logs to a File.
      * 
      * @param name
-     * @param type
+     * @param fileLocation
      */
     public Save(String name, Mode fileLocation){
 
@@ -168,7 +168,7 @@ public class Save extends SimpleJson {
 
         File directory = new File(this.fileLocation.value);
         if(!directory.exists()){
-            System.err.println("Orignal Selected File Location `" + this.fileLocation.value + "` can not be accessed.");
+            System.err.println("Original Selected File Location `" + this.fileLocation.value + "` can not be accessed.");
             this.fileLocation = Mode.kInternalTemporary;
         }
 
@@ -269,12 +269,12 @@ public class Save extends SimpleJson {
     /**
      * Write Value based on Network Table Entry
      * 
-     * @param NetworkTableEntry
-     * @param NetworkTableType
+     * @param value
+     * @param type
      */
     public void push(NetworkTableEntry value, NetworkTableType type){
 
-        // Used as Temp Stoage to be Converted to String
+        // Used as Temp Storage to be Converted to String
         Object valueT = null;
 
         // Switch Case Switching based on the Type of Entry.
@@ -307,8 +307,8 @@ public class Save extends SimpleJson {
     /**
      * Write Value based on the Current Speed Controller
      * 
-     * @param String Key
-     * @param SpeedController Value
+     * @param key Key
+     * @param value Value
      */
     public void push(String key, SpeedController value){
         
@@ -332,7 +332,7 @@ public class Save extends SimpleJson {
         }
 
         if(this.lastPushValues.get(key) != null && value == this.lastPushValues.get(key)){
-            // Write Dupliate being Made.
+            // Write Duplicate being Made.
             // Check to see if this is allowed to be a duplicate entry.    
             if(this.allowDuplicates.get(key) == null || this.allowDuplicates.get(key) == false){
                 // Do not allow Duplicate Values in the Given Key.
@@ -360,7 +360,7 @@ public class Save extends SimpleJson {
         this.push("time", this.getTime());
         this.push("mode", Save.getMode());
         this.push("state", Save.getEnv());
-        this.push("mtime", Save.getMatchtime());
+        this.push("mtime", Save.getMatchTime());
 
         this.lastPushValues = this.write;
 
@@ -413,7 +413,7 @@ public class Save extends SimpleJson {
     }
     
     /**
-     * Retuns the Total Time Since Class Instance Init.
+     * Reruns the Total Time Since Class Instance Init.
      * 
      * @return double
      */
@@ -424,18 +424,18 @@ public class Save extends SimpleJson {
     
     /**
      * Write string data to File.
-     * This function will wrtie directly to the file,
+     * This function will write directly to the file,
      *  no write buffer
      * 
      * 
-     * @param String Log Data
+     * @param input Log Data
      * @return Save Return the Self Instance to Call Functions back to back.
      */
     public Save writeRaw(String... input){
         
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
         for (String single : input) {
-            buffer += single;
+            buffer.append(single);
         }
         
         try {
@@ -455,7 +455,7 @@ public class Save extends SimpleJson {
     public void close(){
         this.sync(); // Write File Data
         this.clearBuffer(); // Clear Write Buffer
-        this.clearPush(); // Clear Duplciate Write Records (This index prevents duplicate writes)
+        this.clearPush(); // Clear Duplicate Write Records (This index prevents duplicate writes)
 
         try {
             this.fileStream.close();
@@ -471,7 +471,7 @@ public class Save extends SimpleJson {
      * 
      * @return MatchTime
      */
-    public static double getMatchtime(){
+    public static double getMatchTime(){
         return Timer.getMatchTime();
     }
 

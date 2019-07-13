@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj.command.InstantCommand ;
 public class Limelight_LedCameraMode extends InstantCommand {
 
     /**
-     * Set the Camera Mode, Run Commnad Once and Quit, Fast and Easy.
+     * Set the Camera Mode, Run Command Once and Quit, Fast and Easy.
      * 
-     * @param camMode
+     * @param mode
      */
     public Limelight_LedCameraMode(Limelight.ledMode mode){
         
@@ -20,18 +20,19 @@ public class Limelight_LedCameraMode extends InstantCommand {
     private Limelight.ledMode cMode;
 
     /**
-     * Set the Pipeline, Run Commnad Once and Quit, Fast and Easy.
+     * Set the Pipeline, Run Command Once and Quit, Fast and Easy.
      * 
-     * @param pipeline
+     * @param limelight
      */
     public Limelight_LedCameraMode(Limelight limelight){
         this(limelight, Limelight.ledMode.kOn);
     }
 
     /**
-     * Set the Pipeline, Run Commnad Once and Quit, Fast and Easy.
+     * Set the Pipeline, Run Command Once and Quit, Fast and Easy.
      * 
-     * @param pipeline
+     * @param limelight
+     * @param cMode
      */
     public Limelight_LedCameraMode(Limelight limelight, Limelight.ledMode cMode){
         this.limelight = limelight;

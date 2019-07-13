@@ -48,7 +48,7 @@ public class AutoDriveEncoder extends Command {
      * @param enc Encoder to Follow
      * @param power Power Control Value
      * @param ticks Total Distance to go on the Encoder
-     * @param time Total time to spend on the job, this is a saftey part to 
+     * @param time Total time to spend on the job, this is a safety part to
      *    protect the robot from driving without an encoder
      */
     public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, int ticks, int time) {

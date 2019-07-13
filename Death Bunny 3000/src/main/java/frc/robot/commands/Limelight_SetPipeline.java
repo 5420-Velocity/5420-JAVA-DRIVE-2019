@@ -10,16 +10,16 @@ public class Limelight_SetPipeline extends InstantCommand {
     private int pipeline;
 
     /**
-     * Set the Pipeline, Run Commnad Once and Quit, Fast and Easy.
+     * Set the Pipeline, Run Command Once and Quit, Fast and Easy.
      * 
-     * @param pipeline
+     * @param limelight
      */
     public Limelight_SetPipeline(Limelight limelight){
         this(limelight, 0);
     }
 
     /**
-     * Set the Pipeline, Run Commnad Once and Quit, Fast and Easy.
+     * Set the Pipeline, Run Command Once and Quit, Fast and Easy.
      * 
      * @param pipeline
      */

@@ -27,7 +27,7 @@ public class ButtonToggle extends ButtonDebouncer {
     }
     
     /**
-     * Map Button on Joystick with a Period of a Debouce Period
+     * Map Button on Joystick with a Period of a Debounce Period
      * 
      * @param joystick
      * @param buttonNum

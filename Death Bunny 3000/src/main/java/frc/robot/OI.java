@@ -5,11 +5,10 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.helpers.ButtonDebouncer;
 import frc.robot.helpers.controllers.DPadButton;
-import frc.robot.helpers.controllers.DPadButtonDebouce;
+import frc.robot.helpers.controllers.DPadButtonDebounce;
 import frc.robot.helpers.controllers.LogitechMap_X;
 import frc.robot.helpers.DropSelection;
 
@@ -51,10 +50,10 @@ public class OI {
     public static ButtonDebouncer directionSwitch;
     
 
-    public static DPadButtonDebouce liftTop;
-    public static DPadButtonDebouce liftMid;
-    public static DPadButtonDebouce liftMidAlt;
-    public static DPadButtonDebouce liftBottom;
+    public static DPadButtonDebounce liftTop;
+    public static DPadButtonDebounce liftMid;
+    public static DPadButtonDebounce liftMidAlt;
+    public static DPadButtonDebounce liftBottom;
 
     public static DPadButton driveSlowForward;
     public static DPadButton driveSlowReverse;
@@ -88,7 +87,7 @@ public class OI {
     public static NetworkTableEntry limelightS;
     public static NetworkTableEntry limelightV;
     public static NetworkTableEntry driveShift;
-    public static NetworkTableEntry ballUppwerLimit;
+    public static NetworkTableEntry ballUpperLimit;
     public static NetworkTableEntry ballLowerLimit;
     public static NetworkTableEntry limelightLEDOn;
     public static NetworkTableEntry LLCtrl;
@@ -134,7 +133,7 @@ public class OI {
         limelightS = table.getEntry("llS");
         limelightV = table.getEntry("llV");
         driveShift = table.getEntry("driveShift");
-        ballUppwerLimit = table.getEntry("ballUpperLimit");
+        ballUpperLimit = table.getEntry("ballUpperLimit");
         ballLowerLimit = table.getEntry("ballLowerLimit");
         limelightLEDOn = table.getEntry("limelightLEDOn");
         LLCtrl = table.getEntry("LLCtrl");
@@ -163,10 +162,10 @@ public class OI {
         hatchButtonOut = new JoystickButton(operator, LogitechMap_X.BUTTON_Y);
         autoTurnCtrl = new JoystickButton(driver, LogitechMap_X.BUTTON_A);
 
-        liftTop = new DPadButtonDebouce(operator, DPadButton.Direction.Up);
-        liftBottom = new DPadButtonDebouce(operator, DPadButton.Direction.Down);
-        liftMid = new DPadButtonDebouce(operator, DPadButton.Direction.Right);
-        liftMidAlt = new DPadButtonDebouce(operator, DPadButton.Direction.Left);
+        liftTop = new DPadButtonDebounce(operator, DPadButton.Direction.Up);
+        liftBottom = new DPadButtonDebounce(operator, DPadButton.Direction.Down);
+        liftMid = new DPadButtonDebounce(operator, DPadButton.Direction.Right);
+        liftMidAlt = new DPadButtonDebounce(operator, DPadButton.Direction.Left);
 
         driveSlowForward = new DPadButton(driver, DPadButton.Direction.Up);
         driveSlowReverse = new DPadButton(driver, DPadButton.Direction.Down);
@@ -184,7 +183,7 @@ public class OI {
         limelightS.setDefaultNumber(0);
         limelightV.setDefaultBoolean(false);
 
-        ballUppwerLimit.setDefaultBoolean(false);
+        ballUpperLimit.setDefaultBoolean(false);
         ballLowerLimit.setDefaultBoolean(false);
 
         driveShift.setDefaultString("LAST-STATE");
@@ -204,19 +203,19 @@ public class OI {
 
         autoDelay.setDefaultNumber(0);
 
-        // Define the Position Contorls
+        // Define the Position Contorts
         position.add("None", true, 0);
         position.add("Left", 1);
         position.add("Center", 2);
         position.add("Right", 3);
 
-        // Define the Levels Contorls
+        // Define the Levels Contorts
         level.add("None", true, 0);
         level.add("Level 1 (Low)", 1);
         level.add("Level 2 (Med)", 2);
         level.add("Level 3 (High)", 3);
 
-        // Add options to target the Hab eithrer by the Face or Side
+        // Add options to target the Hab either by the Face or Side
         target.add("None", true, OI.Target.NotDefined);
         target.add("No Auto", OI.Target.None);
         target.add("Face of Hab", OI.Target.Face);

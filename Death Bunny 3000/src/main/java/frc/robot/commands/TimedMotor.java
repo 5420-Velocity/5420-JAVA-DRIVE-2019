@@ -30,7 +30,7 @@ public class TimedMotor extends Command {
 	 * 
 	 * @param motor       Motor to Control
 	 * @param Speed       Speed used to drive the motor
-	 * @param targetTime  The Time to wait before turning off the motors.
+	 * @param targetTimeIn  The Time to wait before turning off the motors.
 	 */
 	public TimedMotor (PWMSpeedController motor, double Speed, int targetTimeIn){
 		this.targetTime = Math.abs(targetTimeIn); // Get ABS of the Number.

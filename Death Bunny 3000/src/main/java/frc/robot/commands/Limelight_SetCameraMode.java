@@ -10,18 +10,19 @@ public class Limelight_SetCameraMode extends InstantCommand {
     private Limelight.camMode cMode;
 
     /**
-     * Set the Pipeline, Run Commnad Once and Quit, Fast and Easy.
+     * Set the Pipeline, Run Command Once and Quit, Fast and Easy.
      * 
-     * @param pipeline
+     * @param limelight
      */
     public Limelight_SetCameraMode(Limelight limelight){
         this(limelight, Limelight.camMode.kVision);
     }
 
     /**
-     * Set the Pipeline, Run Commnad Once and Quit, Fast and Easy.
+     * Set the Pipeline, Run Command Once and Quit, Fast and Easy.
      * 
-     * @param pipeline
+     * @param limelight
+     * @param cMode
      */
     public Limelight_SetCameraMode(Limelight limelight, Limelight.camMode cMode){
         this.limelight = limelight;

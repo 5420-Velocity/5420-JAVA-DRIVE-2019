@@ -59,7 +59,7 @@ public class SimpleJson {
         Enum,
         String,
         Boolean,
-        Number;
+        Number
     }
 
     /**
@@ -128,7 +128,7 @@ public class SimpleJson {
     /**
      * Set the value to Null, Keep in mind
      *  that null as a value in Json is not
-     *  widly adopted dispite the RFC7159.
+     *  widely adopted despite the RFC7159.
      * 
      * @param key String
      */
@@ -364,33 +364,33 @@ public class SimpleJson {
      * @param value ArrayList Value
      */
     public void push(String key, ArrayList<?> value){
-        String buffer = "[";
+        StringBuilder buffer = new StringBuilder("[");
 
         for(Object v : value){
-            if(buffer != "["){
-                buffer += ",";
+            if(buffer.toString() != "["){
+                buffer.append(",");
             }
 
             if(v instanceof String){
-                buffer += "\"" + SimpleJson.stringString(String.valueOf(v)) + "\"";
+                buffer.append("\"").append(SimpleJson.stringString(String.valueOf(v))).append("\"");
             }
             else if(v instanceof Character){
-                buffer += (String)v;
+                buffer.append((String) v);
             }
             else if(v instanceof Integer){
-                buffer += String.valueOf((Integer)v);
+                buffer.append(String.valueOf((Integer) v));
             }
             else if(v instanceof Double){
-                buffer += String.valueOf((Double)v);
+                buffer.append(String.valueOf((Double) v));
             }
             else if(v instanceof Float){
-                buffer += String.valueOf((Float)v);
+                buffer.append(String.valueOf((Float) v));
             }
             else if(v instanceof Long){
-                buffer += String.valueOf((Long)v);
+                buffer.append(String.valueOf((Long) v));
             }
             else if(v instanceof Boolean){
-                buffer += (Boolean)v?"true":"false";
+                buffer.append((Boolean) v ? "true" : "false");
             }
             else if(v instanceof Enum){
                 // Need to figure out a way to do this.
@@ -398,18 +398,18 @@ public class SimpleJson {
             }
             else if(v instanceof Class){
                 System.out.println("[SimpleJson] Can not take type: Class -> " + ((Class<?>)v.getClass()).getName());
-                buffer +=  "null";
+                buffer.append("null");
             }
             else {
-                // No Data Type Registed for the Input
+                // No Data Type Registered for the Input
                 System.out.println("[SimpleJson] Can not take type: " + v.toString());
-                buffer +=  "null";
+                buffer.append("null");
             }
         }
 
-        buffer += "]";
+        buffer.append("]");
 
-        this.push(key, buffer, Type.Raw);
+        this.push(key, buffer.toString(), Type.Raw);
     }
 
     /**
@@ -418,7 +418,7 @@ public class SimpleJson {
      * 
      * @param key Key Value
      * @param value String Value
-     * @param t Type of Vlaue Insert
+     * @param t Type of Value Insert
      */
     protected void push(String key, String value, Type t){
 
@@ -432,7 +432,7 @@ public class SimpleJson {
      * @return String Version of the Value Store
      */
     public String toString(){
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
 
         for (Map.Entry<String, String> entry : this.write.entrySet()) {
             
@@ -441,31 +441,31 @@ public class SimpleJson {
                 continue;
             }
             
-            if(buffer != ""){
+            if(buffer.toString() != ""){
                 // Add Comma  
-                buffer += ",";
+                buffer.append(",");
             }
 
             if(this.isAssociativeArray == true){
                 // Write Key Value
-                buffer += "\"" + entry.getKey() + "\":";
+                buffer.append("\"").append(entry.getKey()).append("\":");
             }
 
             if(writeType.get(entry.getKey()) == Type.Number){
                 // Write as Plain Text (Number)
-                buffer += entry.getValue();
+                buffer.append(entry.getValue());
             }
             else if(writeType.get(entry.getKey()) == Type.Raw){
                 // Write what is given in Directly Out.
-                buffer += entry.getValue();
+                buffer.append(entry.getValue());
             }
             else if(writeType.get(entry.getKey()) == Type.Enum){
                 // Write what is given in Directly Out.
-                buffer += entry.getValue();
+                buffer.append(entry.getValue());
             }
             else if(writeType.get(entry.getKey()) == Type.Boolean){
                 // Write what is given in Directly Out.
-                buffer += entry.getValue();
+                buffer.append(entry.getValue());
             }
             else if(writeType.get(entry.getKey()) == Type.String){
                 // Write String
@@ -475,11 +475,11 @@ public class SimpleJson {
                 SimpleJson.stringString(value);
 
                 // Puts string in Value for JSON wrapped in Quotes
-                buffer += "\"" + value + "\"";
+                buffer.append("\"").append(value).append("\"");
             }
         }
 
-        if(buffer != "") {
+        if(buffer.toString() != "") {
         	if(this.isAssociativeArray == false){
                 return "["+buffer+"]";
             }

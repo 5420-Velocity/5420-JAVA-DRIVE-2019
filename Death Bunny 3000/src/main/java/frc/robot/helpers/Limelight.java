@@ -126,9 +126,9 @@ public class Limelight {
     }
 
     /**
-     * Createa a new Limelight Instance with a Custome Table
+     * Create a new Limelight Instance with a Custom Table
      * 
-     * @param NetworkTable
+     * @param tableName
      */
     public Limelight(String tableName){
         NetworkTableInstance ds  = NetworkTableInstance.getDefault(); // Get the Driver Station Network Table Instance.
@@ -177,7 +177,7 @@ public class Limelight {
      *  Horizontal Offset From Crosshair To Target
      *  (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
      * 
-     * @return X Offset from tartget
+     * @return X Offset from target
      */
     public double getX(){
         return this.tx.getDouble(0.0);
@@ -217,7 +217,7 @@ public class Limelight {
     /**
      * Set the LED Mode to a Set ENUM Value.
      * 
-     * @param ledMode
+     * @param mode
      */
     public void setLed(Limelight.ledMode mode){
         this.ledModeNT.setNumber(mode.value);
@@ -263,7 +263,7 @@ public class Limelight {
     }
 
     /**
-     * Sets limelight’s LED mode usinng ENUM
+     * Sets limelight’s LED mode using ENUM
      * 
      * @param mode
      */
@@ -313,7 +313,7 @@ public class Limelight {
     /**
      * Set the limelight’s current pipeline 0-9
      * 
-     * @param int
+     * @param line
      */
     public void setPipeline(int line){
         this.pipeline.setNumber(line);
@@ -340,7 +340,7 @@ public class Limelight {
     /**
      * Set the limelight’s Video Output Mode on port 5802
      * 
-     * @param videoMode
+     * @param vmode
      */
     public void setVideo(Limelight.videoMode vmode){
         this.stream.setNumber(vmode.value);
@@ -378,15 +378,15 @@ public class Limelight {
     /**
      * Return the Distance from the Target
      *  Both Params should be constant, Both Known Values
-     *  The KnonwArea is based off of the KnownDistance
+     *  The KnownArea is based off of the KnownDistance
      * 
      * Place the Robot down on the ground and measure from the limelight
      *  then look at the limelight's web interface for the `ta` value.
-     * Pass the 2 values in as a contant and it will return the % of the
+     * Pass the 2 values in as a constant and it will return the % of the
      *  selected KnownDistance.
      * 
      * @link http://docs.limelightvision.io/en/latest/cs_estimating_distance.html#using-area-to-estimate-distance
-     * @return The Aprox Distnace away from the Target in View with only 2 decimal places
+     * @return The Aprox Distance away from the Target in View with only 2 decimal places
      */
     public double getDistance(){
         if(Math.abs(this.getA()) < 0.02){

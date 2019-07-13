@@ -18,7 +18,7 @@ public class Edge {
 
     public enum EdgeMode {
         kFalling,
-        kRisiing
+        kRising
     }
     
     public Edge(DigitalInput dio, EdgeMode DetectMode){
@@ -28,7 +28,7 @@ public class Edge {
         if(this.DetectMode == EdgeMode.kFalling){
             this.DETECTB = false;
         }
-        else if(this.DetectMode == EdgeMode.kRisiing ){
+        else if(this.DetectMode == EdgeMode.kRising){
             this.DETECTB = true;
         }
     }

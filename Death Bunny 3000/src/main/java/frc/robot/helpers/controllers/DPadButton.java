@@ -19,7 +19,7 @@ public class DPadButton {
         Up,
         Down,
         Left,
-        Right;
+        Right
     }
 
     public DPadButton(Joystick joy, Direction dir){

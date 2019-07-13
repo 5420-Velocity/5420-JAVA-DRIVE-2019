@@ -8,7 +8,7 @@ import frc.robot.helpers.console;
 
 public class LimelightFollow extends Command {
 
-    private double turnSensitivty = 50;
+    private double turnSensitivity = 50;
     private int cruiseVel = 400;
     private int pipeline;
     private DifferentialDrive drive;
@@ -20,7 +20,7 @@ public class LimelightFollow extends Command {
      * 
      * @param drive Drive to Control
      * @param limelight Limelight Object to read data from.
-     * @param pipeline Limelight Contorl to Find
+     * @param pipeline Limelight Control to Find
      */
     public LimelightFollow(DifferentialDrive drive, Limelight limelight, int pipeline) {
         this(drive, limelight, 5, pipeline);
@@ -31,7 +31,7 @@ public class LimelightFollow extends Command {
      * 
      * @param drive Drive to Control
      * @param limelight Limelight Object to read data from.
-     * @param pipeline Limelight Contorl to Find
+     * @param pipeline Limelight Control to Find
      * @param timeout The total time to allocate before it fails the execution.
      */
     public LimelightFollow(DifferentialDrive drive, Limelight limelight, int pipeline, int timeout){
@@ -50,7 +50,7 @@ public class LimelightFollow extends Command {
 
     protected void execute() {
         angleError = limelight.getX() - 8;
-        double turn = angleError * turnSensitivty;
+        double turn = angleError * turnSensitivity;
         this.drive.arcadeDrive(cruiseVel + turn, cruiseVel - turn);
     }
 

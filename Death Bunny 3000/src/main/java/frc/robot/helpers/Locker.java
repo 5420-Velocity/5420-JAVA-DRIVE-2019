@@ -50,7 +50,7 @@ public class Locker {
      * 
      * Set a Key to be True, Create lock from PWMSpeedController
      * 
-     * @param SpeedCtrl Convert Speed Contorller to String Name
+     * @param SpeedCtrl Convert Speed Controller to String Name
      */
     public static void lock(PWMSpeedController SpeedCtrl){
         Locker.lockStatus.put("PWM" + SpeedCtrl.getName() + SpeedCtrl.getChannel(), true);
@@ -81,7 +81,7 @@ public class Locker {
      * 
      * Set a Key to be True, Create lock from PWMSpeedController
      * 
-     * @param SpeedCtrl Convert Speed Contorller to String Name
+     * @param SpeedCtrl Convert Speed Controller to String Name
      */
     public static void unlock(PWMSpeedController SpeedCtrl){
         Locker.lockStatus.put("PWM" + SpeedCtrl.getName() + SpeedCtrl.getChannel(), false);
