@@ -3,14 +3,13 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.helpers.ButtonDebouncer;
 import frc.robot.helpers.controllers.DPadButton;
 import frc.robot.helpers.controllers.DPadButtonDebouce;
-import frc.robot.helpers.controllers.LogitechMap_X;
+//import frc.robot.helpers.controllers.OLD.Logitech_X;
+import frc.robot.helpers.controllers.Logitech_X;
 import frc.robot.helpers.DropSelection;
 
 /**
@@ -43,10 +42,12 @@ public class OI {
     public static final double LimelightKD = 4;
     public static final double LimelightKA = 2.5409;
 
-    public static Joystick driver;
+    public static Logitech_X driverCtl, operatorCtl;
+
+    //public static Joystick driver;
     public static JoystickButton inputGrabberToggle;
     public static JoystickButton autoTurnCtrl;
-    public static Joystick operator;
+    //public static Joystick operator;
     
     public static ButtonDebouncer directionSwitch;
     
@@ -88,7 +89,7 @@ public class OI {
     public static NetworkTableEntry limelightS;
     public static NetworkTableEntry limelightV;
     public static NetworkTableEntry driveShift;
-    public static NetworkTableEntry ballUppwerLimit;
+    public static NetworkTableEntry ballUpperLimit;
     public static NetworkTableEntry ballLowerLimit;
     public static NetworkTableEntry limelightLEDOn;
     public static NetworkTableEntry LLCtrl;
@@ -134,7 +135,7 @@ public class OI {
         limelightS = table.getEntry("llS");
         limelightV = table.getEntry("llV");
         driveShift = table.getEntry("driveShift");
-        ballUppwerLimit = table.getEntry("ballUpperLimit");
+        ballUpperLimit = table.getEntry("ballUpperLimit");
         ballLowerLimit = table.getEntry("ballLowerLimit");
         limelightLEDOn = table.getEntry("limelightLEDOn");
         LLCtrl = table.getEntry("LLCtrl");
@@ -149,19 +150,21 @@ public class OI {
         limitLower.setDefaultBoolean(false);
         LLCtrl.setDefaultBoolean(false);
 
-        driver = new Joystick(Robot.DRIVER);
-        operator = new Joystick(Robot.OPERATOR);
+        driverCtl = new Logitech_X(Robot.DRIVER);
+        operatorCtl = new Logitech_X(Robot.OPERATOR);
+        //driver = new Joystick(Robot.DRIVER);
+        //operator = new Joystick(Robot.OPERATOR);
 
         //// Create Buttons ////
 
         driver.setRumble(RumbleType.kLeftRumble, 0);
-        directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
+        /*directionSwitch = new ButtonDebouncer(driver, Logitech_X.BUTTON_B, 0.8);
 
-        inputGrabberToggle = new JoystickButton(driver, LogitechMap_X.BUTTON_A);
-        //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
-        hatchButton = new JoystickButton(operator, LogitechMap_X.BUTTON_A);
-        hatchButtonOut = new JoystickButton(operator, LogitechMap_X.BUTTON_Y);
-        autoTurnCtrl = new JoystickButton(driver, LogitechMap_X.BUTTON_A);
+        inputGrabberToggle = new JoystickButton(driver, Logitech_X.BUTTON_A);
+        //hatchButton = new Button(operator, Logitech_X.BUTTON_A);
+        hatchButton = new JoystickButton(operator, Logitech_X.BUTTON_A);
+        hatchButtonOut = new JoystickButton(operator, Logitech_X.BUTTON_Y);
+        autoTurnCtrl = new JoystickButton(driver, Logitech_X.BUTTON_A);*/
 
         liftTop = new DPadButtonDebouce(operator, DPadButton.Direction.Up);
         liftBottom = new DPadButtonDebouce(operator, DPadButton.Direction.Down);
@@ -184,7 +187,7 @@ public class OI {
         limelightS.setDefaultNumber(0);
         limelightV.setDefaultBoolean(false);
 
-        ballUppwerLimit.setDefaultBoolean(false);
+        ballUpperLimit.setDefaultBoolean(false);
         ballLowerLimit.setDefaultBoolean(false);
 
         driveShift.setDefaultString("LAST-STATE");

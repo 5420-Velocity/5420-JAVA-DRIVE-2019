@@ -29,7 +29,6 @@ import frc.robot.helpers.*;
 import frc.robot.helpers.Edge.EdgeMode;
 import frc.robot.helpers.RobotOrientation.Side;
 import frc.robot.helpers.console.logMode;
-import frc.robot.helpers.controllers.*;
 import frc.robot.commands.*;
 
 /**
@@ -169,9 +168,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-    // Save.getInstance().push("t", System.currentTimeMillis());
-    // Save.getInstance().push("batt", RobotController.getBatteryVoltage());
-
     Robot.logInterval++;
     if(logInterval % CTRL_LOG_INTERVAL == 0){
       Logger.pushCtrlValues("Driver", OI.driver);
@@ -192,7 +188,7 @@ public class Robot extends TimedRobot {
     OI.distanceFront.setNumber(Robot.frontSide.getRangeInches());
     OI.limitLower.setBoolean(Robot.lowerLimit.get());
     OI.limitUpper.setBoolean(Robot.upperLimit.get());
-    OI.ballUppwerLimit.setBoolean(ballUpperLimit.get());
+    OI.ballUpperLimit.setBoolean(ballUpperLimit.get());
     OI.ballLowerLimit.setBoolean(ballLowerLimit.get());
 
     OI.LimelightDistance.setNumber(Robot.limelightMain.getDistance());
@@ -412,7 +408,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_A)){
+    if(OI.driverCtl.getButtonValue("A")){
       // Add Code to run the robot.
       //Scheduler.getInstance().add();
 
@@ -433,13 +429,13 @@ public class Robot extends TimedRobot {
     /////////////////
     ///   LIFT    ///
     /////////////////
-    if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB) && OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
+    if(OI.operatorCtl.getButtonValue("LB") && OI.operatorCtl.getButtonValue("RB")){
       // Go Up bypass the Upper Limit
       console.out(logMode.kDebug, "BYPASS UPPER LIMIT, UP");
       Robot.motorLift.set(0.4); // Up
       Robot.winchBreak.set(true); // Break Off
     }
-    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
+    else if(OI.operatorCtl.getButtonValue("LB")){
       if(!Robot.upperLimit.get() == false){
         // Upperlimit is setup to give a signal as true as open.
         Robot.motorLift.set(0.9); // Up
@@ -451,7 +447,7 @@ public class Robot extends TimedRobot {
         Robot.winchBreak.set(false); // Break On
       }
     }
-    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
+    else if(OI.operatorCtl.getButtonValue("RB")){
       if(Robot.lowerLimit.get() == false){
         Robot.motorLift.set(-0.5); // Down
         Robot.winchBreak.set(true); // Break Off
@@ -480,7 +476,7 @@ public class Robot extends TimedRobot {
       ballIntake2.set(0.5);
     }
     // Ball Intake Control using Buttons
-    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
+    else if(OI.driverCtl.getButtonValue("LB")){
       // Ball In
       if(Robot.ballLoaded.get() == false){
         ballIntake.set(-0.5);
@@ -498,7 +494,7 @@ public class Robot extends TimedRobot {
         }
       }
     }
-    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
+    else if(OI.driverCtl.getButtonValue("RB")){
       // Ball Out
       ballIntake.set(0.8);
       ballIntake2.set(-0.8);
@@ -542,7 +538,7 @@ public class Robot extends TimedRobot {
     //////////////////
     //  SHIFT CTRL  //
     //////////////////
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_Y)){
+    if(OI.driverCtl.getButtonValue("Y")){
       transSol.set(false); // High Gear
       OI.driveShift.setString("HIGH");
     }
@@ -555,8 +551,8 @@ public class Robot extends TimedRobot {
     //////////////////
     //  DRIVE CTRL  //
     //////////////////
-    double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
-    double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
+    double DRIVE_Y = (OI.driverCtl.getJoystick("LEFT").getY());
+    double DRIVE_X = (-OI.driverCtl.getJoystick("LEFT").getX());
     DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideB);
 
     if(OI.driveSlowForward.get()){
@@ -582,7 +578,6 @@ public class Robot extends TimedRobot {
       console.out(logMode.kDebug, "Slow Right");
       DRIVE_Y = 0;
       DRIVE_X = -0.3;
-      ;
     }
     else {
       // Joystick Mode
@@ -641,7 +636,7 @@ public class Robot extends TimedRobot {
     ///////////////////////////////////////
     ////  Front and Rear Lift Control  ////
     ///////////////////////////////////////
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_START)){
+    if(OI.driverCtl.getButtonValue("START")){
       Robot.robotLiftR.set(true);
       console.out(logMode.kDebug, "UP! UP! AND AWAY!");
     }
@@ -649,7 +644,7 @@ public class Robot extends TimedRobot {
       Robot.robotLiftR.set(false);
     }
 
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_BACK)){
+    if(OI.driverCtl.getButtonValue("BACK")){
       Robot.robotLiftF.set(true);
       console.out(logMode.kDebug, "UP! UP! AND AWAY! FRONT");
     }
@@ -657,10 +652,10 @@ public class Robot extends TimedRobot {
       Robot.robotLiftF.set(false);
     }
 
-    //Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
-    //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+    //Robot.motorTilt.set(OI.operator.getRawAxis(Logitech_X.AXIS_LEFT_Y));
+    //Robot.motorLock.set(OI.operator.getRawAxis(Logitech_X.AXIS_LEFT_Y));
 
-    double controlArm = -OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
+    double controlArm = -OI.operatorCtl.getJoystick("LEFT").getY();
     if(controlArm > 0){
       if(ballUpperLimit.get() != true){
         // Allow if button is true, Wired for Cut Wire Saftey

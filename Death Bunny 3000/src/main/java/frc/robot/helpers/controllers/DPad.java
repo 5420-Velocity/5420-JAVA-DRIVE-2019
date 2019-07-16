@@ -11,56 +11,61 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class DPad {
 
-    // -Controller D-Pad POV Hat
+    // Controller D-Pad POV Hat
     final static int XBOX_DPAD_POV = 0;
-    public Joystick inJoystick;
 
-    /**
-     * 
-     * @return The current "angle" from the DPad (POV switch)
-     */
-    public static int get(Joystick joy) {
-        return joy.getPOV(XBOX_DPAD_POV);
+    private int povIndex;
+    private Joystick joy;
+
+    public DPad(Joystick joy){
+        this.joy = joy;
+        this.povIndex = XBOX_DPAD_POV;
     }
 
+    public DPad(Joystick joy, int povIndex){
+        this.joy = joy;
+        this.povIndex = povIndex;
+    }
+
+    /**
+     * Get POV Index
+     * 
+     * @return POV Index Id
+     */
+    public int getId(){
+        return povIndex;
+    }
+
+    /**
+     * Get POV Value
+     * 
+     * @return POV Values with the give POV Index
+     */
+    public int get(){
+        return joy.getPOV(povIndex);
+    }
 
     /**
      * Is the DPad button Up
      * 
      * @return True if the DPad is pushed up, False if it is not pressed
      */
-    public static boolean up(Joystick joy) {
-        if ((joy.getPOV(XBOX_DPAD_POV) >= 315 || joy.getPOV(XBOX_DPAD_POV) <= 45) && joy.getPOV(XBOX_DPAD_POV) != -1){
+    public boolean up() {
+        if ((this.get() >= 315 || this.get() <= 45) && this.get() != -1){
             return true;
         }
         else {
             return false;
         }
     }
-
-
-    /**
-     * Is the DPad button on the Right
-     * 
-     * @return True if the DPad is pushed right, False if it is not pressed
-     */
-    public static boolean right(Joystick joy) {
-        if (joy.getPOV(XBOX_DPAD_POV) >= 45 && joy.getPOV(XBOX_DPAD_POV) <= 135){
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
 
     /**
      * Is the DPad button Down
      * 
      * @return True if the DPad is pushed down, False if it is not pressed
      */
-    public static boolean down(Joystick joy) {
-        if (joy.getPOV(XBOX_DPAD_POV) >= 135 && joy.getPOV(XBOX_DPAD_POV) <= 225){
+    public boolean down() {
+        if (this.get() >= 135 && this.get() <= 225){
             return true;
         }
         else {
@@ -68,14 +73,27 @@ public class DPad {
         }
     }
 
-
+    /**
+     * Is the DPad button on the Right
+     * 
+     * @return True if the DPad is pushed right, False if it is not pressed
+     */
+    public boolean right() {
+        if (this.get() >= 45 && this.get() <= 135){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
     /**
      * Is the DPad button on the Left
      * 
      * @return True if the DPad is pushed left, False if it is not pressed
      */
-    public static boolean left(Joystick joy) {
-        if (joy.getPOV(XBOX_DPAD_POV) >= 225 && joy.getPOV(XBOX_DPAD_POV) <= 315){
+    public boolean left() {
+        if (this.get() >= 225 && this.get() <= 315){
             return true;
         }
         else {
@@ -83,27 +101,4 @@ public class DPad {
         }
     }
 
-    public DPad(Joystick joy){
-        this.inJoystick = joy;
-    }
-
-    public boolean up(){
-        return DPad.up(this.inJoystick);
-    }
-
-    public boolean down(){
-        return DPad.down(this.inJoystick);
-    }
-
-    public boolean right(){
-        return DPad.right(this.inJoystick);
-    }
-
-    public boolean left(){
-        return DPad.left(this.inJoystick);
-    }
-
-    public int get(){
-        return DPad.get(this.inJoystick);
-    }
 }
