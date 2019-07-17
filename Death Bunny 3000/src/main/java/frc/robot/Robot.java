@@ -376,347 +376,344 @@ public class Robot extends TimedRobot {
 			Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
 		}
 
-		// Robot Auto Command Drive Controls
-		//Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
+    // Robot Auto Command Drive Controls
+    //Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
 
-		// Add to Stack
-		Scheduler.getInstance().add(Robot.autoCommand);
+    // Add to Stack
+    Scheduler.getInstance().add(Robot.autoCommand);
 
-	}
+  }
 
-	@Override
-	public void autonomousPeriodic() {
+  @Override
+  public void autonomousPeriodic() {
 
-		Scheduler.getInstance().run();
+    Scheduler.getInstance().run();
 
-		if(Robot.autoCommand.isCompleted()){
-			this.teleopPeriodic(); // Run Robot Telelop Code
-		}
+    if(Robot.autoCommand.isCompleted()){
+      this.teleopPeriodic(); // Run Robot Telelop Code
+    }
 
-	}
+  }
 
-	@Override
-	public void teleopInit() {
-		// Turn Limelight Off
-		Robot.limelightMain.setLed(Limelight.ledMode.kOn);
+  @Override
+  public void teleopInit() {
+    // Turn Limelight Off
+    Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
-		// Stop Auto Commands
+    // Stop Auto Commands
 
-		if(Robot.autoCommand != null){
-			Robot.autoCommand.cancel();
-		}
+    if(Robot.autoCommand != null){
+      Robot.autoCommand.cancel();
+    }
 
-	}
+  }
 
-	@Override
-	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
+  @Override
+  public void teleopPeriodic() {
+    Scheduler.getInstance().run();
 
-		if(OI.driver.getRawButton(LogitechMap_X.BUTTON_A)){
-			// Add Code to run the robot.
-			//Scheduler.getInstance().add();
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_A)){
+      // Add Code to run the robot.
+      //Scheduler.getInstance().add();
 
-		}
-		else {
-			// Add code to Cancel the Program
+    }
+    else {
+      // Add code to Cancel the Program
 
-		}
+    }
 
-		/////////////////
-		/// SIDE CTRL ///
-		/////////////////
-		// Update the Side Value, Swapping Sides
-		if(OI.directionSwitch.get()){
-			RobotOrientation.getInstance().flipSide();
-		}
+    /////////////////
+    /// SIDE CTRL ///
+    /////////////////
+    // Update the Side Value, Swapping Sides
+    if(OI.directionSwitch.get()){
+      RobotOrientation.getInstance().flipSide();
+    }
 
-		/////////////////
-		///   LIFT    ///
-		/////////////////
-		if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB) && OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
-			// Go Up bypass the Upper Limit
-			console.out(logMode.kDebug, "BYPASS UPPER LIMIT, UP");
-			Robot.motorLift.set(0.4); // Up
-			Robot.winchBreak.set(true); // Break Off
-		}
-		else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
-			if(Robot.upperLimit.get()){
-				// Upperlimit is setup to give a signal as true as open.
-				Robot.motorLift.set(0.9); // Up
-				Robot.winchBreak.set(true); // Break Off
-			}
-			else {
-				console.out(logMode.kDebug, "Upper Limit");
-				Robot.motorLift.set(0); // Off
-				Robot.winchBreak.set(false); // Break On
-			}
-		}
-		else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
-			if(!Robot.lowerLimit.get()){
-				Robot.motorLift.set(-0.5); // Down
-				Robot.winchBreak.set(true); // Break Off
-			}
-			else {
-				console.out(logMode.kDebug, "Lower Limit");
-				Robot.motorLift.set(0); // Off
-				Robot.winchBreak.set(false); // Break On
-			}
-		}
-		else {
-			Robot.motorLift.set(0); // Off
-			Robot.winchBreak.set(false); // Break On
-		}
+    /////////////////
+    ///   LIFT    ///
+    /////////////////
+    if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB) && OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
+      // Go Up bypass the Upper Limit
+      console.out(logMode.kDebug, "BYPASS UPPER LIMIT, UP");
+      Robot.motorLift.set(0.4); // Up
+      Robot.winchBreak.set(true); // Break Off
+    }
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
+      if(!Robot.upperLimit.get() == false){
+        // Upperlimit is setup to give a signal as true as open.
+        Robot.motorLift.set(0.9); // Up
+        Robot.winchBreak.set(false); // Break On
+      }
+      else {
+        console.out(logMode.kDebug, "Upper Limit");
+        Robot.motorLift.set(0); // Off
+        Robot.winchBreak.set(true); // Break off
+      }
+    }
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
+      if(Robot.lowerLimit.get() == false){
+        Robot.motorLift.set(-0.5); // Down
+        Robot.winchBreak.set(false); // Break on
+      }
+      else {
+        console.out(logMode.kDebug, "Lower Limit");
+        Robot.motorLift.set(0); // Off
+        Robot.winchBreak.set(true); // Break off
+      }
+    }
+    else {
+      Robot.motorLift.set(0); // Off
+      Robot.winchBreak.set(true); // Break off
+    }
 
-		//////////////////
-		//  BALL CTRL   //
-		//////////////////
-		if(ballLoadedEdge.get() && !ballLowerLimit.get()){
-			console.log("...Added  MotorDrive Command...");
-			Scheduler.getInstance().add(new MotorDrive(motorTilt, 0.6, 1500, "motorTilt"));
-		}
-		else if(!Robot.ballLoaded.get() && !ballLowerLimit.get()){
-			// Auto run the Ball Intake when @ the lower limit and when the ball is not loaded.
-			ballIntake.set(-0.5);
-			ballIntake2.set(0.5);
-		}
-		// Ball Intake Control using Buttons
-		else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
-			// Ball In
-			if(!Robot.ballLoaded.get()){
-				ballIntake.set(-0.5);
-				ballIntake2.set(0.5);
-			}
-			else {
-				console.log("Ball Loaded, Auto Stop");
-				// Ball Off
-				ballIntake.set(0);
-				ballIntake2.set(0);
-				if(!liftOnce){
-					// Disabled since the button in the lift was too sensitive.
-					//m Scheduler.getInstance().add( new MotorDriveLimit(Robot.motorTilt, 0.8, 2000, ballUpperLimit, "") );
-					liftOnce = true;
-				}
-			}
-		}
-		else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
-			// Ball Out
-			ballIntake.set(0.8);
-			ballIntake2.set(-0.8);
-			liftOnce = false;
-		}
-		else {
-			// Ball Off
-			ballIntake.set(0);
-			ballIntake2.set(0);
-		}
+    //////////////////
+    //  BALL CTRL   //
+    //////////////////
+    if(ballLoadedEdge.get() == true && ballLowerLimit.get() == false){
+      console.log("...Added  MotorDrive Command...");
+      Scheduler.getInstance().add(new MotorDrive(motorTilt, 0.6, 1500, "motorTilt"));
+    }
+    else if(Robot.ballLoaded.get() == false && ballLowerLimit.get() == false){
+      // Auto run the Ball Intake when @ the lower limit and when the ball is not loaded.
+      ballIntake.set(-0.5);
+      ballIntake2.set(0.5);
+    }
+    // Ball Intake Control using Buttons
+    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
+      // Ball In
+      if(Robot.ballLoaded.get() == false){
+        ballIntake.set(-0.5);
+        ballIntake2.set(0.5);
+      }
+      else {
+        console.log("Ball Loaded, Auto Stop");
+        // Ball Off
+        ballIntake.set(0);
+        ballIntake2.set(0);
+        if(liftOnce == false){
+          // Disabled since the button in the lift was too sensitive.
+         //m Scheduler.getInstance().add( new MotorDriveLimit(Robot.motorTilt, 0.8, 2000, ballUpperLimit, "") );
+          liftOnce = true;
+        }
+      }
+    }
+    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
+      // Ball Out
+      ballIntake.set(0.8);
+      ballIntake2.set(-0.8);
+      liftOnce = false;
+    }
+    else {
+      // Ball Off
+      ballIntake.set(0);
+      ballIntake2.set(0);
+    }
 
-		/////////////////
-		///   HATCH   ///
-		/////////////////
-		if(OI.hatchButton.get()){
-			hatchSol.set(Value.kReverse); // In
-		}
-		else if(OI.hatchButtonOut.get()){
-			hatchSol.set(Value.kForward); // Out
-			hatchSolPusher.set(Value.kForward); // Push Out
-		}
-		else {
-			hatchSolPusher.set(Value.kReverse); // Push In
-			if(Robot.hatchSwitchAutoClose.get()){
-				// Default State Control, If the User is not Pushing the Button
-				hatchSol.set(Value.kReverse); // In
-			}
-			else {
-				if(window.getTime() != -1 && window.getTime() < 10){
-					// Hatch Close in the Last Part of the Match Time.
-					hatchSol.set(Value.kReverse); // In
-				}
-				else {
-					// Default State Control, If the User is not Pushing the Button
-					hatchSol.set(Value.kForward); // Out
-				}
-			}
-		}
-
-
-		//////////////////
-		//  SHIFT CTRL  //
-		//////////////////
-		if(OI.driver.getRawButton(LogitechMap_X.BUTTON_Y)){
-			transSol.set(false); // High Gear
-			OI.driveShift.setString("HIGH");
-		}
-		else {
-			transSol.set(true); // LowGear
-			//OI.driveShift.setString("LOW");
-		}
+    /////////////////
+    ///   HATCH   ///
+    /////////////////
+    if(OI.hatchButton.get()){
+      hatchSol.set(Value.kReverse); // In
+    }
+    else if(OI.hatchButtonOut.get()){
+      hatchSol.set(Value.kForward); // Out
+      hatchSolPusher.set(Value.kForward); // Push Out
+    }
+    else {
+      hatchSolPusher.set(Value.kReverse); // Push In
+      if(Robot.hatchSwitchAutoClose.get()){
+        // Defalt State Control, If the User is not Pushing the Button
+        hatchSol.set(Value.kReverse); // In
+      }
+      else {
+        if(window.getTime() != -1 && window.getTime() < 10){
+          // Hatch Close in the Last Part of the Match Time.
+          hatchSol.set(Value.kReverse); // In
+        }
+        else {
+          // Defalt State Control, If the User is not Pushing the Button
+          hatchSol.set(Value.kForward); // Out
+        }
+      }
+    }
 
 
-		//////////////////
-		//  DRIVE CTRL  //
-		//////////////////
-		double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
-		double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
-		DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideB);
-
-		if(OI.driveSlowForward.get()){
-			// Button Mode Forward
-			console.out(logMode.kDebug, "Slow Forward");
-			DRIVE_Y = RobotOrientation.getInstance().fix(0.45, Side.kSideA);
-			DRIVE_X = 0;
-		}
-		else if(OI.driveSlowReverse.get()){
-			// Button Mode Reverse
-			console.out(logMode.kDebug, "Slow Reverse");
-			DRIVE_Y = RobotOrientation.getInstance().fix(-0.45, Side.kSideA);
-			DRIVE_X = 0;
-		}
-		else if(OI.driveSlowLeft.get()){
-			// Button Mode Reverse
-			console.out(logMode.kDebug, "Slow Left");
-			DRIVE_Y = 0;
-			DRIVE_X = 0.3;
-		}
-		else if(OI.driveSlowRight.get()){
-			// Button Mode Reverse
-			console.out(logMode.kDebug, "Slow Right");
-			DRIVE_Y = 0;
-			DRIVE_X = -0.3;
-
-		}
-		else {
-			// Joystick Mode
-			DRIVE_Y = DRIVE_Y*0.80;
-			DRIVE_X = DRIVE_X*0.50;
-		}
+    //////////////////
+    //  SHIFT CTRL  //
+    //////////////////
+    if(OI.transButtonHigh.get()){
+      transSol.set(false); // High Gear
+      OI.driveShift.setString("HIGH");
+    }
+    else if(OI.transButtonLow.get()){
+      transSol.set(true); // LowGear
+      OI.driveShift.setString("LOW");
+    }
 
 
-		/**
-		 * Auto Turn Control using Limelight
-		 *
-		 * p =
-		 *    0.5 = P * tX
-		 * 0.5 is the target speed @ tX distance.
-		 */
-		if(OI.autoTurnCtrl.get()){
+    //////////////////
+    //  DRIVE CTRL  //
+    //////////////////
+    double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+    double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
+    DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideB);
 
-			DRIVE_X = -0.048 * Robot.limelightMain.getX();
+    if(OI.driveSlowForward.get()){
+      // Button Mode Forward
+      console.out(logMode.kDebug, "Slow Forward");
+      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideB);
+      DRIVE_X = 0;
+    }
+    else if(OI.driveSlowReverse.get()){
+      // Button Mode Reverse
+      console.out(logMode.kDebug, "Slow Reverse");
+      DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideB);
+      DRIVE_X = 0;
+    }
+    else if(OI.driveSlowLeft.get()){
+      // Button Mode Reverse
+      console.out(logMode.kDebug, "Slow Left");
+      DRIVE_Y = 0;
+      DRIVE_X = 0.3;
+    }
+    else if(OI.driveSlowRight.get()){
+      // Button Mode Reverse
+      console.out(logMode.kDebug, "Slow Right");
+      DRIVE_Y = 0;
+      DRIVE_X = -0.3;
+      ;
+    }
+    else {
+      // Joystick Mode
+      DRIVE_Y = DRIVE_Y*0.80;
+      DRIVE_X = DRIVE_X*0.80;
+    }
 
-			// Covers the Sensor if its not connected.
-			double range = Robot.limelightMain.getDistance();
-			if(range < 2){
-				range = 1.5;
-			}
-			System.out.println("F" + range);
-			DRIVE_Y = 0.14 * range;
+    /**
+     * Auto Turn Control using Limelight
+     *
+     * p =
+     *    0.5 = P * tX
+     * 0.5 is the target speed @ tX distance.
+     */
+    if(OI.autoTurnCtrl.get() == true){
 
-			System.out.println(DRIVE_Y);
-			console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
-			OI.LLCtrl.setBoolean(true);
-		}
-		else {
-			console.out(logMode.kDebug, ":: " + DRIVE_X);
-			OI.LLCtrl.setBoolean(false);
-		}
-		Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
+      DRIVE_X = -0.048 * Robot.limelightMain.getX();
 
+      // Covers the Sensor if its not connected.
+      double range = Robot.limelightMain.getDistance();
+      if(range > 200){
+        range = 1;
+      }
+      DRIVE_Y = 0.18 * range;
 
-		////////////////////////
-		//////// SIDE A ////////
-		////////////////////////
-		if(RobotOrientation.getInstance().getSide() == Side.kSideA) {
-
-			OI.cameraView.setNumber(1);
-			OI.cameraViewText.setString("HATCH");
-		}
-		////////////////////////
-		//////// SIDE B ////////
-		////////////////////////
-		else {
-
-			OI.cameraView.setNumber(0);
-			OI.cameraViewText.setString("BALL");
-		}
-
-		///////////////////////////////////////
-		////  Front and Rear Lift Control  ////
-		///////////////////////////////////////
-		if(OI.driver.getRawButton(LogitechMap_X.BUTTON_START)){
-			Robot.robotLiftR.set(true);
-			console.out(logMode.kDebug, "UP! UP! AND AWAY!");
-		}
-		else {
-			Robot.robotLiftR.set(false);
-		}
-
-		if(OI.driver.getRawButton(LogitechMap_X.BUTTON_BACK)){
-			Robot.robotLiftF.set(true);
-			console.out(logMode.kDebug, "UP! UP! AND AWAY! FRONT");
-		}
-		else {
-			Robot.robotLiftF.set(false);
-		}
-
-		//Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
-		//Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
-
-		double controlArm = -OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
-		if(controlArm > 0){
-			if(!ballUpperLimit.get()){
-				// Allow if button is true, Wired for Cut Wire Safety
-				controlArm = 0;
-			}
-			else{
-				// Limit the Up to %50 max power
-				controlArm = controlArm*0.85;
-			}
-		}
-		else if (controlArm > 0){
-			// Run Off code IF the Locker is not in use.
-			if(!Locker.isLocked("motorTilt")){
-				Robot.motorTilt.set(0);
-			}
-		}
-		else {
-			// Limit the Down to 85% max power
-			controlArm = controlArm*0.85;
-		}
-
-		if(!Locker.isLocked("motorTilt")){
-			Robot.motorTilt.set(controlArm);
-		}
-		else {
-			if(controlArm != 0){
-				console.log("User Control Ignored, Locked");
-			}
-		}
+      console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
+      OI.LLCtrl.setBoolean(true);
+    }
+    else {
+      console.out(logMode.kDebug, ":: " + DRIVE_X);
+      OI.LLCtrl.setBoolean(false);
+    }
+    Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
 
 
-		//////////////////////
-		//// Lift Control ////
-		//////////////////////
-		if(OI.liftTop.get()){
-			console.out(logMode.kDebug, "Top");
-		}
-		else if(OI.liftMid.get() || OI.liftMidAlt.get()){
-			console.out(logMode.kDebug, "Mid");
-		}
-		else if(OI.liftBottom.get()){
-			console.out(logMode.kDebug, "Bottom");
-		}
+    ////////////////////////
+    //////// SIDE A ////////
+    ////////////////////////
+    if(RobotOrientation.getInstance().getSide() == Side.kSideA) {
 
-	}
+      OI.cameraView.setNumber(1);
+      OI.cameraViewText.setString("HATCH");
+    }
+    ////////////////////////
+    //////// SIDE B ////////
+    ////////////////////////
+    else {
+
+      OI.cameraView.setNumber(0);
+      OI.cameraViewText.setString("BALL");
+    }
+
+    ///////////////////////////////////////
+    ////  Front and Rear Lift Control  ////
+    ///////////////////////////////////////
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_START)){
+      Robot.robotLiftR.set(true);
+      console.out(logMode.kDebug, "UP! UP! AND AWAY!");
+    }
+    else {
+      Robot.robotLiftR.set(false);
+    }
+
+    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_BACK)){
+      Robot.robotLiftF.set(true);
+      console.out(logMode.kDebug, "UP! UP! AND AWAY! FRONT");
+    }
+    else {
+      Robot.robotLiftF.set(false);
+    }
+
+    //Robot.motorTilt.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+    //Robot.motorLock.set(OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
+
+    double controlArm = -OI.operator.getRawAxis(LogitechMap_X.AXIS_LEFT_Y);
+    if(controlArm > 0){
+      if(ballUpperLimit.get() != true){
+        // Allow if button is true, Wired for Cut Wire Saftey
+        controlArm = 0;
+      }
+      else{
+        // Limit the Up to %50 max power
+        controlArm = controlArm*0.85;
+      }
+    }
+    else if (controlArm > 0){
+      // Run Off code IF the Locker is not in use.
+      if(Locker.isLocked("motorTilt") == false){
+        Robot.motorTilt.set(0);
+      }
+    }
+    else {
+      // Limit the Down to 85% max power
+      controlArm = controlArm*0.85;
+    }
+
+    if(Locker.isLocked("motorTilt") == false){
+      Robot.motorTilt.set(controlArm);
+    }
+    else {
+      if(controlArm != 0){
+        console.log("User Control Ignored, Locked");
+      }
+    }
 
 
-	/**
-	 * Is Value between the given input.
-	 *
-	 * @param Input Input Value
-	 * @param trueZone Green Zone
-	 * @return Return True if its Betwen a set Value
-	 */
-	public boolean between(double Input, double trueZone){
-		return (Math.abs(Input) < trueZone);
-	}
+    //////////////////////
+    //// Lift Control ////
+    //////////////////////
+    if(OI.liftTop.get()){
+      console.out(logMode.kDebug, "Top");
+    }
+    else if(OI.liftMid.get() || OI.liftMidAlt.get()){
+      console.out(logMode.kDebug, "Mid");
+    }
+    else if(OI.liftBottom.get()){
+      console.out(logMode.kDebug, "Bottom");
+    }
+
+  }
+
+
+  /**
+   * Is Value between the given input.
+   *
+   * @param Input
+   * @param trueZone
+   * @return
+   */
+  public boolean between(double Input, double trueZone){
+    return (Math.abs(Input) < trueZone);
+  }
 
 }

@@ -46,9 +46,13 @@ public class OI {
     public static JoystickButton inputGrabberToggle;
     public static JoystickButton autoTurnCtrl;
     public static Joystick operator;
-    
+
     public static ButtonDebouncer directionSwitch;
-    
+    public static ButtonDebouncer transButtonHigh;
+    public static ButtonDebouncer transButtonLow;
+    public static ButtonDebouncer autoIntake;
+
+
 
     public static DPadButtonDebounce liftTop;
     public static DPadButtonDebounce liftMid;
@@ -62,7 +66,7 @@ public class OI {
 
     public static JoystickButton hatchButton;
     public static JoystickButton hatchButtonOut;
-    
+
     public static NetworkTableInstance tableInstance;
     public static NetworkTable table;
 
@@ -92,6 +96,7 @@ public class OI {
     public static NetworkTableEntry limelightLEDOn;
     public static NetworkTableEntry LLCtrl;
     public static NetworkTableEntry debugLogEnabled;
+    public static NetworkTableEntry LLError, LLCError;
 
     public static DropSelection<Integer> position;
     public static DropSelection<Integer> level;
@@ -99,7 +104,7 @@ public class OI {
     public static DropSelection<SideTarget> targetSide;
     public static DropSelection<FaceTarget> targetFace;
 
-    
+
     public OI() {
 
         position = new DropSelection<Integer>("pos");
@@ -138,6 +143,8 @@ public class OI {
         limelightLEDOn = table.getEntry("limelightLEDOn");
         LLCtrl = table.getEntry("LLCtrl");
         debugLogEnabled = table.getEntry("debugLog");
+        LLError = table.getEntry("LLError");
+        LLCError = table.getEntry("LLCError");
 
         LimelightDistance.setDefaultNumber(0);
         cameraView.setDefaultNumber(0);
@@ -147,6 +154,8 @@ public class OI {
         limitUpper.setDefaultBoolean(false);
         limitLower.setDefaultBoolean(false);
         LLCtrl.setDefaultBoolean(false);
+        LLCError.setDefaultNumber(0.0);
+        LLError.setDefaultNumber(0.0);
 
         driver = new Joystick(Robot.DRIVER);
         operator = new Joystick(Robot.OPERATOR);
@@ -155,6 +164,9 @@ public class OI {
 
         driver.setRumble(RumbleType.kLeftRumble, 0);
         directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
+        transButtonHigh = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 0.8); // High Range
+        transButtonLow = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_X, 0.8);  // Low Range
+        autoIntake = new ButtonDebouncer(operator, LogitechMap_X.BUTTON_B, 0.8);
 
         inputGrabberToggle = new JoystickButton(driver, LogitechMap_X.BUTTON_A);
         //hatchButton = new Button(operator, LogitechMap_X.BUTTON_A);
@@ -196,8 +208,8 @@ public class OI {
     }
 
     /**
-     * Setup 
-     * 
+     * Setup
+     *
      */
     public static void Apply(){
 
@@ -226,13 +238,13 @@ public class OI {
         targetSide.add("Far", OI.SideTarget.Far);
         targetSide.add("Middle", OI.SideTarget.Mid);
         targetSide.add("Close", OI.SideTarget.Close);
- 
+
         // targetFace Options
         targetFace.add("None", true, OI.FaceTarget.NotDefined);
         targetFace.add("Left", OI.FaceTarget.Left);
         targetFace.add("Right", OI.FaceTarget.Right);
 
-        
+
         // Send data to driverstation
         position.send();
         level.send();

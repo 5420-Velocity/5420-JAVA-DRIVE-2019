@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PWMSpeedController;
+import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.helpers.console;
 import frc.robot.helpers.console.logMode;
 
@@ -17,10 +18,13 @@ import frc.robot.helpers.console.logMode;
  */
 public class MotorDriveEncoder extends MotorDrive {
     public DigitalInput upperLimit;
+    public DigitalInput lowerLimit;
+
     
-    public MotorDriveEncoder(PWMSpeedController drive, double power, double timeInMillis, DigitalInput upperLimit){
+    public MotorDriveEncoder(PWMSpeedController drive, double power, double timeInMillis, DigitalInput upperLimit, DigitalInput lowerLimit){
         super( drive, power, timeInMillis, "");
         this.upperLimit = upperLimit;
+        this.lowerLimit = lowerLimit;
     }
 
     // Called just before this Command runs the first time
@@ -39,13 +43,22 @@ public class MotorDriveEncoder extends MotorDrive {
         // Safety Code, Its made to catch the Human Error of not plugging in the Encoder.
 		//  Encoders will send a 0 value if you don't have an encoder plugged-in to the port.
 		// Do the Safe Check to see if the Encoders are doing their thing or not after x seconds
-		if( new Date().after(EStopEncoderTime) ) {
+		if( new Date().after(EStopEncoderTime)) {
 			// If the Encoder is not Past 10 ticks.
 			console.out(logMode.kDebug, "[AutoDrive] Finished");
 			this.isFinished = true;
         }
-        else {
+        else if(upperLimit.get() == false && lowerLimit.get() == false){
             this.drive.set(power);
+        }
+        else if(power < 0 && upperLimit.get() == true){
+            this.drive.set(power);
+        }
+        else if(power  > 0 && lowerLimit.get() == true){
+            this.drive.set(power);
+        }
+        else{
+            this.isFinished = false;
         }
         this.drive.feed();
     }

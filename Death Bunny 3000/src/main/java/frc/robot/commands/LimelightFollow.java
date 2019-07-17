@@ -8,7 +8,7 @@ import frc.robot.helpers.console;
 
 public class LimelightFollow extends Command {
 
-    private double turnSensitivity = 50;
+    private double turnSensitivty = 30;
     private int cruiseVel = 400;
     private int pipeline;
     private DifferentialDrive drive;
@@ -16,8 +16,8 @@ public class LimelightFollow extends Command {
     private Limelight limelight;
 
     /**
-     * 
-     * 
+     *
+     *
      * @param drive Drive to Control
      * @param limelight Limelight Object to read data from.
      * @param pipeline Limelight Control to Find
@@ -27,8 +27,8 @@ public class LimelightFollow extends Command {
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param drive Drive to Control
      * @param limelight Limelight Object to read data from.
      * @param pipeline Limelight Control to Find
