@@ -8,7 +8,7 @@ import frc.robot.helpers.console;
 
 public class LimelightFollow extends Command {
 
-    private double turnSensitivty = 30;
+    private double turnSensitivity = 30;
     private int cruiseVel = 400;
     private int pipeline;
     private DifferentialDrive drive;

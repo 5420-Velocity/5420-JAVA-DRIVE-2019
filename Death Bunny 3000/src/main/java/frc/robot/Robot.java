@@ -400,6 +400,8 @@ public class Robot extends TimedRobot {
     // Turn Limelight Off
     Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
+    transSol.set(true); // LowGear
+
     // Stop Auto Commands
 
     if(Robot.autoCommand != null){
@@ -455,11 +457,14 @@ public class Robot extends TimedRobot {
       if(Robot.lowerLimit.get() == false){
         Robot.motorLift.set(-0.5); // Down
         Robot.winchBreak.set(false); // Break on
+        console.log("false");
       }
       else {
         console.out(logMode.kDebug, "Lower Limit");
         Robot.motorLift.set(0); // Off
         Robot.winchBreak.set(true); // Break off
+        console.log("true");
+
       }
     }
     else {
@@ -480,7 +485,7 @@ public class Robot extends TimedRobot {
       ballIntake2.set(0.5);
     }
     // Ball Intake Control using Buttons
-    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_LB)){
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_B)){
       // Ball In
       if(Robot.ballLoaded.get() == false){
         ballIntake.set(-0.5);
@@ -498,7 +503,7 @@ public class Robot extends TimedRobot {
         }
       }
     }
-    else if(OI.driver.getRawButton(LogitechMap_X.BUTTON_RB)){
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_X)){
       // Ball Out
       ballIntake.set(0.8);
       ballIntake2.set(-0.8);
