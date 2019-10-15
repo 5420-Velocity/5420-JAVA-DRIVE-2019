@@ -561,7 +561,7 @@ public class Robot extends TimedRobot {
     //  DRIVE CTRL  //
     //////////////////
     double DRIVE_Y = (OI.driver.getRawAxis(LogitechMap_X.AXIS_LEFT_Y));
-    double DRIVE_X = (-OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
+    double DRIVE_X = (OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
     DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideB);
 
     if(OI.driveSlowForward.get()){
@@ -592,7 +592,7 @@ public class Robot extends TimedRobot {
     else {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.80;
-      DRIVE_X = DRIVE_X*0.80;
+      DRIVE_X = -DRIVE_X*0.70;
     }
 
     /**
