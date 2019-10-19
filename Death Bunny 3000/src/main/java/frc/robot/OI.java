@@ -48,7 +48,7 @@ public class OI {
     public static Joystick operator;
 
     public static ButtonDebouncer directionSwitch;
-    public static ButtonDebouncer transButtonHigh;
+    public static JoystickButton transButtonHigh;
     public static ButtonDebouncer transButtonLow;
     public static ButtonDebouncer autoIntake;
 
@@ -164,7 +164,7 @@ public class OI {
 
         driver.setRumble(RumbleType.kLeftRumble, 0);
         directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
-        transButtonHigh = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 0.8); // High Range
+        transButtonHigh = new JoystickButton(driver, LogitechMap_X.BUTTON_Y); // High Range
         transButtonLow = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_X, 0.8);  // Low Range
         autoIntake = new ButtonDebouncer(operator, LogitechMap_X.BUTTON_B, 0.8);
 

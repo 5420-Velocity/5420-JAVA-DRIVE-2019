@@ -439,37 +439,37 @@ public class Robot extends TimedRobot {
       // Go Up bypass the Upper Limit
       console.out(logMode.kDebug, "BYPASS UPPER LIMIT, UP");
       Robot.motorLift.set(0.4); // Up
-      Robot.winchBreak.set(true); // Break Off
+      Robot.winchBreak.set(false); // Break Off
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
       if(!Robot.upperLimit.get() == false){
         // Upperlimit is setup to give a signal as true as open.
         Robot.motorLift.set(0.9); // Up
-        Robot.winchBreak.set(false); // Break On
+        Robot.winchBreak.set(true); // Break Off
       }
       else {
         console.out(logMode.kDebug, "Upper Limit");
         Robot.motorLift.set(0); // Off
-        Robot.winchBreak.set(true); // Break off
+        Robot.winchBreak.set(false); // Break on
       }
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
-      if(Robot.lowerLimit.get() == false){
+      // if(Robot.lowerLimit.get() == false){
         Robot.motorLift.set(-0.5); // Down
-        Robot.winchBreak.set(false); // Break on
-        console.log("false");
-      }
-      else {
-        console.out(logMode.kDebug, "Lower Limit");
-        Robot.motorLift.set(0); // Off
         Robot.winchBreak.set(true); // Break off
         console.log("true");
+      // }
+      // else {
+      //   console.out(logMode.kDebug, "Lower Limit");
+      //   Robot.motorLift.set(0); // Off
+      //   Robot.winchBreak.set(false); // Break on
+      //   console.log("false");
 
-      }
+      // }
     }
     else {
       Robot.motorLift.set(0); // Off
-      Robot.winchBreak.set(true); // Break off
+      Robot.winchBreak.set(false); // Break on
     }
 
     //////////////////
@@ -551,7 +551,7 @@ public class Robot extends TimedRobot {
       transSol.set(false); // High Gear
       OI.driveShift.setString("HIGH");
     }
-    else if(OI.transButtonLow.get()){
+    else{
       transSol.set(true); // LowGear
       OI.driveShift.setString("LOW");
     }
@@ -592,7 +592,7 @@ public class Robot extends TimedRobot {
     else {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.80;
-      DRIVE_X = -DRIVE_X*0.70;
+      DRIVE_X = -DRIVE_X*0.50;
     }
 
     /**
@@ -604,7 +604,7 @@ public class Robot extends TimedRobot {
      */
     if(OI.autoTurnCtrl.get() == true){
 
-      DRIVE_X = -0.048 * Robot.limelightMain.getX();
+      DRIVE_X = -0.04 * Robot.limelightMain.getX();
 
       // Covers the Sensor if its not connected.
       double range = Robot.limelightMain.getDistance();
