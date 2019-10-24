@@ -10,7 +10,7 @@ import java.util.HashMap;
  * NetworkTableEntryStore
  * This is to store all of the Object by the Table Entry Name or via
  *  an alias. Keep in mind that this allows you to store the object
- *  in on variable using the Map without needing to define extra vairables.
+ *  in on variable using the Map without needing to define extra variables.
  * 
  * @autor Noah Halstead <nhalstead00@gmail.com>
  */
@@ -18,7 +18,7 @@ public class NetworkTableEntryStore {
 
     /**
      * Allows you to create one instance of the call and call it 
-     *  later without needing to recall a new instance or svae it.
+     *  later without needing to recall a new instance or save it.
      * 
      * @var NetworkTableEntryStore
      */
@@ -34,7 +34,7 @@ public class NetworkTableEntryStore {
         if(NetworkTableEntryStore.constantInstance == null){
             // Make a new Instance with Default
             NetworkTableInstance tableInstance = NetworkTableInstance.getDefault(); // Get the Default Instance.
-            NetworkTable table = tableInstance.getTable("SmartDashboard"); // Get the Default Dasboard Store.
+            NetworkTable table = tableInstance.getTable("SmartDashboard"); // Get the Default Dashboard Store.
             
             // Create and Store the Instance
             NetworkTableEntryStore.constantInstance = new NetworkTableEntryStore(table);
@@ -69,8 +69,7 @@ public class NetworkTableEntryStore {
     /**
      * Takes the NetworkTable and Allows you to
      *  call Entries from the Network Tables.
-     * 
-     * @see NetowrkEntryStore
+     *
      * @param table NetworkTable
      */
     public NetworkTableEntryStore(NetworkTable table){
@@ -82,9 +81,9 @@ public class NetworkTableEntryStore {
      *  call Entries from the Network Tables.
      * 
      * @param table NetworkTable
-     * @param bool Set this new Instnace as the Class Instance
+     * @param setClassInstance Set this new Instance as the Class Instance
      */
-    public NetworkTableEntryStore(NetworkTable table, boolean setClassInstnace){
+    public NetworkTableEntryStore(NetworkTable table, boolean setClassInstance){
         // Save the Table to the Local Instance.
         this.table = table;
         NetworkTableEntryStore.constantInstance = this;
@@ -105,8 +104,8 @@ public class NetworkTableEntryStore {
      * If you want to add an Alias use this otherwise you can `get`
      *  that will add to the index by calling this inline.
      * 
-     * @param String Table Entry in the Server
-     * @param String Alias for the Entry
+     * @param tableEntryName Table Entry in the Server
+     * @param aliasName Alias for the Entry
      */
     public void addToIndex(String tableEntryName, String aliasName){
         this.tableEntryIndex.put(aliasName, table.getEntry(tableEntryName));
@@ -126,7 +125,7 @@ public class NetworkTableEntryStore {
     }
 
     /**
-     * Remove a Selected Alias or Name and relateed Object from
+     * Remove a Selected Alias or Name and related Object from
      *  the index
      * 
      * @param name String Alias or Name to remove from index.
@@ -146,8 +145,8 @@ public class NetworkTableEntryStore {
     }
 
     /**
-     * Return if the Naame or Alias exists in the Index
-     * 
+     * Return if the Name or Alias exists in the Index
+     *
      * @param name Name or Alias
      * @return If the Entry exists in the Index
      */

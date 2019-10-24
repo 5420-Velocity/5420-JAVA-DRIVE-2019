@@ -4,7 +4,7 @@ package frc.robot.helpers.controllers;
  * LogitechMap
  * The Map of the Logitech F310 USB Controller in
  *  switch mode X.
- * 
+ *
  * @author Noah Halstead <nhalstead00@gmail.com>
  */
 
@@ -12,7 +12,7 @@ public class LogitechMap_X {
 
     /**
      * Breakdown of the Controls in an Enum
-     * 
+     *
      */
     public enum Button {
         A(1),
@@ -35,7 +35,7 @@ public class LogitechMap_X {
 
     /**
      * Breakdown of the Controls in an Enum
-     * 
+     *
      */
     public enum Axis {
         LEFT_X(0),

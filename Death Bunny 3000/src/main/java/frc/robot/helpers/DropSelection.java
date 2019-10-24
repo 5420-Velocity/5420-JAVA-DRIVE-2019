@@ -41,7 +41,7 @@ public class DropSelection<V> {
     /**
      * Init by the Input of a SendableChooser
      * 
-     * @param sendableChooser
+     * @param v
      */
     public DropSelection(SendableChooser<V> v){
         this.selection = v;

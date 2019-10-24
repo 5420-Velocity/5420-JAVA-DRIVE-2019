@@ -40,7 +40,7 @@ public class MaxbotixUltrasonic {
      * Init using extra Params
      * 
      * @param _channel Select the Analog Channel to use
-     * @param _use_units If the value retuned shoould be 
+     * @param _use_units If the value returned should be
      * @param _min_voltage Min Voltage of the Sensor
      * @param _max_voltage Max Voltage of the Sensor
      * @param _min_distance Mix Value of the Sensor

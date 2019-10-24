@@ -166,9 +166,9 @@ public class console {
      * @return console 
      */
     public static void log(String... input){
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
         for (String single : input) {
-            buffer += single;
+            buffer.append(single);
         }
         System.out.println(buffer);
     }
@@ -179,11 +179,11 @@ public class console {
      * @param input Data to send to the DriverStation
      */
     public static void error(String... input){
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
         for (String single : input) {
-            buffer += single;
+            buffer.append(single);
         }
-        DriverStation.reportError(buffer, false);
+        DriverStation.reportError(buffer.toString(), false);
     }
 
     /**
@@ -192,11 +192,11 @@ public class console {
      * @param input Data to send to the DriverStation
      */
     public static void warn(String... input){
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
         for (String single : input) {
-            buffer += single;
+            buffer.append(single);
         }
-        DriverStation.reportWarning(buffer, false);
+        DriverStation.reportWarning(buffer.toString(), false);
     }
 
 }

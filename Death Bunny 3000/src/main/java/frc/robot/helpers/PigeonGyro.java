@@ -37,6 +37,15 @@ public class PigeonGyro extends GyroBase implements Gyro {
     }
 
     /**
+     * Setup by Using the TalonSRX
+     * 
+     * @param CANId Input of the CAN Address for the Pigeon Device.
+     */
+    public PigeonGyro(int CANId){
+        this(new PigeonIMU(CANId));
+    }
+
+    /**
      * Generate by the PigeonIMU Object
      * 
      * @param gyro
