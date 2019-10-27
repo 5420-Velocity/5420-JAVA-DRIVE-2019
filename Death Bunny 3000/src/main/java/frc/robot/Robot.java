@@ -454,18 +454,18 @@ public class Robot extends TimedRobot {
       }
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
-      // if(Robot.lowerLimit.get() == false){
+       if(Robot.lowerLimit.get() == false){
         Robot.motorLift.set(-0.5); // Down
         Robot.winchBreak.set(true); // Break off
         console.log("true");
-      // }
-      // else {
-      //   console.out(logMode.kDebug, "Lower Limit");
-      //   Robot.motorLift.set(0); // Off
-      //   Robot.winchBreak.set(false); // Break on
-      //   console.log("false");
+       }
+       else {
+         console.out(logMode.kDebug, "Lower Limit");
+         Robot.motorLift.set(0); // Off
+         Robot.winchBreak.set(false); // Break on
+         console.log("false");
 
-      // }
+       }
     }
     else {
       Robot.motorLift.set(0); // Off
@@ -592,7 +592,7 @@ public class Robot extends TimedRobot {
     else {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.80;
-      DRIVE_X = -DRIVE_X*0.50;
+      DRIVE_X = -DRIVE_X*0.65;
     }
 
     /**
@@ -611,7 +611,7 @@ public class Robot extends TimedRobot {
       if(range > 200){
         range = 1;
       }
-      DRIVE_Y = 0.18 * range;
+      DRIVE_Y = 0.25 * range;
 
       console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
       OI.LLCtrl.setBoolean(true);

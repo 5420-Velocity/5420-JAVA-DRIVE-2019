@@ -39,8 +39,8 @@ public class OI {
     }
 
     // getDistance Param Values
-    public static final double LimelightKD = 4;
-    public static final double LimelightKA = 2.5409;
+    public static final double LimelightKD = 1.5;
+    public static final double LimelightKA = 5.03;
 
     public static Joystick driver;
     public static JoystickButton inputGrabberToggle;
