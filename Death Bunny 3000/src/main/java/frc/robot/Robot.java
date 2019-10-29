@@ -608,12 +608,30 @@ public class Robot extends TimedRobot {
 
       // Covers the Sensor if its not connected.
       double range = Robot.limelightMain.getDistance();
+      // Covers the Sensor if its not connected.
       if(range > 200){
         range = 1;
       }
       DRIVE_Y = 0.25 * range;
 
-      console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
+      if(range == 1 || range == 0) {
+        // Backup if the range is Zero
+        Scheduler.getInstance().add(new MotorDrive(motorTilt, 0.6, 1500, "motorTilt"));
+      }
+      else {
+        DRIVE_X = -0.04 * Robot.limelightMain.getX();
+
+        if(range < 4){
+          DRIVE_Y = 0.4;
+        }
+        else {
+          DRIVE_Y = 0.08 * range;
+        }
+
+        console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
+        System.out.println(">> " + DRIVE_X + "  " + DRIVE_Y);
+      }
+
       OI.LLCtrl.setBoolean(true);
     }
     else {
