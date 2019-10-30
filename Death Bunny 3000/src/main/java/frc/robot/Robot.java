@@ -163,7 +163,8 @@ public class Robot extends TimedRobot {
 		console.allowLog = logMode.kOff;
 
 		// Setup Auto CTRL
-		OI.Apply();
+    OI.Apply();
+    
 	}
 
 	@Override
@@ -414,14 +415,15 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_A)){
-      // Add Code to run the robot.
-      //Scheduler.getInstance().add();
-
+    if(OI.turnFaceRight.get()){
+      // Turn Face Rigth
+      Scheduler.getInstance().add(new AutoDriveGyro(Robot.m_drive, Robot.pigeon, "m_drive", 160, 0.7));
+      console.log("AutoDriveGyro +");
     }
-    else {
-      // Add code to Cancel the Program
-
+    else if(OI.turnFacefLeft.get()){
+      // Turn Face Left
+      Scheduler.getInstance().add(new AutoDriveGyro(Robot.m_drive, Robot.pigeon, "m_drive", 160, -0.7));
+      console.log("AutoDriveGyro -");
     }
 
     /////////////////
@@ -460,11 +462,10 @@ public class Robot extends TimedRobot {
         console.log("true");
        }
        else {
-         console.out(logMode.kDebug, "Lower Limit");
-         Robot.motorLift.set(0); // Off
-         Robot.winchBreak.set(false); // Break on
-         console.log("false");
-
+          console.out(logMode.kDebug, "Lower Limit");
+          Robot.motorLift.set(0); // Off
+          Robot.winchBreak.set(false); // Break on
+          console.log("false");
        }
     }
     else {
@@ -485,7 +486,7 @@ public class Robot extends TimedRobot {
       ballIntake2.set(0.5);
     }
     // Ball Intake Control using Buttons
-    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_B)){
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_B)) {
       // Ball In
       if(Robot.ballLoaded.get() == false){
         ballIntake.set(-0.5);
@@ -503,7 +504,7 @@ public class Robot extends TimedRobot {
         }
       }
     }
-    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_X)){
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_X)) {
       // Ball Out
       ballIntake.set(0.8);
       ballIntake2.set(-0.8);
@@ -564,25 +565,25 @@ public class Robot extends TimedRobot {
     double DRIVE_X = (OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
     DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideB);
 
-    if(OI.driveSlowForward.get()){
+    if(OI.driveSlowForward.get()) {
       // Button Mode Forward
       console.out(logMode.kDebug, "Slow Forward");
       DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideB);
       DRIVE_X = 0;
     }
-    else if(OI.driveSlowReverse.get()){
+    else if(OI.driveSlowReverse.get()) {
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Reverse");
       DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideB);
       DRIVE_X = 0;
     }
-    else if(OI.driveSlowLeft.get()){
+    else if(OI.driveSlowLeft.get()) {
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Left");
       DRIVE_Y = 0;
       DRIVE_X = 0.3;
     }
-    else if(OI.driveSlowRight.get()){
+    else if(OI.driveSlowRight.get()) {
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Right");
       DRIVE_Y = 0;
@@ -616,7 +617,7 @@ public class Robot extends TimedRobot {
 
       if(range == 1 || range == 0) {
         // Backup if the range is Zero
-        Scheduler.getInstance().add(new MotorDrive(motorTilt, 0.6, 1500, "motorTilt"));
+        
       }
       else {
         DRIVE_X = -0.04 * Robot.limelightMain.getX();
@@ -638,7 +639,11 @@ public class Robot extends TimedRobot {
       console.out(logMode.kDebug, ":: " + DRIVE_X);
       OI.LLCtrl.setBoolean(false);
     }
-    Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
+
+    if(Locker.isLocked("m_drive") == false) {
+      // If the Robot Drive is not Locked, Pass in the drive object.
+      Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
+    }
 
 
     ////////////////////////

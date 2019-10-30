@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import frc.robot.helpers.Locker;
 import frc.robot.helpers.VirtualGyro;
 import frc.robot.helpers.console;
 import frc.robot.helpers.console.logMode;
@@ -23,6 +24,7 @@ public class AutoDriveGyro extends Command {
     protected Date EStopTime;
     protected long endTime;
     protected boolean isFinished;
+    protected String lockName = "";
     protected double power;
     protected double targetDeg;
     protected VirtualGyro gyro;
@@ -36,11 +38,12 @@ public class AutoDriveGyro extends Command {
      * 
      * @param drive     Drive Control
      * @param gyro      Gyro Instance
+     * @param lockName  Name of the Lock
      * @param targetDeg Target Deg
      * @param power     Power Control Value (Used for the Turn Contorl)
      */
-    public AutoDriveGyro(DifferentialDrive  drive, Gyro gyro, double targetDeg, double power) {
-        this(drive, gyro, power, targetDeg, 4);
+    public AutoDriveGyro(DifferentialDrive  drive, Gyro gyro, String lockName, double targetDeg, double power) {
+        this(drive, gyro, lockName, targetDeg,power, 4000);
     }
 
     /**
@@ -49,30 +52,32 @@ public class AutoDriveGyro extends Command {
      * 
      * @param drive     Drive Control
      * @param gyro      Gyro Instance
+     * @param lockName  Name of the Lock
      * @param targetDeg Target Deg
      * @param power     Power Control Value (Used for the Turn Contorl)
      * @param timeout   Total time to spend on the job, this is a safety part to
      *    protect the robot from driving without an encoder
      */
-    public AutoDriveGyro(DifferentialDrive  drive, Gyro gyro, double targetDeg, double power, int timeout) {
+    public AutoDriveGyro(DifferentialDrive  drive, Gyro gyro, String lockName, double targetDeg, double power, int timeout) {
         this.drive = drive;
         this.gyro = new VirtualGyro(gyro);
-        this.power = power;
+        this.lockName = lockName;
         this.targetDeg = targetDeg;
+        this.power = power;
         this.timeout = timeout;
     }
     
     // Called just before this Command runs the first time
     protected void initialize() {
-        console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Running Gyro " + this.gyro.getAngle());
-        
         this.drive.stopMotor(); // Stop Motors, Stops any Rouge Commands Before Execution
         this.gyro.reset(); // Reset Gyro to Zero.
+        console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Running Gyro " + this.gyro.getAngle());
 
         // Setup the Stop Motor by Time when the encoder does not update.
         Calendar calculateDate = GregorianCalendar.getInstance();
         calculateDate.add(GregorianCalendar.MILLISECOND, (int) this.timeout); // Time to Check the Encoder Distance is not Zero
         EStopTime = calculateDate.getTime();
+        Locker.lock(this.lockName);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -89,12 +94,13 @@ public class AutoDriveGyro extends Command {
         }
 
         double current = this.gyro.getAngle();
-        if(Math.abs(current) > this.targetDeg) {
+        console.out(logMode.kDebug, "RUN :: " + current);
+        if(Math.abs(current) < this.targetDeg) {
             if(Math.signum(current) == -1) {
-                this.drive.arcadeDrive(power, 0);
+                this.drive.arcadeDrive(0, power);
             }
             else if(Math.signum(current) == 1) {
-                this.drive.arcadeDrive(power, 0);
+                this.drive.arcadeDrive(0, power);
             }
         }
         else {
@@ -116,5 +122,6 @@ public class AutoDriveGyro extends Command {
         this.drive.arcadeDrive(0, 0);
         this.drive.stopMotor();
         console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Finished Command");
+        Locker.unlock(this.lockName);
     }
 }

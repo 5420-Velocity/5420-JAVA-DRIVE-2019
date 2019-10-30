@@ -51,7 +51,8 @@ public class OI {
     public static JoystickButton transButtonHigh;
     public static ButtonDebouncer transButtonLow;
     public static ButtonDebouncer autoIntake;
-
+    public static ButtonDebouncer turnFacefLeft;
+    public static ButtonDebouncer turnFaceRight;
 
 
     public static DPadButtonDebounce liftTop;
@@ -178,6 +179,9 @@ public class OI {
         liftBottom = new DPadButtonDebounce(operator, DPadButton.Direction.Down);
         liftMid = new DPadButtonDebounce(operator, DPadButton.Direction.Right);
         liftMidAlt = new DPadButtonDebounce(operator, DPadButton.Direction.Left);
+
+        turnFaceRight = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_RB, 0.8);
+        turnFacefLeft = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_LB, 0.8);
 
         driveSlowForward = new DPadButton(driver, DPadButton.Direction.Up);
         driveSlowReverse = new DPadButton(driver, DPadButton.Direction.Down);
