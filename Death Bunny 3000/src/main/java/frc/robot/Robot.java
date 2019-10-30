@@ -567,13 +567,13 @@ public class Robot extends TimedRobot {
     if(OI.driveSlowForward.get()){
       // Button Mode Forward
       console.out(logMode.kDebug, "Slow Forward");
-      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideB);
+      DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideB);
       DRIVE_X = 0;
     }
     else if(OI.driveSlowReverse.get()){
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Reverse");
-      DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideB);
+      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideB);
       DRIVE_X = 0;
     }
     else if(OI.driveSlowLeft.get()){
@@ -604,7 +604,7 @@ public class Robot extends TimedRobot {
      */
     if(OI.autoTurnCtrl.get() == true){
 
-      DRIVE_X = -0.04 * Robot.limelightMain.getX();
+      DRIVE_X = -0.03 * Robot.limelightMain.getX();
 
       // Covers the Sensor if its not connected.
       double range = Robot.limelightMain.getDistance();
@@ -620,13 +620,13 @@ public class Robot extends TimedRobot {
       }
       else {
         DRIVE_X = -0.04 * Robot.limelightMain.getX();
-
-        if(range < 4){
-          DRIVE_Y = 0.4;
+        if(range < 6){
+          DRIVE_Y = 0.6;
         }
-        else {
+        else{
           DRIVE_Y = 0.08 * range;
         }
+         
 
         console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
         System.out.println(">> " + DRIVE_X + "  " + DRIVE_Y);
