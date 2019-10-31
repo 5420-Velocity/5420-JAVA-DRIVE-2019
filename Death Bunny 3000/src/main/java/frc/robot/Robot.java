@@ -61,7 +61,8 @@ public class Robot extends TimedRobot {
 	public static Encoder leftEncoder, rightEncoder;
 	public static AnalogPotentiometer liftEncoder;
 
-	public static Edge ballLoadedEdge;
+  public static Edge ballLoadedEdge;
+  public static Edge hatchLoadedEdge;
 
 	public static VictorSP motorLift, motorTilt, ballIntake2, motorLock, ballIntake;
 
@@ -135,7 +136,8 @@ public class Robot extends TimedRobot {
 
 		upperLimit = new DigitalInput(0);
 		lowerLimit = new DigitalInput(1);
-		hatchSwitchAutoClose = new DigitalInput(8);
+    hatchSwitchAutoClose = new DigitalInput(8);
+    hatchLoadedEdge = new Edge(hatchSwitchAutoClose, EdgeMode.kRising);
 		ballLoaded = new DigitalInput(9);
 		ballLoadedEdge = new Edge(ballLoaded, EdgeMode.kRising);
 		ballUpperLimit = new DigitalInput(10);
@@ -254,7 +256,7 @@ public class Robot extends TimedRobot {
 		console.out(logMode.kDebug, "Testing Init Start");
 
 		// Drive the Robot using an Encoder to a set point.
-		Scheduler.getInstance().add(new AutoDriveEncoder(Robot.m_drive, Robot.leftEncoder, 0.5, 0, 10000));
+		//Scheduler.getInstance().add(new AutoDriveEncoder(Robot.m_drive, Robot.leftEncoder, 0.5, 0, 10000));
 
 		// Using the Given Drive, Turn to the Object until the value is within a margin.
 		//Scheduler.getInstance().add(new Limelight_turn(Robot.m_drive, Robot.limelightMain));
