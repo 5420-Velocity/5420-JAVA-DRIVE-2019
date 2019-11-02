@@ -180,8 +180,8 @@ public class OI {
         liftMid = new DPadButtonDebounce(operator, DPadButton.Direction.Right);
         liftMidAlt = new DPadButtonDebounce(operator, DPadButton.Direction.Left);
 
-        turnFaceRight = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_RB, 0.8);
-        turnFacefLeft = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_LB, 0.8);
+        turnFaceRight = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_RB, 1.2);
+        turnFacefLeft = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_LB, 1.2);
 
         driveSlowForward = new DPadButton(driver, DPadButton.Direction.Up);
         driveSlowReverse = new DPadButton(driver, DPadButton.Direction.Down);

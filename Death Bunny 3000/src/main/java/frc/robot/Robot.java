@@ -285,7 +285,10 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 
 		Robot.gameData = window.getData();
-		Robot.autoCommand = new CommandGroup();
+    Robot.autoCommand = new CommandGroup();
+
+    // Turn Limelight On
+    Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
 		/////////////////////
 		////// STAGE 1 //////
@@ -400,7 +403,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // Turn Limelight Off
+    // Turn Limelight On
     Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
     transSol.set(true); // LowGear
@@ -417,16 +420,16 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
-    if(OI.turnFaceRight.get()){
-      // Turn Face Rigth
-      Scheduler.getInstance().add(new AutoDriveGyro(Robot.m_drive, Robot.pigeon, "m_drive", 160, 0.7));
-      console.log("AutoDriveGyro +");
-    }
-    else if(OI.turnFacefLeft.get()){
-      // Turn Face Left
-      Scheduler.getInstance().add(new AutoDriveGyro(Robot.m_drive, Robot.pigeon, "m_drive", 160, -0.7));
-      console.log("AutoDriveGyro -");
-    }
+    // if(OI.turnFaceRight.get()){
+    //   // Turn Face Rigth
+    //   Scheduler.getInstance().add(new AutoDriveGyro(Robot.m_drive, Robot.pigeon, "m_drive", 170, 0.7));
+    //   console.log("AutoDriveGyro +");
+    // }
+    // else if(OI.turnFacefLeft.get()){
+    //   // Turn Face Left
+    //   Scheduler.getInstance().add(new AutoDriveGyro(Robot.m_drive, Robot.pigeon, "m_drive", 170, -0.7));
+    //   console.log("AutoDriveGyro -");
+    // }
 
     /////////////////
     /// SIDE CTRL ///
@@ -595,7 +598,7 @@ public class Robot extends TimedRobot {
     else {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.80;
-      DRIVE_X = -DRIVE_X*0.45;
+      DRIVE_X = -DRIVE_X*0.60;
     }
 
     /**
