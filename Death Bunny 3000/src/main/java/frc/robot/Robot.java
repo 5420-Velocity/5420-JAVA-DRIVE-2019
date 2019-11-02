@@ -177,10 +177,10 @@ public class Robot extends TimedRobot {
 
 		Robot.logInterval++;
 		if(logInterval % CTRL_LOG_INTERVAL == 0){
-			Logger.pushCtrlValues("Driver", OI.driver);
-			Logger.pushCtrlValues("Operator", OI.operator);
-			System.out.println("TMP-L: " + Robot.left1.getMotorTemperature());
-			System.out.println("TMP-R: " + Robot.right1.getMotorTemperature());
+			//Logger.pushCtrlValues("Driver", OI.driver);
+			//Logger.pushCtrlValues("Operator", OI.operator);
+			//System.out.println("TMP-L: " + Robot.left1.getMotorTemperature());
+			//System.out.println("TMP-R: " + Robot.right1.getMotorTemperature());
 
 			Robot.logInterval = 0;
 		}
@@ -464,13 +464,11 @@ public class Robot extends TimedRobot {
        if(Robot.lowerLimit.get() == false){
         Robot.motorLift.set(-0.5); // Down
         Robot.winchBreak.set(true); // Break off
-        console.log("true");
        }
        else {
           console.out(logMode.kDebug, "Lower Limit");
           Robot.motorLift.set(0); // Off
           Robot.winchBreak.set(false); // Break on
-          console.log("false");
        }
     }
     else {
@@ -721,7 +719,7 @@ public class Robot extends TimedRobot {
     }
     else {
       if(controlArm != 0){
-        console.log("User Control Ignored, Locked");
+        //console.log("User Control Ignored, Locked");
       }
     }
 
