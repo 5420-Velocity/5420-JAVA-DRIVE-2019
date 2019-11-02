@@ -165,7 +165,7 @@ public class OI {
 
         driver.setRumble(RumbleType.kLeftRumble, 0);
         directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
-        transButtonHigh = new JoystickButton(driver, LogitechMap_X.BUTTON_Y); // High Range
+        transButtonHigh = new JoystickButton(driver, LogitechMap_X.BUTTON_RB); // High Range
         transButtonLow = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_X, 0.8);  // Low Range
         autoIntake = new ButtonDebouncer(operator, LogitechMap_X.BUTTON_B, 0.8);
 
@@ -180,7 +180,7 @@ public class OI {
         liftMid = new DPadButtonDebounce(operator, DPadButton.Direction.Right);
         liftMidAlt = new DPadButtonDebounce(operator, DPadButton.Direction.Left);
 
-        turnFaceRight = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_RB, 1.2);
+        turnFaceRight = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 1.2);
         turnFacefLeft = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_LB, 1.2);
 
         driveSlowForward = new DPadButton(driver, DPadButton.Direction.Up);
