@@ -54,8 +54,9 @@ public class Robot extends TimedRobot {
 	public static Solenoid transSol; // Put Solenoid to the Close State
 	public static PigeonGyro pigeon;
 
-	public static Ultrasonic frontSide;
-	public static DigitalInput hatchSwitchAutoClose, ballLoaded, upperLimit, lowerLimit, ballUpperLimit, ballLowerLimit;
+  public static Ultrasonic frontSide;
+  public static DigitalInputNegDebouce hatchSwitchAutoClose;
+	public static DigitalInput ballLoaded, hallLoaded, upperLimit, lowerLimit, ballUpperLimit, ballLowerLimit;
 	public static DoubleSolenoid hatchSol, hatchSolPusher; // Put Solenoid to the Open State
 	public static Solenoid robotLiftF, robotLiftR;
 	public static Encoder leftEncoder, rightEncoder;
@@ -136,7 +137,7 @@ public class Robot extends TimedRobot {
 
 		upperLimit = new DigitalInput(0);
 		lowerLimit = new DigitalInput(1);
-    hatchSwitchAutoClose = new DigitalInput(8);
+    hatchSwitchAutoClose = new DigitalInputNegDebouce(8, 20);
     hatchLoadedEdge = new Edge(hatchSwitchAutoClose, EdgeMode.kRising);
 		ballLoaded = new DigitalInput(9);
 		ballLoadedEdge = new Edge(ballLoaded, EdgeMode.kRising);
