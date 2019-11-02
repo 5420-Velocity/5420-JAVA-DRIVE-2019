@@ -595,7 +595,7 @@ public class Robot extends TimedRobot {
     else {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.80;
-      DRIVE_X = -DRIVE_X*0.65;
+      DRIVE_X = -DRIVE_X*0.45;
     }
 
     /**
