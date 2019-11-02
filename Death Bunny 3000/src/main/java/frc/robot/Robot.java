@@ -605,7 +605,7 @@ public class Robot extends TimedRobot {
      *    0.5 = P * tX
      * 0.5 is the target speed @ tX distance.
      */
-    if(OI.autoTurnCtrl.get() == true){
+    if(OI.autoTurnCtrl.get() == true && Robot.hatchLoadedEdge.get() == false){
 
       DRIVE_X = -0.03 * Robot.limelightMain.getX();
 
@@ -629,10 +629,7 @@ public class Robot extends TimedRobot {
         else{
           DRIVE_Y = 0.08 * range;
         }
-         
-
         console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
-        System.out.println(">> " + DRIVE_X + "  " + DRIVE_Y);
       }
 
       OI.LLCtrl.setBoolean(true);
