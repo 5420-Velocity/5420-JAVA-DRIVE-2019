@@ -637,6 +637,11 @@ public class Robot extends TimedRobot {
 
       OI.LLCtrl.setBoolean(true);
     }
+
+    if(OI.autoTurnCtrl.get() == true && Robot.hatchLoadedEdge.get() == true) {
+      console.log(":: hatchLoadedEdge ::");
+      //Scheduler.getInstance().add(new AutoDriveEncoder(Robot.m_drive, Robot.leftEncoder, -0.5, "m_drive", 50, 4000));
+    }
     else {
       console.out(logMode.kDebug, ":: " + DRIVE_X);
       OI.LLCtrl.setBoolean(false);
@@ -698,10 +703,10 @@ public class Robot extends TimedRobot {
         controlArm = controlArm*0.85;
       }
     }
-    else if (controlArm > 0){
-      // Run Off code IF the Locker is not in use.
-      if(Locker.isLocked("motorTilt") == false){
-        Robot.motorTilt.set(0);
+    else if (controlArm < 0){
+      if(ballLowerLimit.get() != true){
+        // Allow if button is true, Wired for Cut Wire Saftey
+        controlArm = 0;
       }
     }
     else {
@@ -709,6 +714,8 @@ public class Robot extends TimedRobot {
       controlArm = controlArm*0.85;
     }
 
+    
+    // Run Off code IF the Locker is not in use.
     if(Locker.isLocked("motorTilt") == false){
       Robot.motorTilt.set(controlArm);
     }
