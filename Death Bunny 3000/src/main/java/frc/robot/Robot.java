@@ -290,100 +290,100 @@ public class Robot extends TimedRobot {
     // Turn Limelight On
     Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
-		/////////////////////
-		////// STAGE 1 //////
-		/////////////////////
+		// /////////////////////
+		// ////// STAGE 1 //////
+		// /////////////////////
 
-		// Add Time Delay for a User Input
-		Robot.autoCommand.addSequential( new Delay(OI.autoDelay.getNumber(0)) );
+		// // Add Time Delay for a User Input
+		// Robot.autoCommand.addSequential( new Delay(OI.autoDelay.getNumber(0)) );
 
-		//////////////////////////////////
-		// If Position is Left / Right  //
-		//////////////////////////////////
-		if(OI.position.get() == 1 || OI.position.get() == 3){
-			console.log("POS 1 || POS 3");
+		// //////////////////////////////////
+		// // If Position is Left / Right  //
+		// //////////////////////////////////
+		// if(OI.position.get() == 1 || OI.position.get() == 3){
+		// 	console.log("POS 1 || POS 3");
 
 
-			// Level 1
-			if(OI.level.get() == 1){
-				console.log("LEVEL 1");
+		// 	// Level 1
+		// 	if(OI.level.get() == 1){
+		// 		console.log("LEVEL 1");
 
-				// Drive
-				Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 2000) );
+		// 		// Drive
+		// 		Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 2000) );
 
-			}
+		// 	}
 
-			// Level 2
-			else if(OI.level.get() == 2){
-				console.log("LEVEL 2");
+		// 	// Level 2
+		// 	else if(OI.level.get() == 2){
+		// 		console.log("LEVEL 2");
 
-				//drive
-				Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 3000));
+		// 		//drive
+		// 		Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 3000));
 
-			}
+		// 	}
 
-		}
+		// }
 
-		///////////////////////////
-		// If Position is Center //
-		///////////////////////////
+		// ///////////////////////////
+		// // If Position is Center //
+		// ///////////////////////////
 
-		else if(OI.position.get() == 2){
+		// else if(OI.position.get() == 2){
 
-			console.log("POS 2");
+		// 	console.log("POS 2");
 
-			// Level 1
-			if(OI.level.get() == 1){
-				console.log("LEVEL 1");
+		// 	// Level 1
+		// 	if(OI.level.get() == 1){
+		// 		console.log("LEVEL 1");
 
-				// Drive
-				Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 800));
+		// 		// Drive
+		// 		Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 800));
 
-			}
+		// 	}
 
-		}
+		// }
 
-		/////////////////////
-		////// STAGE 2 //////
-		/////////////////////
+		// /////////////////////
+		// ////// STAGE 2 //////
+		// /////////////////////
 
-		if(OI.target.get() == OI.Target.None){
+		// if(OI.target.get() == OI.Target.None){
 
-		}
-		else if(OI.target.get() == OI.Target.Face){
-			console.log("TARGET: FACE");
+		// }
+		// else if(OI.target.get() == OI.Target.Face){
+		// 	console.log("TARGET: FACE");
 
-			Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
-			Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, 90));
-			Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 2500));
-			Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, -90));
+		// 	Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
+		// 	Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, 90));
+		// 	Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 2500));
+		// 	Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, -90));
 
-		}
-		else if(OI.target.get() == OI.Target.Side){
-			console.log("TARGET: SIDE");
+		// }
+		// else if(OI.target.get() == OI.Target.Side){
+		// 	console.log("TARGET: SIDE");
 
-			Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 1000));
-		}
+		// 	Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 1000));
+		// }
 
-		/////////////////////
-		////// STAGE 3 //////
-		/////////////////////
+		// /////////////////////
+		// ////// STAGE 3 //////
+		// /////////////////////
 
-		if(OI.target.get() == OI.Target.Face){
+		// if(OI.target.get() == OI.Target.Face){
 
-			console.log("TARGET: FACE (3)");
+		// 	console.log("TARGET: FACE (3)");
 
-			Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 500));
-			Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kReverse));
-		}
-		else if(OI.target.get() == OI.Target.Side){
-			console.log("TARGET: SIDE (3)");
+		// 	Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 500));
+		// 	Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kReverse));
+		// }
+		// else if(OI.target.get() == OI.Target.Side){
+		// 	console.log("TARGET: SIDE (3)");
 
-			Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
-		}
+		// 	Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
+		// }
 
-    // Robot Auto Command Drive Controls
-    //Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
+    // // Robot Auto Command Drive Controls
+    // //Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
 
     // Add to Stack
     Scheduler.getInstance().add(Robot.autoCommand);
