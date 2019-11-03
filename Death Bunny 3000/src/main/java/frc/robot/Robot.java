@@ -625,8 +625,8 @@ public class Robot extends TimedRobot {
       }
       else {
         DRIVE_X = -0.04 * Robot.limelightMain.getX();
-        if(range < 6){
-          DRIVE_Y = 0.6;
+        if(range < 6.5){
+          DRIVE_Y = 0.7;
         }
         else{
           DRIVE_Y = 0.08 * range;
@@ -699,7 +699,7 @@ public class Robot extends TimedRobot {
       }
       else{
         // Limit the Up to %50 max power
-        controlArm = controlArm*0.85;
+        controlArm = controlArm*0.95;
       }
     }
     else if (controlArm < 0){
@@ -710,7 +710,7 @@ public class Robot extends TimedRobot {
     }
     else {
       // Limit the Down to 85% max power
-      controlArm = controlArm*0.85;
+      controlArm = controlArm*0.95;
     }
 
     
