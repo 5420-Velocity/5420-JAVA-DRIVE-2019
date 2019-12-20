@@ -625,8 +625,8 @@ public class Robot extends TimedRobot {
       }
       else {
         DRIVE_X = -0.04 * Robot.limelightMain.getX();
-        if(range < 6.5){
-          DRIVE_Y = 0.7;
+        if(range < 6){
+          DRIVE_Y = 0.6;
         }
         else{
           DRIVE_Y = 0.08 * range;
