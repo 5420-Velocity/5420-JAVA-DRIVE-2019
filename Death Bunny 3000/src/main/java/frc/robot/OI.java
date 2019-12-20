@@ -39,8 +39,8 @@ public class OI {
     }
 
     // getDistance Param Values
-    public static final double LimelightKD = 4;
-    public static final double LimelightKA = 2.5409;
+    public static final double LimelightKD = 2.5;
+    public static final double LimelightKA = 7.15;
 
     public static Joystick driver;
     public static JoystickButton inputGrabberToggle;
@@ -48,10 +48,11 @@ public class OI {
     public static Joystick operator;
 
     public static ButtonDebouncer directionSwitch;
-    public static ButtonDebouncer transButtonHigh;
+    public static JoystickButton transButtonHigh;
     public static ButtonDebouncer transButtonLow;
     public static ButtonDebouncer autoIntake;
-
+    public static ButtonDebouncer turnFacefLeft;
+    public static ButtonDebouncer turnFaceRight;
 
 
     public static DPadButtonDebounce liftTop;
@@ -164,7 +165,7 @@ public class OI {
 
         driver.setRumble(RumbleType.kLeftRumble, 0);
         directionSwitch = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_B, 0.8);
-        transButtonHigh = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 0.8); // High Range
+        transButtonHigh = new JoystickButton(driver, LogitechMap_X.BUTTON_RB); // High Range
         transButtonLow = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_X, 0.8);  // Low Range
         autoIntake = new ButtonDebouncer(operator, LogitechMap_X.BUTTON_B, 0.8);
 
@@ -178,6 +179,9 @@ public class OI {
         liftBottom = new DPadButtonDebounce(operator, DPadButton.Direction.Down);
         liftMid = new DPadButtonDebounce(operator, DPadButton.Direction.Right);
         liftMidAlt = new DPadButtonDebounce(operator, DPadButton.Direction.Left);
+
+        turnFaceRight = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_Y, 1.2);
+        turnFacefLeft = new ButtonDebouncer(driver, LogitechMap_X.BUTTON_LB, 1.2);
 
         driveSlowForward = new DPadButton(driver, DPadButton.Direction.Up);
         driveSlowReverse = new DPadButton(driver, DPadButton.Direction.Down);

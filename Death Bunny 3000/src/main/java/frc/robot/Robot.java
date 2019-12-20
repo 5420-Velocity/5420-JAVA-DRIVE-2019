@@ -54,14 +54,16 @@ public class Robot extends TimedRobot {
 	public static Solenoid transSol; // Put Solenoid to the Close State
 	public static PigeonGyro pigeon;
 
-	public static Ultrasonic frontSide;
-	public static DigitalInput hatchSwitchAutoClose, ballLoaded, upperLimit, lowerLimit, ballUpperLimit, ballLowerLimit;
+  public static Ultrasonic frontSide;
+  public static DigitalInputNegDebouce hatchSwitchAutoClose;
+	public static DigitalInput ballLoaded, hallLoaded, upperLimit, lowerLimit, ballUpperLimit, ballLowerLimit;
 	public static DoubleSolenoid hatchSol, hatchSolPusher; // Put Solenoid to the Open State
 	public static Solenoid robotLiftF, robotLiftR;
 	public static Encoder leftEncoder, rightEncoder;
 	public static AnalogPotentiometer liftEncoder;
 
-	public static Edge ballLoadedEdge;
+  public static Edge ballLoadedEdge;
+  public static Edge hatchLoadedEdge;
 
 	public static VictorSP motorLift, motorTilt, ballIntake2, motorLock, ballIntake;
 
@@ -135,7 +137,8 @@ public class Robot extends TimedRobot {
 
 		upperLimit = new DigitalInput(0);
 		lowerLimit = new DigitalInput(1);
-		hatchSwitchAutoClose = new DigitalInput(8);
+    hatchSwitchAutoClose = new DigitalInputNegDebouce(8, 20);
+    hatchLoadedEdge = new Edge(hatchSwitchAutoClose, EdgeMode.kRising);
 		ballLoaded = new DigitalInput(9);
 		ballLoadedEdge = new Edge(ballLoaded, EdgeMode.kRising);
 		ballUpperLimit = new DigitalInput(10);
@@ -163,7 +166,8 @@ public class Robot extends TimedRobot {
 		console.allowLog = logMode.kOff;
 
 		// Setup Auto CTRL
-		OI.Apply();
+    OI.Apply();
+    
 	}
 
 	@Override
@@ -174,10 +178,10 @@ public class Robot extends TimedRobot {
 
 		Robot.logInterval++;
 		if(logInterval % CTRL_LOG_INTERVAL == 0){
-			Logger.pushCtrlValues("Driver", OI.driver);
-			Logger.pushCtrlValues("Operator", OI.operator);
-			System.out.println("TMP-L: " + Robot.left1.getMotorTemperature());
-			System.out.println("TMP-R: " + Robot.right1.getMotorTemperature());
+			//Logger.pushCtrlValues("Driver", OI.driver);
+			//Logger.pushCtrlValues("Operator", OI.operator);
+			//System.out.println("TMP-L: " + Robot.left1.getMotorTemperature());
+			//System.out.println("TMP-R: " + Robot.right1.getMotorTemperature());
 
 			Robot.logInterval = 0;
 		}
@@ -253,7 +257,7 @@ public class Robot extends TimedRobot {
 		console.out(logMode.kDebug, "Testing Init Start");
 
 		// Drive the Robot using an Encoder to a set point.
-		Scheduler.getInstance().add(new AutoDriveEncoder(Robot.m_drive, Robot.leftEncoder, 0.5, 0, 10000));
+		//Scheduler.getInstance().add(new AutoDriveEncoder(Robot.m_drive, Robot.leftEncoder, 0.5, 0, 10000));
 
 		// Using the Given Drive, Turn to the Object until the value is within a margin.
 		//Scheduler.getInstance().add(new Limelight_turn(Robot.m_drive, Robot.limelightMain));
@@ -282,102 +286,105 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 
 		Robot.gameData = window.getData();
-		Robot.autoCommand = new CommandGroup();
+    Robot.autoCommand = new CommandGroup();
 
-		/////////////////////
-		////// STAGE 1 //////
-		/////////////////////
+    // Turn Limelight On
+    Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
-		// Add Time Delay for a User Input
-		Robot.autoCommand.addSequential( new Delay(OI.autoDelay.getNumber(0)) );
+		// /////////////////////
+		// ////// STAGE 1 //////
+		// /////////////////////
 
-		//////////////////////////////////
-		// If Position is Left / Right  //
-		//////////////////////////////////
-		if(OI.position.get() == 1 || OI.position.get() == 3){
-			console.log("POS 1 || POS 3");
+		// // Add Time Delay for a User Input
+		// Robot.autoCommand.addSequential( new Delay(OI.autoDelay.getNumber(0)) );
+
+		// //////////////////////////////////
+		// // If Position is Left / Right  //
+		// //////////////////////////////////
+		// if(OI.position.get() == 1 || OI.position.get() == 3){
+		// 	console.log("POS 1 || POS 3");
 
 
-			// Level 1
-			if(OI.level.get() == 1){
-				console.log("LEVEL 1");
+		// 	// Level 1
+		// 	if(OI.level.get() == 1){
+		// 		console.log("LEVEL 1");
 
-				// Drive
-				Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 2000) );
+		// 		// Drive
+		// 		Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 2000) );
 
-			}
+		// 	}
 
-			// Level 2
-			else if(OI.level.get() == 2){
-				console.log("LEVEL 2");
+		// 	// Level 2
+		// 	else if(OI.level.get() == 2){
+		// 		console.log("LEVEL 2");
 
-				//drive
-				Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 3000));
+		// 		//drive
+		// 		Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.8, 0, 3000));
 
-			}
+		// 	}
 
-		}
+		// }
 
-		///////////////////////////
-		// If Position is Center //
-		///////////////////////////
+		// ///////////////////////////
+		// // If Position is Center //
+		// ///////////////////////////
 
-		else if(OI.position.get() == 2){
+		// else if(OI.position.get() == 2){
 
-			console.log("POS 2");
+		// 	console.log("POS 2");
 
-			// Level 1
-			if(OI.level.get() == 1){
-				console.log("LEVEL 1");
+		// 	// Level 1
+		// 	if(OI.level.get() == 1){
+		// 		console.log("LEVEL 1");
 
-				// Drive
-				Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 800));
+		// 		// Drive
+		// 		Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 800));
 
-			}
+		// 	}
 
-		}
+		// }
 
-		/////////////////////
-		////// STAGE 2 //////
-		/////////////////////
+		// /////////////////////
+		// ////// STAGE 2 //////
+		// /////////////////////
 
-		if(OI.target.get() == OI.Target.None){
+		// if(OI.target.get() == OI.Target.None){
 
-		}
-		else if(OI.target.get() == OI.Target.Face){
-			console.log("TARGET: FACE");
+		// }
+		// else if(OI.target.get() == OI.Target.Face){
+		// 	console.log("TARGET: FACE");
 
-			Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
-			Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, 90));
-			Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 2500));
-			Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, -90));
+		// 	Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 4000));
+		// 	Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, 90));
+		// 	Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 2500));
+		// 	Robot.autoCommand.addSequential(new AutoTurn(Robot.m_drive, Robot.pigeon, 0.5, -90));
 
-		}
-		else if(OI.target.get() == OI.Target.Side){
-			console.log("TARGET: SIDE");
+		// }
+		// else if(OI.target.get() == OI.Target.Side){
+		// 	console.log("TARGET: SIDE");
 
-			Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 1000));
-		}
+		// 	Robot.autoCommand.addSequential(new AutoDrive(Robot.m_drive, 0.5, 0, 1000));
+		// }
 
-		/////////////////////
-		////// STAGE 3 //////
-		/////////////////////
+		// /////////////////////
+		// ////// STAGE 3 //////
+		// /////////////////////
 
-		if(OI.target.get() == OI.Target.Face){
+		// if(OI.target.get() == OI.Target.Face){
 
-			console.log("TARGET: FACE (3)");
+		// 	console.log("TARGET: FACE (3)");
 
-			Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 500));
-			Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kReverse));
-		}
-		else if(OI.target.get() == OI.Target.Side){
-			console.log("TARGET: SIDE (3)");
+		// 	Robot.autoCommand.addSequential( new AutoDrive(Robot.m_drive, 0.5, 0, 500));
+		// 	Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kReverse));
+		// }
+		// else if(OI.target.get() == OI.Target.Side){
+		// 	console.log("TARGET: SIDE (3)");
 
-			Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
-		}
+		// 	Robot.autoCommand.addSequential( new SolenoidAuto(Robot.hatchSol, Value.kForward));
+		// }
 
-    // Robot Auto Command Drive Controls
-    //Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
+    // // Robot Auto Command Drive Controls
+    // //Robot.autoCommand.addSequential(new AutoDrive(m_drive, 0.5, 0, 10));
 
     // Add to Stack
     Scheduler.getInstance().add(Robot.autoCommand);
@@ -397,7 +404,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // Turn Limelight Off
+    // Turn Limelight On
     Robot.limelightMain.setLed(Limelight.ledMode.kOn);
 
     transSol.set(true); // LowGear
@@ -414,15 +421,16 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
-    if(OI.driver.getRawButton(LogitechMap_X.BUTTON_A)){
-      // Add Code to run the robot.
-      //Scheduler.getInstance().add();
-
-    }
-    else {
-      // Add code to Cancel the Program
-
-    }
+    // if(OI.turnFaceRight.get()){
+    //   // Turn Face Rigth
+    //   Scheduler.getInstance().add(new AutoDriveGyro(Robot.m_drive, Robot.pigeon, "m_drive", 170, 0.7));
+    //   console.log("AutoDriveGyro +");
+    // }
+    // else if(OI.turnFacefLeft.get()){
+    //   // Turn Face Left
+    //   Scheduler.getInstance().add(new AutoDriveGyro(Robot.m_drive, Robot.pigeon, "m_drive", 170, -0.7));
+    //   console.log("AutoDriveGyro -");
+    // }
 
     /////////////////
     /// SIDE CTRL ///
@@ -439,37 +447,34 @@ public class Robot extends TimedRobot {
       // Go Up bypass the Upper Limit
       console.out(logMode.kDebug, "BYPASS UPPER LIMIT, UP");
       Robot.motorLift.set(0.4); // Up
-      Robot.winchBreak.set(true); // Break Off
+      Robot.winchBreak.set(false); // Break Off
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_LB)){
       if(!Robot.upperLimit.get() == false){
         // Upperlimit is setup to give a signal as true as open.
         Robot.motorLift.set(0.9); // Up
-        Robot.winchBreak.set(false); // Break On
+        Robot.winchBreak.set(true); // Break Off
       }
       else {
         console.out(logMode.kDebug, "Upper Limit");
         Robot.motorLift.set(0); // Off
-        Robot.winchBreak.set(true); // Break off
+        Robot.winchBreak.set(false); // Break on
       }
     }
     else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_RB)){
-      if(Robot.lowerLimit.get() == false){
+       if(Robot.lowerLimit.get() == false){
         Robot.motorLift.set(-0.5); // Down
-        Robot.winchBreak.set(false); // Break on
-        console.log("false");
-      }
-      else {
-        console.out(logMode.kDebug, "Lower Limit");
-        Robot.motorLift.set(0); // Off
         Robot.winchBreak.set(true); // Break off
-        console.log("true");
-
-      }
+       }
+       else {
+          console.out(logMode.kDebug, "Lower Limit");
+          Robot.motorLift.set(0); // Off
+          Robot.winchBreak.set(false); // Break on
+       }
     }
     else {
       Robot.motorLift.set(0); // Off
-      Robot.winchBreak.set(true); // Break off
+      Robot.winchBreak.set(false); // Break on
     }
 
     //////////////////
@@ -485,7 +490,7 @@ public class Robot extends TimedRobot {
       ballIntake2.set(0.5);
     }
     // Ball Intake Control using Buttons
-    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_B)){
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_B)) {
       // Ball In
       if(Robot.ballLoaded.get() == false){
         ballIntake.set(-0.5);
@@ -503,7 +508,7 @@ public class Robot extends TimedRobot {
         }
       }
     }
-    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_X)){
+    else if(OI.operator.getRawButton(LogitechMap_X.BUTTON_X)) {
       // Ball Out
       ballIntake.set(0.8);
       ballIntake2.set(-0.8);
@@ -551,7 +556,7 @@ public class Robot extends TimedRobot {
       transSol.set(false); // High Gear
       OI.driveShift.setString("HIGH");
     }
-    else if(OI.transButtonLow.get()){
+    else{
       transSol.set(true); // LowGear
       OI.driveShift.setString("LOW");
     }
@@ -564,25 +569,25 @@ public class Robot extends TimedRobot {
     double DRIVE_X = (OI.driver.getRawAxis(LogitechMap_X.AXIS_RIGHT_X));
     DRIVE_Y = RobotOrientation.getInstance().fix(DRIVE_Y, Side.kSideB);
 
-    if(OI.driveSlowForward.get()){
+    if(OI.driveSlowForward.get()) {
       // Button Mode Forward
       console.out(logMode.kDebug, "Slow Forward");
-      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideB);
-      DRIVE_X = 0;
-    }
-    else if(OI.driveSlowReverse.get()){
-      // Button Mode Reverse
-      console.out(logMode.kDebug, "Slow Reverse");
       DRIVE_Y = RobotOrientation.getInstance().fix(-0.3, Side.kSideB);
       DRIVE_X = 0;
     }
-    else if(OI.driveSlowLeft.get()){
+    else if(OI.driveSlowReverse.get()) {
+      // Button Mode Reverse
+      console.out(logMode.kDebug, "Slow Reverse");
+      DRIVE_Y = RobotOrientation.getInstance().fix(0.3, Side.kSideB);
+      DRIVE_X = 0;
+    }
+    else if(OI.driveSlowLeft.get()) {
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Left");
       DRIVE_Y = 0;
       DRIVE_X = 0.3;
     }
-    else if(OI.driveSlowRight.get()){
+    else if(OI.driveSlowRight.get()) {
       // Button Mode Reverse
       console.out(logMode.kDebug, "Slow Right");
       DRIVE_Y = 0;
@@ -592,7 +597,7 @@ public class Robot extends TimedRobot {
     else {
       // Joystick Mode
       DRIVE_Y = DRIVE_Y*0.80;
-      DRIVE_X = -DRIVE_X*0.70;
+      DRIVE_X = -DRIVE_X*0.60;
     }
 
     /**
@@ -602,25 +607,49 @@ public class Robot extends TimedRobot {
      *    0.5 = P * tX
      * 0.5 is the target speed @ tX distance.
      */
-    if(OI.autoTurnCtrl.get() == true){
+    if(OI.autoTurnCtrl.get() == true && Robot.hatchLoadedEdge.get() == false){
 
-      DRIVE_X = -0.048 * Robot.limelightMain.getX();
+      DRIVE_X = -0.03 * Robot.limelightMain.getX();
 
       // Covers the Sensor if its not connected.
       double range = Robot.limelightMain.getDistance();
+      // Covers the Sensor if its not connected.
       if(range > 200){
         range = 1;
       }
-      DRIVE_Y = 0.18 * range;
+      DRIVE_Y = 0.25 * range;
 
-      console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
+      if(range == 1 || range == 0) {
+        // Backup if the range is Zero
+        
+      }
+      else {
+        DRIVE_X = -0.04 * Robot.limelightMain.getX();
+        if(range < 6){
+          DRIVE_Y = 0.6;
+        }
+        else{
+          DRIVE_Y = 0.08 * range;
+        }
+        console.out(logMode.kDebug, ">> " + DRIVE_X + "  " + DRIVE_Y);
+      }
+
       OI.LLCtrl.setBoolean(true);
+    }
+
+    if(OI.autoTurnCtrl.get() == true && Robot.hatchLoadedEdge.get() == true) {
+      console.log(":: hatchLoadedEdge ::");
+      //Scheduler.getInstance().add(new AutoDriveEncoder(Robot.m_drive, Robot.leftEncoder, -0.5, "m_drive", 50, 4000));
     }
     else {
       console.out(logMode.kDebug, ":: " + DRIVE_X);
       OI.LLCtrl.setBoolean(false);
     }
-    Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
+
+    if(Locker.isLocked("m_drive") == false) {
+      // If the Robot Drive is not Locked, Pass in the drive object.
+      Robot.m_drive.arcadeDrive( DRIVE_Y, DRIVE_X );
+    }
 
 
     ////////////////////////
@@ -670,26 +699,28 @@ public class Robot extends TimedRobot {
       }
       else{
         // Limit the Up to %50 max power
-        controlArm = controlArm*0.85;
+        controlArm = controlArm*0.95;
       }
     }
-    else if (controlArm > 0){
-      // Run Off code IF the Locker is not in use.
-      if(Locker.isLocked("motorTilt") == false){
-        Robot.motorTilt.set(0);
+    else if (controlArm < 0){
+      if(ballLowerLimit.get() != true){
+        // Allow if button is true, Wired for Cut Wire Saftey
+        controlArm = 0;
       }
     }
     else {
       // Limit the Down to 85% max power
-      controlArm = controlArm*0.85;
+      controlArm = controlArm*0.95;
     }
 
+    
+    // Run Off code IF the Locker is not in use.
     if(Locker.isLocked("motorTilt") == false){
       Robot.motorTilt.set(controlArm);
     }
     else {
       if(controlArm != 0){
-        console.log("User Control Ignored, Locked");
+        //console.log("User Control Ignored, Locked");
       }
     }
 

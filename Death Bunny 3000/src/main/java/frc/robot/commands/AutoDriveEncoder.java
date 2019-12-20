@@ -7,6 +7,7 @@ import java.util.Date;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.helpers.Locker;
 import frc.robot.helpers.console;
 import frc.robot.helpers.console.logMode;
 
@@ -21,6 +22,7 @@ public class AutoDriveEncoder extends Command {
     protected int distance;
     protected long endTime;
     protected boolean isFinished;
+    protected String lockName = "";
     protected Encoder enc;
     protected Date EStopTime;
     protected int time;
@@ -37,7 +39,7 @@ public class AutoDriveEncoder extends Command {
      * @param ticks Total Distance to go on the Encoder
      */
     public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, int ticks) {
-        this(drive, enc, power, ticks, 4);
+        this(drive, enc, power, "", ticks, 4);
     }
 
     /**
@@ -47,14 +49,16 @@ public class AutoDriveEncoder extends Command {
      * @param drive Drive Control
      * @param enc Encoder to Follow
      * @param power Power Control Value
+     * @param lockName  Name of the Lock
      * @param ticks Total Distance to go on the Encoder
      * @param time Total time to spend on the job, this is a safety part to
      *    protect the robot from driving without an encoder
      */
-    public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, int ticks, int time) {
+    public AutoDriveEncoder(DifferentialDrive  drive, Encoder enc, double power, String lockName, int ticks, int time) {
         this.drive = drive;
         this.enc = enc;
         this.power = power;
+        this.lockName = lockName;
         this.distance = Math.abs(ticks);
         this.time = time;
     }
@@ -70,6 +74,7 @@ public class AutoDriveEncoder extends Command {
         Calendar calculateDate = GregorianCalendar.getInstance();
         calculateDate.add(GregorianCalendar.MILLISECOND, (int) this.time); // Time to Check the Encoder Distance is not Zero
         EStopTime = calculateDate.getTime();
+        Locker.lock(this.lockName);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -122,5 +127,6 @@ public class AutoDriveEncoder extends Command {
         this.drive.arcadeDrive(0, 0);
         this.drive.stopMotor();
         console.out(logMode.kDebug, "["+this.getClass().getSimpleName()+"] Finished Command");
+        Locker.unlock(this.lockName);
     }
 }
